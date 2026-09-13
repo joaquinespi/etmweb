@@ -1,0 +1,180 @@
+---
+// src/components/ui/Footer.astro
+import Icon from "../../components/ui/Icon.astro";
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="gap-0">
+  <div
+    class="w-full bg-linear-to-r from-black to-gray-950 dark:bg-linear-to-r dark:from-gray-800 dark:to-gray-900"
+  >
+    <div class="container mx-auto px-4 pt-16 pb-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <div class="space-y-6 text-center md:text-left">
+          <div class="flex items-center gap-3">
+            <img
+              src="/logo_dark.svg"
+              alt="Expansion Logo"
+              class="h-18 w-auto transition-transform group-hover:scale-105 mx-auto md:mx-0"
+              width="120"
+              height="40"
+            />
+          </div>
+          <p class="text-sm text-white">Lo mejor en Equipos</p>
+        </div>
+
+        <div class="text-center md:text-left">
+          <h3
+            class="font-body text-lg text-white/80 font-medium mb-6 tracking-wide"
+          >
+            Compra y conoce
+          </h3>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <a
+                href="/tienda"
+                class="text-white hover:text-white/80 transition-colors"
+                >Tienda</a
+              >
+            </li>
+            <li>
+              <a
+                href="/sucursales"
+                class="text-white hover:text-white/80 transition-colors"
+                >Sucursales</a
+              >
+            </li>
+            <li>
+              <a
+                href="/activaciones"
+                class="text-white hover:text-white/80 transition-colors"
+                >Activaciones</a
+              >
+            </li>
+            <li>
+              <a
+                href="/contacto"
+                class="text-white hover:text-white/80 transition-colors"
+                >Contáctanos</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="text-center md:text-left">
+          <h3
+            class="font-body text-lg text-white/80 font-medium mb-6 tracking-wide"
+          >
+            Sobre Nosotros
+          </h3>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <a
+                href="/nosotros"
+                class="text-white hover:text-white/80 transition-colors"
+                >Expansion TEC MyT</a
+              >
+            </li>
+            <li>
+              <a
+                href="/politica-cookies"
+                class="text-white hover:text-white/80 transition-colors"
+                >Política de cookies</a
+              >
+            </li>
+            <li>
+              <a
+                href="/privacidad"
+                class="text-white hover:text-white/80 transition-colors"
+                >Política de privacidad</a
+              >
+            </li>
+            <li>
+              <a
+                href="/mapa-sitio"
+                class="text-white hover:text-white/80 transition-colors"
+                >Mapa del Sitio</a
+              >
+            </li>
+            <li>
+              <a
+                href="/libro-de-reclamaciones"
+                class="group inline-flex bg-linear-to-r from-red-400 to-red-600 items-center gap-3 px-6 py-3 rounded-lg hover:bg-gray-800 transition-all w-full mt-4 justify-center md:justify-start"
+              >
+                <Icon
+                  name="book"
+                  class="w-8 h-8 text-black group-hover:text-black/60"
+                />
+                <span
+                  class="text-black font-medium text-base group-hover:text-black/60 transition-colors"
+                  >Libro de Reclamaciones</span
+                >
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="space-y-8 text-center md:text-left">
+          <div>
+            <h3
+              class="font-body text-lg text-white/80 font-medium mb-6 tracking-wide"
+            >
+              Siguenos en
+            </h3>
+            <div class="flex gap-4 justify-center md:justify-start">
+              <a href="#" class="text-white hover:text-white transition-all"
+                ><Icon name="facebook" class="w-5 h-5" /></a
+              >
+              <a href="#" class="text-white hover:text-white transition-all"
+                ><Icon name="instagram" class="w-5 h-5" /></a
+              >
+              <a href="#" class="text-white hover:text-white transition-all"
+                ><Icon name="tiktok" class="w-5 h-5" /></a
+              >
+              <a href="#" class="text-white hover:text-white transition-all"
+                ><Icon name="youtube" class="w-5 h-5" /></a
+              >
+              <a href="#" class="text-white hover:text-white transition-all"
+                ><Icon name="whatsapp" class="w-5 h-5" /></a
+              >
+            </div>
+          </div>
+
+          <div class="space-y-2 text-sm">
+            <h3
+              class="font-body text-lg text-white/80 font-medium mb-6 tracking-wide"
+            >
+              Servicio al cliente
+            </h3>
+            <div class="text-white flex items-center gap-2 justify-center md:justify-start">
+              <Icon name="phone" class="w-5 h-5 text-white" />
+              <span>+51 984797688</span>
+            </div>
+            <div class="text-white flex items-center gap-2 justify-center md:justify-start">
+              <Icon name="mail" class="w-5 h-5 text-white" />
+              <span>adm_mye@telcomsway.com</span>
+            </div>
+          </div>
+
+          <!-- <div class="pt-4">
+          <h3
+            class="font-body text-lg text-white/80 font-medium mb-6 tracking-wide"
+          >
+            Tienda Principal
+          </h3>
+          <div class="flex items-start gap-3 text-sm">
+            <Icon name="pin" class="w-4 h-4 text-white mt-1" />
+            <span>Av. La Marina 1234, Lima, Perú</span>
+          </div>
+        </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="w-full bg-black">
+    <div class="container mx-auto p-4 text-center text-xs text-white">
+      <p>© {currentYear} EXPANSION TECMYE. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>

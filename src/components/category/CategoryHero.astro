@@ -1,0 +1,55 @@
+---
+interface Props {
+  name: string;
+  description?: string;
+  banner?: string;
+  productCount: number;
+}
+const { name, description, banner, productCount } = Astro.props;
+---
+
+<div class="relative w-full overflow-hidden" style="height: 280px;">
+  <!-- Banner o fallback degradado -->
+  {
+    banner ? (
+      <img
+        src={banner}
+        alt={name}
+        class="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+      />
+    ) : (
+      <div class="absolute inset-0 bg-gradient-to-br from-neutral-900 to-neutral-700" />
+    )
+  }
+
+  <!-- Overlay oscuro -->
+  <div
+    class="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-black/20"
+  >
+  </div>
+
+  <!-- Contenido -->
+  <div
+    class="relative z-10 h-full flex flex-col justify-end px-6 md:px-12 pb-8 max-w-[var(--content-wide)] mx-auto"
+  >
+    <h1
+      class="font-display font-black text-white text-4xl md:text-5xl leading-tight mb-2"
+    >
+      {name}
+    </h1>
+    <div class="flex items-center gap-4 flex-wrap">
+      {
+        description && (
+          <p class="text-white/75 text-base max-w-xl">{description}</p>
+        )
+      }
+      <span
+        class="text-white/60 text-sm bg-white/10 border border-white/20 px-3 py-1 rounded-full shrink-0"
+      >
+        {productCount}
+        {productCount === 1 ? "producto" : "productos"}
+      </span>
+    </div>
+  </div>
+</div>

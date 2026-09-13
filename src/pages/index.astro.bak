@@ -1,0 +1,138 @@
+---
+// src/pages/index.astro
+export const prerender = true;
+import { getCollection, getEntry } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HeroSlider from "../components/home/HeroSlider.astro";
+import CategoryList from "../components/home/CategoryList.astro";
+import FeaturedProducts from "../components/home/FeaturedProducts.astro";
+import ProductSection from "../components/home/ProductSection.astro";
+import StoreSection from "../components/home/StoreSection.astro";
+import BrandList from "../components/home/BrandList.astro";
+import ActivationSection from "../components/home/ActivationSection.astro";
+
+// Productos destacados
+const allProducts = await getCollection(
+  "products",
+  ({ data }: { data: any }) => data.inStock,
+);
+const featured = allProducts
+  .filter((p: any) => p.data.featured && p.data.inStock)
+  .slice(0, 7);
+
+const featuredWithData = await Promise.all(
+  featured.map(async (p: any) => {
+    // CORRECCIÓN: Pasar el nombre de la colección como primer argumento
+    const brand = p.data.brand ? await getEntry("brands", p.data.brand) : null;
+    const category = p.data.category
+      ? await getEntry("categories", p.data.category)
+      : null;
+
+    return {
+      ...p,
+      brandName: brand?.data.name ?? "",
+      categoryName: category?.data.name ?? "",
+    };
+  }),
+);
+
+// Función para procesar datos (opcional, para obtener nombres de marcas/categorías)
+async function hydrateProducts(productList: any[]) {
+  return await Promise.all(
+    productList.map(async (p) => {
+      const brand = p.data.brand
+        ? await getEntry("brands", p.data.brand)
+        : null;
+      return { ...p, brandName: brand?.data.name || "" };
+    }),
+  );
+}
+
+// 1. Filtrar Celulares
+const smartphones = await hydrateProducts(
+  allProducts.filter((p: any) => p.data.category === "celulares").slice(0, 5),
+);
+
+// 2. Filtrar Accesorios
+const accessories = await hydrateProducts(
+  allProducts.filter((p: any) => p.data.category === "accesorios").slice(0, 5),
+);
+
+// Activaciones próximas
+const now = new Date();
+const allActivations = await getCollection("activations");
+// console.log("Activaciones sin procesar:", allActivations); // Debug: Ver qué datos llegan antes de procesar
+// console.log("Activaciones crudas:", allActivations); // Debug: Ver qué datos llegan
+
+const activationsWithLocation = await Promise.all(
+  allActivations
+    .filter((a: any) => {
+      // Filtramos por publicadas, que no hayan vencido y que tengan el nuevo formato de array
+      const isPublished = a.data.isPublished;
+      const hasNotEnded = new Date(a.data.endDate) > now;
+      const hasLocations = Array.isArray(a.data.locations);
+      return isPublished && hasNotEnded && hasLocations;
+    })
+    .map(async (a: any) => {
+      // Recuperamos los objetos completos de cada sucursal vinculada
+      const locationEntries = await Promise.all(
+        a.data.locations.map((id: string) => getEntry("locations", id)),
+      );
+
+      return {
+        ...a,
+        // Guardamos solo los nombres para el componente
+        locationNames: locationEntries
+          .filter((entry) => entry !== undefined)
+          .map((l: any) => l.data.name),
+      };
+    }),
+);
+
+// Ordenamos: las más cercanas a empezar van primero
+activationsWithLocation.sort(
+  (a, b) =>
+    new Date(a.data.startDate).getTime() - new Date(b.data.startDate).getTime(),
+);
+
+// Sucursales activas
+const locations = await getCollection("locations", (l: any) => l.data.isActive);
+---
+
+<BaseLayout
+  title="Inicio"
+  description="ExpansionTec — Tecnología y periféricos gaming al mejor precio en Lima. Visítanos en nuestras sucursales."
+>
+  <HeroSlider />
+
+  <!-- CATEGORIAS -->
+  <CategoryList />
+
+  <!-- PRODUCTOS DESTACADOS -->
+  <FeaturedProducts products={featuredWithData} title="Productos Destacados" />
+
+  {/* SECCIÓN CELULARES */}
+  <ProductSection
+    products={smartphones}
+    title="Celulares y Smartphones"
+    icon="device-mobile"
+    gradient="from-slate-900 via-slate-800 to-slate-900"
+  />
+
+  {/* SECCIÓN ACCESORIOS */}
+  <ProductSection
+    products={accessories}
+    title="Accesorios Originales"
+    icon="headphones"
+    gradient="from-orange-500 to-rose-500"
+  />
+
+  <!-- SUCURSALES -->
+  <StoreSection locations={locations} />
+
+  <!-- ACTIVACIONES PRÓXIMAS -->
+  <ActivationSection activations={activationsWithLocation} />
+
+  <!-- MARCAS -->
+  <BrandList />
+</BaseLayout>

@@ -1,0 +1,60 @@
+---
+// src/pages/categoria/[slug].astro
+export const prerender = true;
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CategoryHero from "../../components/category/CategoryHero.astro";
+import ProductGrid from "../../components/category/ProductGrid.astro";
+
+export async function getStaticPaths() {
+  const categories = await getCollection("categories");
+  return categories.map((cat: any) => ({
+    params: { slug: cat.data.slug ?? cat.id },
+    props: { category: cat },
+  }));
+}
+
+const { category } = Astro.props as { category: any };
+const { name, description, banner, image } = category.data;
+
+// Productos filtrados por esta categoría
+const allProducts = await getCollection("products");
+const products = allProducts.filter(
+  (p: any) =>
+    p.data.inStock !== false &&
+    (p.data.category.id === category.id ||
+      p.data.category.slug === category.data.slug),
+);
+---
+
+<BaseLayout
+  title={`${name} — Expansión Tecmy`}
+  description={description ?? `Explora nuestra selección de ${name}`}
+  image={banner ?? image}
+>
+  <!-- Breadcrumb -->
+  <nav aria-label="Breadcrumb" class="bg-surface border-b border-divider">
+    <div
+      class="max-w-[var(--content-wide)] mx-auto px-4 py-2.5 flex items-center gap-2 text-sm text-text-muted"
+    >
+      <a href="/" class="hover:text-text transition-colors">Inicio</a>
+      <span class="text-text-faint">/</span>
+      <a href="/tienda" class="hover:text-text transition-colors">Tienda</a>
+      <span class="text-text-faint">/</span>
+      <span class="text-text font-medium">{name}</span>
+    </div>
+  </nav>
+
+  <!-- Hero de categoría -->
+  <CategoryHero
+    name={name}
+    description={description}
+    banner={banner}
+    productCount={products.length}
+  />
+
+  <!-- Grid de productos -->
+  <section class="max-w-[var(--content-wide)] mx-auto px-4 py-10">
+    <ProductGrid products={products} emptyLabel={name} />
+  </section>
+</BaseLayout>

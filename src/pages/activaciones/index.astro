@@ -1,0 +1,195 @@
+---
+// src/pages/activaciones/index.astro
+import { getCollection, getEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BreadCrumb from "../../components/ui/BreadCrumb.astro";
+import Badge from "../../components/ui/Badge.astro";
+import Icon from "../../components/ui/Icon.astro";
+
+const activations = await getCollection(
+  "activations",
+  ({ data }: { data: any }) => data.isPublished,
+);
+
+const now = new Date();
+const nowTime = now.getTime();
+
+// 1. Procesamiento de datos y resolución de localizaciones
+const processedActivations = await Promise.all(
+  activations.map(async (act: any) => {
+    // Resolvemos los nombres de todas las sedes vinculadas
+    const locationEntries = await Promise.all(
+      (act.data.locations || []).map((id: string) => getEntry("locations", id)),
+    );
+
+    const locationNames = locationEntries
+      .filter((entry) => entry !== undefined)
+      .map((l) => l.data.name);
+
+    const startDate = new Date(act.data.startDate);
+    const endDate = new Date(act.data.endDate);
+    const startTime = startDate.getTime();
+    const endTime = endDate.getTime();
+
+    // ✅ CORRECCIÓN DE URL: Aseguramos un slug limpio sin .md
+    // act.slug suele estar disponible, si no, limpiamos act.id
+    const cleanSlug = act.slug || act.id.replace(/\.[^/.]+$/, "");
+
+    return {
+      ...act,
+      _slug: cleanSlug, // Guardamos el slug limpio aquí
+      _locationText:
+        locationNames.length > 0 ? locationNames.join(", ") : "Sedes múltiples",
+      _isActive: nowTime >= startTime && nowTime <= endTime,
+      _isPast: nowTime > endTime,
+      _startStr: startDate.toLocaleDateString("es-PE", {
+        day: "2-digit",
+        month: "short",
+      }),
+      _endStr: endDate.toLocaleDateString("es-PE", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }),
+      _endTime: endTime,
+      _startTime: startTime,
+    };
+  }),
+);
+
+// 2. Clasificación y Ordenamiento
+const upcoming = processedActivations
+  .filter((a) => !a._isPast)
+  .sort((a, b) => a._startTime - b._startTime);
+
+const past = processedActivations
+  .filter((a) => a._isPast)
+  .sort((a, b) => b._endTime - a._endTime);
+---
+
+<BaseLayout
+  title="Activaciones y Eventos"
+  description="Descubre los próximos eventos, promociones y activaciones tecnológicas en nuestras sedes de ExpansionTec."
+>
+  <div class="w-full mt-16"></div>
+
+  <div class="container mx-auto px-4 py-8 md:py-12">
+    <BreadCrumb
+      crumbs={[{ label: "Inicio", href: "/" }, { label: "Activaciones" }]}
+    />
+
+    <header class="mb-12">
+      <h1
+        class="font-body text-3xl md:text-5xl font-medium text-gray-900 mb-4 dark:text-white"
+      >
+        Activaciones
+      </h1>
+      <p class="text-gray-500 max-w-2xl font-medium dark:text-white/80">
+        Vive la experiencia ExpansionTec de cerca. Participa en nuestros
+        lanzamientos, torneos y promociones exclusivas en tienda.
+      </p>
+    </header>
+
+    {/* SECCIÓN: PRÓXIMAS Y ACTIVAS */}
+    {
+      upcoming.length > 0 && (
+        <section class="mb-20">
+          <div class="flex items-center gap-3 mb-8">
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-red-600" />
+            </span>
+            <h2 class="font-body text-2xl font-medium text-gray-900 dark:text-white">
+              Eventos Vigentes
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {upcoming.map((act) => (
+              <a href={`/activaciones/${act._slug}`} class="group">
+                <article class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl hover:shadow-red-500/5 hover:-translate-y-1 transition-all duration-300 h-full flex flex-col dark:bg-black dark:border-gray-700">
+                  <div class="relative aspect-video overflow-hidden bg-gray-100">
+                    <img
+                      src={
+                        act.data.banner || "/uploads/placeholder-activation.jpg"
+                      }
+                      alt={act.data.title}
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      loading="lazy"
+                    />
+                    <div class="absolute top-4 right-4">
+                      <Badge variant={act._isActive ? "success" : "primary"}>
+                        {act._isActive ? "Activa Ahora" : "Próximamente"}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div class="p-6 flex flex-col flex-1">
+                    <h3 class="font-body text-xl font-medium text-gray-900 mb-4 group-hover:text-red-600 transition-colors line-clamp-2 dark:text-white">
+                      {act.data.title}
+                    </h3>
+
+                    <div class="mt-auto space-y-4">
+                      <div class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <Icon
+                          name="location"
+                          class="w-4 h-4 text-red-600 mt-0.5"
+                        />
+                        <span class="line-clamp-1">{act._locationText}</span>
+                      </div>
+                      <div class="flex items-center justify-between pt-4 border-t border-gray-50 dark:border-gray-700">
+                        <span class="text-[11px] font-bold text-gray-400 uppercase tracking-widest dark:text-gray-50">
+                          {act._startStr} — {act._endStr}
+                        </span>
+                        <span class="text-red-600 font-bold text-sm transform group-hover:translate-x-1 transition-transform dark:text-white dark:group-hover:text-red-600">
+                          →
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {/* SECCIÓN: ANTERIORES */}
+    {
+      past.length > 0 && (
+        <section>
+          <h2 class="font-body text-xl font-medium text-gray-900 mb-6 flex items-center gap-2 dark:text-white">
+            <Icon name="history" class="w-6 h-6 text-red-600" />
+            Eventos Pasados
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {past.map((act) => (
+              <a href={`/activaciones/${act.id || act.slug}`} class="group">
+                <div class="flex items-center justify-between p-5 bg-slate-50 border border-gray-100 rounded-2xl hover:bg-white hover:shadow-md transition-all grayscale-[0.5] hover:grayscale-0 dark:bg-black dark:border-gray-700 dark:hover:bg-gray-900">
+                  <div class="flex flex-col gap-1">
+                    <span class="font-bold text-gray-700 group-hover:text-red-600 transition-colors dark:text-white">
+                      {act.data.title}
+                    </span>
+                    <span class="text-xs text-gray-400 flex items-center gap-1 dark:text-gray-200">
+                      <Icon name="location" class="w-4 h-4" />{" "}
+                      {act._locationText}
+                    </span>
+                  </div>
+                  <div class="text-center">
+                    <span class="text-xs font-medium bg-red-600 text-white block dark:text-red-400 border border-red-600 px-2 py-0.5 rounded-full mb-1 dark:border-red-400 dark:bg-transparent">
+                      Finalizó
+                    </span>
+                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400">
+                      {act._endStr}
+                    </span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

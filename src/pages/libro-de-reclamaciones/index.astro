@@ -1,0 +1,589 @@
+---
+// src/pages/libro-de-reclamaciones/index.astro
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BreadCrumb from "../../components/ui/BreadCrumb.astro";
+
+const today = new Date().toISOString().slice(0, 10);
+---
+
+<BaseLayout
+  title="Libro de Reclamaciones"
+  description="Registra una reclamación o queja en el Libro de Reclamaciones de ExpansionTec."
+>
+  <main class="container mx-auto max-w-5xl px-4 pb-16 pt-24 sm:pt-28">
+    <BreadCrumb
+      crumbs={[
+        { label: "Inicio", href: "/" },
+        { label: "Libro de Reclamaciones" },
+      ]}
+    />
+
+    <section class="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-black">
+      <header class="border-b border-gray-200 px-6 py-6 text-center dark:border-gray-700 sm:px-10">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-red-600">
+          ExpansionTec
+        </p>
+        <h1 class="mt-2 text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+          Libro de Reclamaciones
+        </h1>
+        <p class="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+          Completa este formulario para registrar una reclamación o queja.
+          Los campos marcados con * son obligatorios.
+        </p>
+      </header>
+
+      <form id="claims-form" class="space-y-10 p-6 sm:p-10" novalidate>
+        <fieldset class="space-y-6">
+          <legend class="section-title">
+            Identificación del consumidor reclamante
+          </legend>
+
+          <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div>
+              <label for="first-name" class="field-label">
+                Nombre <span>*</span>
+              </label>
+              <input
+                id="first-name"
+                name="firstName"
+                type="text"
+                required
+                autocomplete="given-name"
+                placeholder="Nombre"
+                class="field-control"
+              />
+            </div>
+
+            <div>
+              <label for="last-name" class="field-label">
+                Primer apellido <span>*</span>
+              </label>
+              <input
+                id="last-name"
+                name="lastName"
+                type="text"
+                required
+                autocomplete="family-name"
+                placeholder="Primer apellido"
+                class="field-control"
+              />
+            </div>
+
+            <div>
+              <label for="second-last-name" class="field-label">
+                Segundo apellido
+              </label>
+              <input
+                id="second-last-name"
+                name="secondLastName"
+                type="text"
+                autocomplete="additional-name"
+                placeholder="Segundo apellido"
+                class="field-control"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div>
+              <label for="document-type" class="field-label">
+                Tipo de documentación <span>*</span>
+              </label>
+              <select
+                id="document-type"
+                name="documentType"
+                required
+                class="field-control"
+              >
+                <option value="">Selecciona el tipo de documento</option>
+                <option value="dni">DNI</option>
+                <option value="ce">Carné de extranjería</option>
+                <option value="passport">Pasaporte</option>
+                <option value="other">Otro</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="document-number" class="field-label">
+                Número de documentación <span>*</span>
+              </label>
+              <input
+                id="document-number"
+                name="documentNumber"
+                type="text"
+                required
+                inputmode="numeric"
+                placeholder="Número de documentación"
+                class="field-control"
+              />
+            </div>
+
+            <div>
+              <label for="phone" class="field-label">
+                Celular <span>*</span>
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                required
+                autocomplete="tel"
+                inputmode="tel"
+                placeholder="Celular"
+                class="field-control"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div>
+              <label for="department" class="field-label">
+                Departamento <span>*</span>
+              </label>
+              <input
+                id="department"
+                name="department"
+                type="text"
+                required
+                placeholder="Departamento"
+                class="field-control"
+              />
+            </div>
+
+            <div>
+              <label for="province" class="field-label">
+                Provincia <span>*</span>
+              </label>
+              <input
+                id="province"
+                name="province"
+                type="text"
+                required
+                placeholder="Provincia"
+                class="field-control"
+              />
+            </div>
+
+            <div>
+              <label for="district" class="field-label">
+                Distrito <span>*</span>
+              </label>
+              <input
+                id="district"
+                name="district"
+                type="text"
+                required
+                placeholder="Distrito"
+                class="field-control"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div>
+              <label for="address" class="field-label">
+                Dirección <span>*</span>
+              </label>
+              <input
+                id="address"
+                name="address"
+                type="text"
+                required
+                autocomplete="street-address"
+                placeholder="Dirección"
+                class="field-control"
+              />
+            </div>
+
+            <div>
+              <label for="reference" class="field-label">
+                Referencia
+              </label>
+              <input
+                id="reference"
+                name="reference"
+                type="text"
+                placeholder="Referencia"
+                class="field-control"
+              />
+            </div>
+
+            <div>
+              <label for="email" class="field-label">
+                Correo electrónico <span>*</span>
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                autocomplete="email"
+                placeholder="Correo electrónico"
+                class="field-control"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:items-center">
+            <span class="field-label mb-0">
+              ¿Eres menor de edad? <span>*</span>
+            </span>
+
+            <label class="radio-label">
+              <input type="radio" name="minor" value="yes" required />
+              Sí
+            </label>
+
+            <label class="radio-label">
+              <input type="radio" name="minor" value="no" />
+              No
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="space-y-6">
+          <legend class="section-title">
+            Detalle del reclamo y orden del consumidor
+          </legend>
+
+          <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div>
+              <label for="claim-type" class="field-label">
+                Tipo de reclamo <span>*</span>
+              </label>
+              <select
+                id="claim-type"
+                name="claimType"
+                required
+                class="field-control"
+              >
+                <option value="">Selecciona un tipo</option>
+                <option value="reclamo">Reclamo</option>
+                <option value="queja">Queja</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="consumption-type" class="field-label">
+                Tipo de consumo <span>*</span>
+              </label>
+              <select
+                id="consumption-type"
+                name="consumptionType"
+                required
+                class="field-control"
+              >
+                <option value="">Selecciona un tipo</option>
+                <option value="producto">Producto</option>
+                <option value="servicio">Servicio</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="order-number" class="field-label">
+                N.° de pedido
+              </label>
+              <input
+                id="order-number"
+                name="orderNumber"
+                type="text"
+                placeholder="N.° de pedido"
+                class="field-control"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div>
+              <label for="provider" class="field-label">Proveedor</label>
+              <input
+                id="provider"
+                name="provider"
+                type="text"
+                placeholder="Proveedor"
+                class="field-control"
+              />
+            </div>
+
+            <div>
+              <label for="claimed-amount" class="field-label">
+                Monto reclamado (S/.)
+              </label>
+              <input
+                id="claimed-amount"
+                name="claimedAmount"
+                type="number"
+                min="0"
+                step="0.01"
+                inputmode="decimal"
+                placeholder="Monto reclamado"
+                class="field-control"
+              />
+            </div>
+
+            <div>
+              <label for="claim-date" class="field-label">
+                Fecha de reclamación / queja <span>*</span>
+              </label>
+              <input
+                id="claim-date"
+                name="claimDate"
+                type="date"
+                value={today}
+                required
+                class="field-control"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label for="product-description" class="field-label">
+              Descripción del producto o servicio <span>*</span>
+            </label>
+            <textarea
+              id="product-description"
+              name="productDescription"
+              required
+              rows="4"
+              class="field-control"
+              placeholder="Describe el producto o servicio relacionado"
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div>
+              <label for="purchase-date" class="field-label">
+                Fecha de compra
+              </label>
+              <input
+                id="purchase-date"
+                name="purchaseDate"
+                type="date"
+                class="field-control"
+              />
+            </div>
+
+            <div>
+              <label for="consumption-date" class="field-label">
+                Fecha de consumo
+              </label>
+              <input
+                id="consumption-date"
+                name="consumptionDate"
+                type="date"
+                class="field-control"
+              />
+            </div>
+
+            <div>
+              <label for="expiration-date" class="field-label">
+                Fecha de caducidad
+              </label>
+              <input
+                id="expiration-date"
+                name="expirationDate"
+                type="date"
+                class="field-control"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label for="claim-detail" class="field-label">
+              Detalle de la reclamación / queja, según lo indicado por el cliente
+              <span>*</span>
+            </label>
+            <textarea
+              id="claim-detail"
+              name="claimDetail"
+              required
+              rows="5"
+              class="field-control"
+              placeholder="Describe detalladamente los hechos"
+            ></textarea>
+          </div>
+
+          <div>
+            <label for="customer-request" class="field-label">
+              Pedido del cliente <span>*</span>
+            </label>
+            <textarea
+              id="customer-request"
+              name="customerRequest"
+              required
+              rows="5"
+              class="field-control"
+              placeholder="Indica qué solución solicitas"
+            ></textarea>
+          </div>
+        </fieldset>
+
+        <div class="space-y-4 text-sm text-gray-700 dark:text-gray-300">
+          <div class="flex items-start gap-3">
+            <span class="claim-marker"></span>
+            <p>
+              <strong>Reclamación:</strong>
+              Desacuerdo relacionado con productos y/o servicios.
+            </p>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <span class="claim-marker"></span>
+            <p>
+              <strong>Queja:</strong>
+              Desacuerdo no relacionado con productos y/o servicios, o molestia
+              o insatisfacción con la atención al público.
+            </p>
+          </div>
+
+          <label class="flex items-start gap-3 leading-relaxed">
+            <input
+              type="checkbox"
+              name="truthDeclaration"
+              required
+              class="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-600"
+            />
+            <span>
+              Declaro que soy el dueño del servicio y acepto el contenido de este
+              formulario al declarar bajo Declaración Jurada la veracidad de los
+              hechos descritos. <span aria-hidden="true">*</span>
+            </span>
+          </label>
+
+          <label class="flex items-start gap-3 leading-relaxed">
+            <input
+              type="checkbox"
+              name="privacyConsent"
+              required
+              class="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-600"
+            />
+            <span>
+              He leído y acepto la Política de privacidad y seguridad y la
+              Política de cookies. <span aria-hidden="true">*</span>
+            </span>
+          </label>
+        </div>
+
+        <button
+          id="claims-submit"
+          type="submit"
+          class="mx-auto flex rounded-full bg-black px-10 py-3 font-bold text-white transition-colors hover:bg-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          ENVIAR
+        </button>
+
+        <div
+          id="claims-feedback"
+          class="hidden text-center"
+          aria-live="polite"
+        ></div>
+      </form>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("#claims-form");
+  const submitButton =
+    document.querySelector<HTMLButtonElement>("#claims-submit");
+  const feedback = document.querySelector<HTMLElement>("#claims-feedback");
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    if (feedback) {
+      feedback.className =
+        "rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:bg-amber-950/40 dark:text-amber-300";
+      feedback.textContent =
+        "El formulario está validado, pero aún falta configurar el servicio de recepción de reclamos.";
+    }
+
+    submitButton?.removeAttribute("disabled");
+  });
+</script>
+
+<style>
+  .section-title {
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid rgb(229 231 235);
+    padding-bottom: 0.65rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: rgb(55 65 81);
+  }
+
+  .section-title::after {
+    display: block;
+    width: 4rem;
+    height: 0.3rem;
+    margin-top: 0.45rem;
+    background: rgb(185 28 28);
+    content: "";
+  }
+
+  .field-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgb(75 85 99);
+  }
+
+  .field-label span {
+    color: rgb(185 28 28);
+  }
+
+  .field-control {
+    width: 100%;
+    min-height: 2.65rem;
+    border: 1px solid rgb(209 213 219);
+    border-radius: 0.4rem;
+    background: white;
+    padding: 0.65rem 0.75rem;
+  }
+
+  textarea.field-control {
+    min-height: auto;
+  }
+
+  .field-control:focus {
+    border-color: rgb(220 38 38);
+    outline: 2px solid rgb(254 202 202);
+    outline-offset: 1px;
+  }
+
+  .radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .claim-marker {
+    display: inline-block;
+    width: 0.7rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    background: rgb(185 28 28);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .section-title,
+    .field-label {
+      color: rgb(229 231 235);
+    }
+
+    .field-control {
+      border-color: rgb(75 85 99);
+      background: rgb(17 24 39);
+      color: white;
+    }
+  }
+</style>

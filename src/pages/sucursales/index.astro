@@ -1,0 +1,109 @@
+---
+// src/pages/sucursales/index.astro
+export const prerender = true;
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BreadCrumb from "../../components/ui/BreadCrumb.astro";
+import Badge from "../../components/ui/Badge.astro";
+import Icon from "../../components/ui/Icon.astro";
+
+const locations = await getCollection("locations");
+const active = locations.filter((l: any) => l.data.isActive);
+---
+
+<BaseLayout
+  title="Sucursales"
+  description="Encuentra nuestras tiendas en Lima. Visítanos y conoce nuestros productos."
+>
+  <div class="w-full mt-16"></div>
+
+  <div class="container mx-auto px-4 py-8 md:py-12">
+    <BreadCrumb
+      crumbs={[{ label: "Inicio", href: "/" }, { label: "Sucursales" }]}
+    />
+
+    <header class="mb-10">
+      <h1
+        class="font-body text-3xl md:text-4xl font-medium text-gray-900 dark:text-white mb-2"
+      >
+        Nuestras Sucursales
+      </h1>
+      <p class="text-gray-500 dark:text-white/80 font-medium">
+        {active.length} tiendas listas para atenderte en Lima
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {
+        active.map((loc: any) => (
+          <a href={`/sucursales/${loc.id}`} class="group block">
+            <article class="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-3xl overflow-hidden hover:shadow-xl hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+              {/* Imagen de la sucursal (Estilo similar a productos/activaciones) */}
+              <div class="relative aspect-video overflow-hidden bg-gray-100">
+                <img
+                  src={loc.data.image || "/uploads/store-placeholder.jpg"}
+                  alt={loc.data.name}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                />
+                <div class="absolute top-4 right-4">
+                  <Badge variant="primary">{loc.data.district}</Badge>
+                </div>
+              </div>
+
+              <div class="p-6 flex flex-col flex-1">
+                <h2 class="text-xl font-medium text-gray-900 dark:text-white mb-4 group-hover:text-orange-600 transition-colors">
+                  {loc.data.name}
+                </h2>
+
+                <div class="space-y-3 mb-6">
+                  <div class="flex items-start gap-3">
+                    <div class="text-red-600 mt-1">
+                      <Icon
+                        id={`icon-map-${loc.slug}`}
+                        name="map"
+                        class="w-4 h-4"
+                      />
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-white leading-snug">
+                      {loc.data.address}
+                    </p>
+                  </div>
+
+                  <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-white">
+                    <Icon
+                      id={`icon-clock-${loc.slug}`}
+                      name="clock"
+                      class="w-4 h-4 text-red-600"
+                    />
+                    <span>{loc.data.schedule}</span>
+                  </div>
+
+                  {loc.data.phone && (
+                    <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-white">
+                      <Icon
+                        id={`icon-phone-${loc.slug}`}
+                        name="phone"
+                        class="w-4 h-4 text-red-600"
+                      />
+                      <span>{loc.data.phone}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                  <span class="text-sm font-bold text-red-600 uppercase tracking-wider">
+                    Ver detalles
+                  </span>
+                  <span class="text-red-600 transform group-hover:translate-x-1 transition-transform">
+                    →
+                  </span>
+                </div>
+              </div>
+            </article>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>

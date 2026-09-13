@@ -1,0 +1,257 @@
+---
+// src/pages/contacto/index.astro
+export const prerender = true;
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BreadCrumb from "../../components/ui/BreadCrumb.astro";
+import Icon from "../../components/ui/Icon.astro";
+
+const locations = await getCollection("locations", (l: any) => l.data.isActive);
+---
+
+<BaseLayout
+  title="Contacto"
+  description="Contáctanos en ExpansionTec. Estamos en Lima con varias sucursales para atenderte."
+>
+  <div class="w-full mt-20"></div>
+
+  <div class="container mx-auto px-4 py-8 sm:py-12 lg:py-12">
+    <BreadCrumb
+      crumbs={[{ label: "Inicio", href: "/" }, { label: "Contacto" }]}
+    />
+
+    <h1
+      class="font-body text-3xl md:text-4xl font-medium tracking-tight text-gray-900 dark:text-white"
+    >
+      Contacto
+    </h1>
+    <p class="text-sm text-gray-500 mt-2 mb-8 dark:text-gray-400">
+      Escríbenos o visítanos en nuestras sucursales
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="contact-layout">
+      <!-- Formulario -->
+      <div>
+        <div
+          class="bg-white border border-gray-100 rounded-3xl p-7 dark:bg-black dark:border-gray-700"
+        >
+          <h2
+            class="font-body font-medium text-xl text-gray-700 dark:text-white mb-4"
+          >
+            Envíanos un mensaje
+          </h2>
+
+          <form id="contact-form" class="flex flex-col gap-6">
+            <div
+              id="name-email-grid"
+              class="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
+              <div>
+                <label
+                  for="name"
+                  class="font-body text-sm font-medium mb-2 uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
+                  Nombre *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  required
+                  placeholder="Tu nombre"
+                  class="w-full px-4 py-2 rounded-sm border border-red-200 focus:ring-2 focus:ring-red-600/50 text-gray-700 placeholder:text-gray-300 focus:border-red-600 dark:bg-transparent dark:border-red-600 dark:text-white dark:placeholder:text-gray-500"
+                />
+              </div>
+              <div>
+                <label
+                  for="email"
+                  class="font-body text-sm font-medium mb-2 uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  placeholder="tu@email.com"
+                  class="w-full px-4 py-2 rounded-sm border border-red-200 focus:ring-2 focus:ring-red-600/50 text-gray-700 placeholder:text-gray-300 focus:border-red-600 dark:bg-transparent dark:border-red-600 dark:text-white dark:placeholder:text-gray-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                for="subject"
+                class="font-body text-sm font-medium mb-2 uppercase tracking-wide text-gray-500 dark:text-gray-400"
+              >
+                Asunto
+              </label>
+              <select
+                id="subject"
+                name="subject"
+                class="w-full px-4 py-2 rounded-sm border border-red-200 focus:ring-2 focus:ring-red-600/50 text-gray-700 placeholder:text-gray-300 focus:border-red-600 dark:bg-transparent dark:border-red-600 dark:text-white dark:placeholder:text-gray-500"
+              >
+                <option value="">Selecciona un tema</option>
+                <option value="producto">Consulta de producto</option>
+                <option value="disponibilidad"
+                  >Disponibilidad en sucursal</option
+                >
+                <option value="precio">Precio y ofertas</option>
+                <option value="soporte">Soporte técnico</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                for="message"
+                class="font-body text-sm font-medium mb-2 uppercase tracking-wide text-gray-500 dark:text-gray-400"
+              >
+                Mensaje *
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                required
+                rows="5"
+                placeholder="¿En qué podemos ayudarte?"
+                class="w-full px-4 py-2 rounded-sm border border-red-200 focus:ring-2 focus:ring-red-600/50 text-gray-700 placeholder:text-gray-300 focus:border-red-600 dark:bg-transparent dark:border-red-600 dark:text-white dark:placeholder:text-gray-500"
+              ></textarea>
+            </div>
+
+            <!-- Selector de sucursal -->
+            <div>
+              <label
+                for="location"
+                class="font-body text-sm font-medium mb-2 uppercase tracking-wide text-gray-500 dark:text-gray-400"
+              >
+                Sucursal de interés
+              </label>
+              <select
+                id="location"
+                name="location"
+                class="w-full px-4 py-2 rounded-sm border border-red-200 focus:ring-2 focus:ring-red-600/50 text-gray-700 placeholder:text-gray-300 focus:border-red-600 dark:bg-transparent dark:border-red-600 dark:text-white dark:placeholder:text-gray-500"
+              >
+                <option value="">Cualquier sucursal</option>
+                {
+                  locations.map((loc: any) => (
+                    <option value={loc.slug}>
+                      {loc.data.name} — {loc.data.district}
+                    </option>
+                  ))
+                }
+              </select>
+            </div>
+
+            <!-- Submit -->
+            <button
+              type="submit"
+              id="submit-btn"
+              class="w-full text-black py-4 px-6 rounded-xl font-bold flex items-center justify-center gap-2 bg-linear-to-r from-red-300 to-red-500 focus:ring-2 focus:ring-red-600/50 placeholder:text-gray-300 dark:placeholder:text-gray-500 cursor-pointer hover:from-red-400 hover:to-red-700 hover:text-black/80 transition-colors duration-300"
+            >
+              Enviar mensaje →
+            </button>
+
+            <!-- Feedback -->
+            <div id="form-feedback" style="display:none;"></div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Sucursales + Mapa -->
+      <div class="flex flex-col gap-6">
+        <h2 class="font-body text-xl font-medium text-gray-700 dark:text-white">
+          Nuestras tiendas
+        </h2>
+
+        {
+          locations.map((loc: any) => (
+            <a href={`/sucursales/${loc.id}`} class="group">
+              <div class="bg-white border border-gray-100 rounded-xl p-4 transition-shadow group-hover:shadow-lg dark:bg-black dark:border-gray-700">
+                <p class="font-body text-gray-700 text-base mb-2 font-medium group-hover:text-red-600 transition-colors dark:text-white">
+                  {loc.data.name}
+                </p>
+                <p class="font-body text-gray-500 text-sm mb-2 dark:text-white/80">
+                  <Icon
+                    name="location"
+                    class="w-5 h-5 inline-block text-red-600 mr-1"
+                  />
+                  {loc.data.address}
+                </p>
+                <p class="font-body text-gray-500 text-sm mb-2 dark:text-white/80">
+                  <Icon
+                    name="phone"
+                    class="w-5 h-5 inline-block text-red-600 mr-1"
+                  />
+                  {loc.data.phone}
+                </p>
+                <p class="font-body text-gray-500 text-sm dark:text-white/80">
+                  <Icon
+                    name="clock"
+                    class="w-5 h-5 inline-block text-red-600 mr-1"
+                  />
+                  {loc.data.schedule}
+                </p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Layout responsive
+  function handleResize() {
+    const layout = document.getElementById("contact-layout");
+    const nameEmailGrid = document.getElementById("name-email-grid");
+    if (!layout || !nameEmailGrid) return;
+    if (window.innerWidth >= 768) {
+      layout.style.gridTemplateColumns = "1fr 1fr";
+      nameEmailGrid.style.gridTemplateColumns = "1fr 1fr";
+    } else {
+      layout.style.gridTemplateColumns = "1fr";
+      nameEmailGrid.style.gridTemplateColumns = "1fr";
+    }
+  }
+  handleResize();
+  window.addEventListener("resize", handleResize);
+
+  // Form submit — preparado para conectar con Formspree, Resend o EmailJS
+  document
+    .getElementById("contact-form")
+    ?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("submit-btn") as HTMLButtonElement;
+      const feedback = document.getElementById("form-feedback")!;
+      const form = e.target as HTMLFormElement;
+
+      btn.disabled = true;
+      btn.textContent = "Enviando...";
+
+      // TODO: reemplaza esta URL con tu endpoint de Formspree o Resend
+      // const res = await fetch('https://formspree.io/f/TU_ID', {
+      //   method: 'POST',
+      //   body: new FormData(form),
+      //   headers: { Accept: 'application/json' },
+      // });
+
+      // Simulación por ahora
+      await new Promise((r) => setTimeout(r, 1000));
+      const success = true;
+
+      if (success) {
+        feedback.style.display = "block";
+        feedback.innerHTML = `<div style="padding:12px 16px;border-radius:8px;background:var(--color-primary-highlight);color:var(--color-primary);font-size:0.875rem;font-weight:600;">✅ Mensaje enviado. Te contactaremos pronto.</div>`;
+        form.reset();
+      } else {
+        feedback.style.display = "block";
+        feedback.innerHTML = `<div style="padding:12px 16px;border-radius:8px;background:#fde8e8;color:#c0392b;font-size:0.875rem;">❌ Error al enviar. Intenta nuevamente.</div>`;
+      }
+
+      btn.disabled = false;
+      btn.textContent = "Enviar mensaje →";
+    });
+</script>

@@ -1,0 +1,521 @@
+{
+  "version": 1,
+  "products": {
+    "Xiaomi-Pad-8--8-Pro-Keyboard": {
+      "hash": "b583233e8c28f7139e37827ebe6d372d7fb3b80cd52e0432b2299799d35e8ebb",
+      "pdf": "xiaomi-pad-8-8-pro-keyboard.pdf",
+      "source": "Xiaomi-Pad-8--8-Pro-Keyboard.md",
+      "updatedAt": "2026-09-09T14:37:59.980Z"
+    },
+    "apple-iphone-13": {
+      "hash": "5bebe6393ad1339c12f89d8cb78adb11effa43ba8f98c6e4812fc06f2baac798",
+      "pdf": "apple-iphone-13.pdf",
+      "source": "apple-iphone-13.md",
+      "updatedAt": "2026-09-09T14:38:00.015Z"
+    },
+    "apple-iphone-14": {
+      "hash": "64a5d73c4dd8891e580e80e42811bc406b49fcfe7d56bad62ed78f72e64ed68e",
+      "pdf": "apple-iphone-14.pdf",
+      "source": "apple-iphone-14.md",
+      "updatedAt": "2026-09-09T14:38:00.058Z"
+    },
+    "apple-iphone-15": {
+      "hash": "92aeeb7f81e745bf25658b90037d378957cabb30b157b6be73262deec8a1af91",
+      "pdf": "apple-iphone-15.pdf",
+      "source": "apple-iphone-15.md",
+      "updatedAt": "2026-09-09T14:38:00.078Z"
+    },
+    "apple-iphone-16": {
+      "hash": "5d215835228a897ba997b2287391854badba694648f4396e21b490ab054fe432",
+      "pdf": "apple-iphone-16.pdf",
+      "source": "apple-iphone-16.md",
+      "updatedAt": "2026-09-09T14:38:00.109Z"
+    },
+    "apple-iphone-17-pro-max": {
+      "hash": "086f81ef739c365e48ee5121f5cbddea8332e1a25981612852c964b759f2bcf1",
+      "pdf": "apple-iphone-17-pro-max.pdf",
+      "source": "apple-iphone-17-pro-max.md",
+      "updatedAt": "2026-09-09T14:38:00.130Z"
+    },
+    "apple-iphone-17-pro": {
+      "hash": "157e8e951edaeec704cda0c82987480af698d7d8e3bb3589d27d37cfedceac81",
+      "pdf": "apple-iphone-17-pro.pdf",
+      "source": "apple-iphone-17-pro.md",
+      "updatedAt": "2026-09-09T14:38:00.152Z"
+    },
+    "apple-iphone-17": {
+      "hash": "4025c75e4af239285a81853ec798aa2105c96f7ab57e6f6e9b2f4abd0bb8cd11",
+      "pdf": "apple-iphone-17.pdf",
+      "source": "apple-iphone-17.md",
+      "updatedAt": "2026-09-09T14:38:00.174Z"
+    },
+    "apple-usb-c-20w-power-adapter": {
+      "hash": "3c268027ba6fcd86dbc03cbeeb0bd1ce1d78b674741621949359acd53216b732",
+      "pdf": "apple-usb-c-20w-power-adapter.pdf",
+      "source": "apple-usb-c-20w-power-adapter.md",
+      "updatedAt": "2026-09-09T14:38:00.188Z"
+    },
+    "corn-k4": {
+      "hash": "ee2ca17c4556d84ad6db51e9fc900e69aed93dfb486093303caeeb4f12476d38",
+      "pdf": "corn-k4.pdf",
+      "source": "corn-k4.md",
+      "updatedAt": "2026-09-09T14:38:00.209Z"
+    },
+    "hello-hi-flip": {
+      "hash": "625f3b29a607a71d23ec04af4c799ad8ce7e4228cf52727bcd80d456bd35bc5a",
+      "pdf": "hello-hi-flip.pdf",
+      "source": "hello-hi-flip.md",
+      "updatedAt": "2026-09-09T14:38:00.225Z"
+    },
+    "honor-400-lite": {
+      "hash": "d9d7473075445f143e734a59aed23db581adcd394aae1bc3c0c54164805ca3ae",
+      "pdf": "honor-400-lite.pdf",
+      "source": "honor-400-lite.md",
+      "updatedAt": "2026-09-09T14:38:00.241Z"
+    },
+    "honor-400": {
+      "hash": "5690cc47e78c33281ad2164b89f205447443cfd659e316a1b5f805f9110c7f3e",
+      "pdf": "honor-400.pdf",
+      "source": "honor-400.md",
+      "updatedAt": "2026-09-09T14:38:00.257Z"
+    },
+    "honor-600": {
+      "hash": "39215d5790d9e362b9217dbb47a7ee0ef668a836155eaff67d7db98bccb24dc6",
+      "pdf": "honor-600.pdf",
+      "source": "honor-600.md",
+      "updatedAt": "2026-09-09T14:38:00.267Z"
+    },
+    "honor-choice-earbuds-x7-lite-mzt-me00": {
+      "hash": "31cf7ec10485a56e59e0a181863af8dbc7f980fcb9a7d1d731674ca4e74bd1e3",
+      "pdf": "honor-choice-earbuds-x7-lite-mzt-me00.pdf",
+      "source": "honor-choice-earbuds-x7-lite-mzt-me00.md",
+      "updatedAt": "2026-09-09T14:38:00.307Z"
+    },
+    "honor-choice-vz-headphones-pro-ros-me00": {
+      "hash": "363fbdbcab1519c3197053d127dd878fc1760037623dfca5375d420bd58840f0",
+      "pdf": "honor-choice-vz-headphones-pro-ros-me00.pdf",
+      "source": "honor-choice-vz-headphones-pro-ros-me00.md",
+      "updatedAt": "2026-09-09T14:38:00.317Z"
+    },
+    "honor-choice-whatch-2i": {
+      "hash": "cdc83b30796b4f83b5d014c570a85c6172db5efafb00766db18b74b4491aaf0f",
+      "pdf": "honor-choice-whatch-2i.pdf",
+      "source": "honor-choice-whatch-2i.md",
+      "updatedAt": "2026-09-09T14:38:00.339Z"
+    },
+    "honor-magic-8-lite": {
+      "hash": "bb8b096f9227643963964f6fb97dd9b2b9ee9d033f30f440f71ade61c10f4947",
+      "pdf": "honor-magic-8-lite.pdf",
+      "source": "honor-magic-8-lite.md",
+      "updatedAt": "2026-09-09T14:38:00.355Z"
+    },
+    "honor-x5b-plus": {
+      "hash": "5dc8801d7ccd1258cb7161533fa00cb19044e915ce4c77ad92ef57085bb43d5d",
+      "pdf": "honor-x5b-plus.pdf",
+      "source": "honor-x5b-plus.md",
+      "updatedAt": "2026-09-09T14:38:00.369Z"
+    },
+    "honor-x5b": {
+      "hash": "bc9c1b3db32454a9159a8628bc764c095a91e463dfb9ed4c03bfc83281bca4d1",
+      "pdf": "honor-x5b.pdf",
+      "source": "honor-x5b.md",
+      "updatedAt": "2026-09-09T14:38:00.395Z"
+    },
+    "honor-x5c": {
+      "hash": "1461899e217e46edc0db56b207697271a407e39ec8ddb196c95176aa1641b708",
+      "pdf": "honor-x5c.pdf",
+      "source": "honor-x5c.md",
+      "updatedAt": "2026-09-09T14:38:00.414Z"
+    },
+    "honor-x5d": {
+      "hash": "25a49a959298739e5db1f27c309ddd432507b97106248d34d7b85e4ea78ce225",
+      "pdf": "honor-x5d.pdf",
+      "source": "honor-x5d.md",
+      "updatedAt": "2026-09-09T14:38:00.430Z"
+    },
+    "honor-x6c": {
+      "hash": "fe280000494f288894d425702da1b93364e4a8e3038e3739f1653ce081f6d991",
+      "pdf": "honor-x6c.pdf",
+      "source": "honor-x6c.md",
+      "updatedAt": "2026-09-09T14:38:00.450Z"
+    },
+    "honor-x6d": {
+      "hash": "e182ca451fd3763a3723acec1060e96a0a8973ad5323cae19a9fe4aed039a4a3",
+      "pdf": "honor-x6d.pdf",
+      "source": "honor-x6d.md",
+      "updatedAt": "2026-09-09T14:38:00.465Z"
+    },
+    "honor-x8c": {
+      "hash": "279e9d847a824f5c5ca3ffcde059cc498a79b8a577f0858ca27508439763b3bd",
+      "pdf": "honor-x8c.pdf",
+      "source": "honor-x8c.md",
+      "updatedAt": "2026-09-09T14:38:00.536Z"
+    },
+    "huawei-b612-533": {
+      "hash": "ba2d8a72121489014b5c8db2b602911a4e10ad57952330efe2812a50d8f0546a",
+      "pdf": "huawei-b612-533.pdf",
+      "source": "huawei-b612-533.md",
+      "updatedAt": "2026-09-09T14:38:00.648Z"
+    },
+    "ipro-a12": {
+      "hash": "134009ffac643c04527c9942dc17c4fc405554574314440e6fdc90d1e9b5d75c",
+      "pdf": "ipro-a12.pdf",
+      "source": "ipro-a12.md",
+      "updatedAt": "2026-09-09T14:38:00.663Z"
+    },
+    "ipro-a32": {
+      "hash": "b1a07368b2fc4ac344ede9d64671e8a5e2a3eb4384b4ae90b02e8d4df8801b50",
+      "pdf": "ipro-a32.pdf",
+      "source": "ipro-a32.md",
+      "updatedAt": "2026-09-09T14:38:00.677Z"
+    },
+    "ipro-a6mini": {
+      "hash": "692b9a63cdb21f305af870c91d7824a9a96066450c2e41a1f1cbb7de2f1ff981",
+      "pdf": "ipro-a6mini.pdf",
+      "source": "ipro-a6mini.md",
+      "updatedAt": "2026-09-09T14:38:00.693Z"
+    },
+    "ipro-a9mini": {
+      "hash": "2a18437a92fb8ea7ce5f0337b340454ba30c36da6cfa79e5b9f5345d3328c2b7",
+      "pdf": "ipro-a9mini.pdf",
+      "source": "ipro-a9mini.md",
+      "updatedAt": "2026-09-09T14:38:00.707Z"
+    },
+    "ipro-f183": {
+      "hash": "479f74f4028721983c110fd1bc61930b597b90bb4ad84589b5f30623d16822c9",
+      "pdf": "ipro-f183.pdf",
+      "source": "ipro-f183.md",
+      "updatedAt": "2026-09-09T14:38:00.728Z"
+    },
+    "ipro-f188": {
+      "hash": "da3d7ae4172a3a7cc06216323b7e0eae5e94b9c30647ee8d6b737a021c0f5872",
+      "pdf": "ipro-f188.pdf",
+      "source": "ipro-f188.md",
+      "updatedAt": "2026-09-09T14:38:00.743Z"
+    },
+    "ipro-k1": {
+      "hash": "28341594b9604e24ba0d12113d5884311427b454db668b8058a882bf076bc6e5",
+      "pdf": "ipro-k1.pdf",
+      "source": "ipro-k1.md",
+      "updatedAt": "2026-09-09T14:38:00.754Z"
+    },
+    "ipro-k5": {
+      "hash": "c7802350a5168753008fed07a4293d739e410cdcb02c7bd0335e6c6c535a16c0",
+      "pdf": "ipro-k5.pdf",
+      "source": "ipro-k5.md",
+      "updatedAt": "2026-09-09T14:38:00.765Z"
+    },
+    "logic-2g-b7-bar-phone": {
+      "hash": "08f0d016225b882d6e53148ee4c0bdfab5d2d7ac602ec29a62b4d318a58fed5e",
+      "pdf": "logic-2g-b7-bar-phone.pdf",
+      "source": "logic-2g-b7-bar-phone.md",
+      "updatedAt": "2026-09-09T14:38:00.776Z"
+    },
+    "logic-fixo-240k": {
+      "hash": "b9cf7eb0267022aeede7f74e8995872249e87ddc78f7f57dcb4a3d17fbb3900e",
+      "pdf": "logic-fixo-240k.pdf",
+      "source": "logic-fixo-240k.md",
+      "updatedAt": "2026-09-09T14:38:00.788Z"
+    },
+    "motorola-moto-g06": {
+      "hash": "7ff3ceaf87a9dd5b1222005e23d22a89fa767afcaa52932e9f11e1c98ba5dd77",
+      "pdf": "motorola-moto-g06.pdf",
+      "source": "motorola-moto-g06.md",
+      "updatedAt": "2026-09-09T14:38:00.808Z"
+    },
+    "motorola-moto-g17": {
+      "hash": "87db0d389a8bcc2aa0b54f6b287ce29ba1c76935e53421c27d3162ba77adc16f",
+      "pdf": "motorola-moto-g17.pdf",
+      "source": "motorola-moto-g17.md",
+      "updatedAt": "2026-09-09T14:38:00.828Z"
+    },
+    "motorola-moto-g47": {
+      "hash": "b8a24bde6f10a5c5439514e96a39a3607572ff0ce5ba6a02e75b56e65c02d652",
+      "pdf": "motorola-moto-g47.pdf",
+      "source": "motorola-moto-g47.md",
+      "updatedAt": "2026-09-09T14:38:00.841Z"
+    },
+    "nokia-105-hmd": {
+      "hash": "550575015a75b564be5a251a0b1b02c40e8fb2b91a3eb14e2780b1d29d48739f",
+      "pdf": "nokia-105-hmd.pdf",
+      "source": "nokia-105-hmd.md",
+      "updatedAt": "2026-09-09T14:38:00.852Z"
+    },
+    "oppo-a5": {
+      "hash": "0be1047d0df4bd0dd5771dabf368009eb339aa7011f8543eccfd24f607187458",
+      "pdf": "oppo-a5.pdf",
+      "source": "oppo-a5.md",
+      "updatedAt": "2026-09-09T14:38:00.864Z"
+    },
+    "oppo-a6x": {
+      "hash": "b3682e5c176a552577886105560b3d0efc8e4e1b7cd4e46515087da705299dbc",
+      "pdf": "oppo-a6x.pdf",
+      "source": "oppo-a6x.md",
+      "updatedAt": "2026-09-09T14:38:00.876Z"
+    },
+    "oppo-g2-3w-bluetooth-speaker": {
+      "hash": "9844057b89d9a4864c8f70e2eaca066b0b6b349f2e5eb392b36053b60209975f",
+      "pdf": "oppo-g2-3w-bluetooth-speaker.pdf",
+      "source": "oppo-g2-3w-bluetooth-speaker.md",
+      "updatedAt": "2026-09-09T14:38:00.894Z"
+    },
+    "oppo-reno-14f": {
+      "hash": "3cc31710f604d43003d5bbeca744151877657622e311aa65c21e27bcd1ccedc6",
+      "pdf": "oppo-reno-14f.pdf",
+      "source": "oppo-reno-14f.md",
+      "updatedAt": "2026-09-09T14:38:00.908Z"
+    },
+    "poco-f8-pro-5g": {
+      "hash": "e837048f7e24eb11ebcbaf0145198538b5e72d63a0c6ceb57f36162bedcd1249",
+      "pdf": "poco-f8-pro-5g.pdf",
+      "source": "poco-f8-pro-5g.md",
+      "updatedAt": "2026-09-09T14:38:01.174Z"
+    },
+    "poco-f8-pro": {
+      "hash": "95a64be605d1eb07f8422d5fce58c00d548618ae8bc0b2e666a643e0fd78df4b",
+      "pdf": "poco-f8-pro.pdf",
+      "source": "poco-f8-pro.md",
+      "updatedAt": "2026-09-09T14:38:01.409Z"
+    },
+    "poco-x8-pro": {
+      "hash": "3c6e0d2978767d96a6ee8fe7a705758c48a777c3bf54a2d08585d68623525c8d",
+      "pdf": "poco-x8-pro.pdf",
+      "source": "poco-x8-pro.md",
+      "updatedAt": "2026-09-09T14:38:01.416Z"
+    },
+    "redmi-a5-plus-pro": {
+      "hash": "a2527cbb066ea666e10d05fe3a5eb06783952c39d398a27d3e9e569eeb85f157",
+      "pdf": "redmi-a5-plus-pro.pdf",
+      "source": "redmi-a5-plus-pro.md",
+      "updatedAt": "2026-09-09T14:38:02.054Z"
+    },
+    "redmi-a5": {
+      "hash": "afb9af0e591e553b6e7c484571d836c018467f248c15865cba9858ed802a3fc7",
+      "pdf": "redmi-a5.pdf",
+      "source": "redmi-a5.md",
+      "updatedAt": "2026-09-09T14:38:02.349Z"
+    },
+    "redmi-buds-6-lite": {
+      "hash": "c57e58d4008c7c4ae044f71dfa76a3be1384ef65d22b72583342ce342a08166c",
+      "pdf": "redmi-buds-6-lite.pdf",
+      "source": "redmi-buds-6-lite.md",
+      "updatedAt": "2026-09-09T14:38:02.367Z"
+    },
+    "redmi-note-15-pro-512gb": {
+      "hash": "faa2b87d81f3d3d3a097418f0f95eea2e02ef6c902855215876f8f2b7091b01d",
+      "pdf": "redmi-note-15-pro.pdf",
+      "source": "redmi-note-15-pro-512gb.md",
+      "updatedAt": "2026-09-09T14:38:02.575Z"
+    },
+    "redmi-pad-2-pro-keyboard": {
+      "hash": "ee950093548dacbf1f207f6355c30642848c069c248bea3382e214fa92d89d00",
+      "pdf": "redmi-pad-2-pro-keyboard.pdf",
+      "source": "redmi-pad-2-pro-keyboard.md",
+      "updatedAt": "2026-09-09T14:38:02.725Z"
+    },
+    "redmi-smart-pen": {
+      "hash": "91d3e2329f43d123663fb3a415406f290454bcc5dcace925845f7a461f1b1051",
+      "pdf": "redmi-smart-pen.pdf",
+      "source": "redmi-smart-pen.md",
+      "updatedAt": "2026-09-09T14:38:02.800Z"
+    },
+    "redmi-watch-5-active": {
+      "hash": "3b4f3a79a0cfbff3979c639fd9873427246d33c6a0919c49c0e0d5384ea2fa00",
+      "pdf": "redmi-watch-5-active.pdf",
+      "source": "redmi-watch-5-active.md",
+      "updatedAt": "2026-09-09T14:38:02.810Z"
+    },
+    "samsung-dado-adaptador-25w": {
+      "hash": "e8e4bf53b1ce18795a6eafe664ae18b697aeccfc75fc3c5aa989c1158d7e490f",
+      "pdf": "samsung-dado-adaptador-25w.pdf",
+      "source": "samsung-dado-adaptador-25w.md",
+      "updatedAt": "2026-09-09T14:38:02.821Z"
+    },
+    "samsung-galaxy-a06": {
+      "hash": "3435acd4585ae598e1baef1cc887ba682d5d4b8f378edc63feb4cc9f76aa5fa4",
+      "pdf": "samsung-galaxy-a06.pdf",
+      "source": "samsung-galaxy-a06.md",
+      "updatedAt": "2026-09-09T14:38:02.831Z"
+    },
+    "samsung-galaxy-a07": {
+      "hash": "d0c76c9d11d8d057705b0d44d911c4c36fc7702750b025ec4376f7ddccae051d",
+      "pdf": "samsung-galaxy-a07.pdf",
+      "source": "samsung-galaxy-a07.md",
+      "updatedAt": "2026-09-09T14:38:02.841Z"
+    },
+    "samsung-galaxy-a16": {
+      "hash": "1de6f55e67296475a986873996b5e9ea5274d34b5193f8257108b2fe3c98914e",
+      "pdf": "samsung-galaxy-a16.pdf",
+      "source": "samsung-galaxy-a16.md",
+      "updatedAt": "2026-09-09T14:38:02.864Z"
+    },
+    "samsung-galaxy-a17": {
+      "hash": "b92ed86e6bad98ec11e094a445213fdc240c80bfde205054de5ba9b5e1939d10",
+      "pdf": "samsung-galaxy-a17.pdf",
+      "source": "samsung-galaxy-a17.md",
+      "updatedAt": "2026-09-09T14:38:02.874Z"
+    },
+    "samsung-galaxy-a27": {
+      "hash": "27a5082b4549ad7460e72a25b7f32e41d2ba26e3f34a150910479273a305ef61",
+      "pdf": "samsung-galaxy-a27.pdf",
+      "source": "samsung-galaxy-a27.md",
+      "updatedAt": "2026-09-09T14:38:02.885Z"
+    },
+    "samsung-galaxy-a36": {
+      "hash": "170f817a68dbfc70c368c7903f5ca1be9d9d97af68cbf6704640c150cec6896c",
+      "pdf": "samsung-galaxy-a36.pdf",
+      "source": "samsung-galaxy-a36.md",
+      "updatedAt": "2026-09-09T14:38:02.899Z"
+    },
+    "samsung-galaxy-a37": {
+      "hash": "dc8ceb87b2c50c946ee6716fac0ae7af43586d608fbb02cf6cdd05f20b366e5c",
+      "pdf": "samsung-galaxy-a37.pdf",
+      "source": "samsung-galaxy-a37.md",
+      "updatedAt": "2026-09-09T14:38:02.909Z"
+    },
+    "samsung-galaxy-a56": {
+      "hash": "8acddcb469270bf4a3dd32fdf3de10208818a382808b4d487dc17f9062996db5",
+      "pdf": "samsung-galaxy-a56.pdf",
+      "source": "samsung-galaxy-a56.md",
+      "updatedAt": "2026-09-09T14:38:02.926Z"
+    },
+    "samsung-galaxy-a57": {
+      "hash": "dd19559d16920a7f1218870cf79c6a25dcfa98e6c8c882594da86fa84fc89f2e",
+      "pdf": "samsung-galaxy-a57.pdf",
+      "source": "samsung-galaxy-a57.md",
+      "updatedAt": "2026-09-09T14:38:02.975Z"
+    },
+    "samsung-galaxy-s25-fe": {
+      "hash": "ecafc6d14731a57c2e8ba88821cbb59f834fc9f1037c3254deddc58b2b97cfd9",
+      "pdf": "samsung-galaxy-s25-fe.pdf",
+      "source": "samsung-galaxy-s25-fe.md",
+      "updatedAt": "2026-09-09T14:38:02.991Z"
+    },
+    "unonu-box-2g-quad-band": {
+      "hash": "012b40c8073458abc90fa40a4bd4d4fd625c7ed38d8ee7a057bfcaab2c96190d",
+      "pdf": "unonu-box-2g-quad-band.pdf",
+      "source": "unonu-box-2g-quad-band.md",
+      "updatedAt": "2026-09-09T14:38:03.000Z"
+    },
+    "unonu-clear-bar-phone": {
+      "hash": "8c62763fb768032fe91a333b18dfce7dabfe68fc0818e1bc74b6f418a95a7183",
+      "pdf": "unonu-clear-bar-phone.pdf",
+      "source": "unonu-clear-bar-phone.md",
+      "updatedAt": "2026-09-09T14:38:03.015Z"
+    },
+    "unonu-quest-2g-quad-band": {
+      "hash": "5e4dac2d7b0ec36e8028d7fd99252eabd6f048578742e1468ac3f351206444fc",
+      "pdf": "unonu-quest-2g-quad-band.pdf",
+      "source": "unonu-quest-2g-quad-band.md",
+      "updatedAt": "2026-09-09T14:38:03.024Z"
+    },
+    "unonu-speed-2g-quad-band": {
+      "hash": "9cd92f5421d10cedb19f96250d7d79f4df51940d8be4dccbf05fa4c42a62f5c7",
+      "pdf": "unonu-speed-2g-quad-band.pdf",
+      "source": "unonu-speed-2g-quad-band.md",
+      "updatedAt": "2026-09-09T14:38:03.034Z"
+    },
+    "xiaomi-11t": {
+      "hash": "229057bcb1a45b69ba21c0a82a3479fd40f0024586b89fc8d032feea6fc1b026",
+      "pdf": "redmi-note-15-pro-5g.pdf",
+      "source": "xiaomi-11t.md",
+      "updatedAt": "2026-09-09T14:38:03.217Z"
+    },
+    "xiaomi-15t-pro": {
+      "hash": "901a84be7b94fa9543019e97fb03277c634e74fabc86d4760f70cdc4df04a0dc",
+      "pdf": "xiaomi-15t-pro.pdf",
+      "source": "xiaomi-15t-pro.md",
+      "updatedAt": "2026-09-09T14:38:03.236Z"
+    },
+    "xiaomi-15t": {
+      "hash": "e265cfc34cbe55c0491fab00ebe19a2c59c657af84ae906a28edfb54a3642f1c",
+      "pdf": "xiaomi-15t.pdf",
+      "source": "xiaomi-15t.md",
+      "updatedAt": "2026-09-09T14:38:03.245Z"
+    },
+    "xiaomi-17-ultra": {
+      "hash": "b07a3d25f8e46b952e6980eb5dec831a687e858f2edee603188ef3b99ab73ab6",
+      "pdf": "xiaomi-17-ultra.pdf",
+      "source": "xiaomi-17-ultra.md",
+      "updatedAt": "2026-09-09T14:38:03.254Z"
+    },
+    "xiaomi-17t": {
+      "hash": "bd78c4fb0c36d333cd3485917cf2b30f943056b45415a93ba3e20ab18a848597",
+      "pdf": "xiaomi-17t.pdf",
+      "source": "xiaomi-17t.md",
+      "updatedAt": "2026-09-09T14:38:03.265Z"
+    },
+    "xiaomi-pad-7-7-pro-keyboard": {
+      "hash": "b81fddd2f50baaf1d1197e64b5fcc8902a82758dae9e249d545c6d23dc48169a",
+      "pdf": "xiaomi-pad-7-7-pro-keyboard.pdf",
+      "source": "xiaomi-pad-7-7-pro-keyboard.md",
+      "updatedAt": "2026-09-09T14:38:03.397Z"
+    },
+    "xiaomi-redmi-15": {
+      "hash": "40e5cfdcae0bca95c90eed957bd88b8b84cd11b410c5056db6bdb314e0c61bef",
+      "pdf": "xiaomi-redmi-15.pdf",
+      "source": "xiaomi-redmi-15.md",
+      "updatedAt": "2026-09-09T14:38:03.408Z"
+    },
+    "xiaomi-redmi-15c": {
+      "hash": "5f17825fea7bb5347165e9758247e6a9768c2c6fdb852994e958a3beca86406d",
+      "pdf": "xiaomi-redmi-15c.pdf",
+      "source": "xiaomi-redmi-15c.md",
+      "updatedAt": "2026-09-09T14:38:03.417Z"
+    },
+    "xiaomi-redmi-a7-pro": {
+      "hash": "ecb88d62d42495cbe11bab2bc2cdb4b7bcb905dbec5ae17eaac351884215f274",
+      "pdf": "xiaomi-redmi-a7-pro.pdf",
+      "source": "xiaomi-redmi-a7-pro.md",
+      "updatedAt": "2026-09-09T14:38:03.426Z"
+    },
+    "xiaomi-redmi-buds-6-play": {
+      "hash": "23fcbc93e0b462150ff30cca273771353f1343f468e2df87eb0a13cec855c4ce",
+      "pdf": "xiaomi-redmi-buds-6-play.pdf",
+      "source": "xiaomi-redmi-buds-6-play.md",
+      "updatedAt": "2026-09-09T14:38:03.445Z"
+    },
+    "xiaomi-redmi-note-15-pro": {
+      "hash": "743346b6208f413b9508bebca12e5cfc558b049bd247bfbc25a0ab7d1806768d",
+      "pdf": "xiaomi-redmi-note-15-pro.pdf",
+      "source": "xiaomi-redmi-note-15-pro.md",
+      "updatedAt": "2026-09-09T14:38:03.460Z"
+    },
+    "xiaomi-redmi-note-15": {
+      "hash": "2517b2125ff02e6e5641e6c5687ed3b881d919ab68c8b4145fce1daf7412083b",
+      "pdf": "xiaomi-redmi-note-15.pdf",
+      "source": "xiaomi-redmi-note-15.md",
+      "updatedAt": "2026-09-09T14:38:03.471Z"
+    },
+    "xiaomi-sound-pocket-mdz-37-db": {
+      "hash": "bdb8b1cb5a99351538b3ee2de296f035c5d8295ebec8f7b7befca546478fccbd",
+      "pdf": "xiaomi-sound-pocket-mdz-37-db.pdf",
+      "source": "xiaomi-sound-pocket-mdz-37-db.md",
+      "updatedAt": "2026-09-09T14:38:03.493Z"
+    },
+    "xiaomi-watch-5": {
+      "hash": "6ab8fb805ce075ab4c2ff112ada5070b79d2454d1d21b6b2dec2daee52d1b4ec",
+      "pdf": "xiaomi-watch-5-2026.pdf",
+      "source": "xiaomi-watch-5.md",
+      "updatedAt": "2026-09-09T14:38:03.516Z"
+    },
+    "zte-blade-a36": {
+      "hash": "795870e4f8ed952d9146326caa4673069f9eb9201062f36161bce8d685d9677d",
+      "pdf": "zte-blade-a36.pdf",
+      "source": "zte-blade-a36.md",
+      "updatedAt": "2026-09-09T14:38:03.529Z"
+    },
+    "zte-blade-a56-pro": {
+      "hash": "61d8ecf0502e39acd79774bce3f8e75867cd77dbdb41ef8263fb6e08a45c997e",
+      "pdf": "zte-blade-a56-pro.pdf",
+      "source": "zte-blade-a56-pro.md",
+      "updatedAt": "2026-09-09T14:38:03.549Z"
+    },
+    "zte-mf937": {
+      "hash": "9833f863444baa25a323981a4912f6593d4be4585855308fce8e7fdff84d521a",
+      "pdf": "zte-mf937.pdf",
+      "source": "zte-mf937.md",
+      "updatedAt": "2026-09-09T14:38:03.560Z"
+    }
+  }
+}

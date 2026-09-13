@@ -1,0 +1,225 @@
+---
+// src/pages/sucursales/[slug].astro
+export const prerender = true;
+import { getCollection, getEntry, render } from "astro:content";
+import { tinaField } from "tinacms/dist/react";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BreadCrumb from "../../components/ui/BreadCrumb.astro";
+import Badge from "../../components/ui/Badge.astro";
+import Icon from "../../components/ui/Icon.astro";
+
+export async function getStaticPaths() {
+  const locations = await getCollection("locations");
+  return locations.map((l: any) => ({ params: { slug: l.id } }));
+}
+
+const { slug } = Astro.params;
+const location = await getEntry("locations", slug!);
+if (!location) return Astro.redirect("/sucursales");
+
+const { Content } = await render(location);
+
+// ✅ ACTUALIZACIÓN: Buscar en el nuevo arreglo 'locations' de cada activación
+const allActivations = await getCollection("activations");
+const now = new Date();
+
+const linkedActivations = allActivations.filter((a: any) => {
+  const isLinked = a.data.locations?.includes(slug);
+  const isPublished = a.data.isPublished;
+  const hasNotEnded = new Date(a.data.endDate) > now;
+  return isLinked && isPublished && hasNotEnded;
+});
+
+const tinaEnabled = import.meta.env.PUBLIC_TINA_ENABLED === "true";
+---
+
+<BaseLayout
+  title={location.data.name}
+  description={`Visita nuestra tienda ${location.data.name} en ${location.data.address}. ${location.data.schedule}`}
+>
+  <div class="w-full mt-20"></div>
+  <div class="container mx-auto px-4 py-8">
+    <BreadCrumb
+      crumbs={[
+        { label: "Inicio", href: "/" },
+        { label: "Sucursales", href: "/sucursales" },
+        { label: location.data.name },
+      ]}
+    />
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-12 mt-8 md:mt-12">
+      <header class="col-span-3">
+        <div class="flex items-center gap-4 mb-4">
+          <h1
+            class="font-body text-3xl md:text-5xl font-bold text-gray-900 dark:text-white"
+            {...tinaEnabled
+              ? { "data-tina-field": tinaField(location, "name") }
+              : {}}
+          >
+            {location.data.name}
+          </h1>
+          <Badge variant="primary">{location.data.district}</Badge>
+        </div>
+        <p class="text-lg text-gray-500 dark:text-white/80 font-medium">
+          Información detallada de la tienda y servicios disponibles.
+        </p>
+        {/* Contenido adicional (Markdown) */}
+        {
+          Content && (
+            <div
+              class="
+                prose
+                prose-red-600
+                max-w-none
+                prose-p:text-gray-600
+                prose-headings:font-body
+                prose-headings:text-gray-900
+                dark:prose-p:text-white/80
+                dark:prose-headings:text-white
+                mt-6
+              "
+            >
+              <Content />
+            </div>
+          )
+        }
+      </header>
+      <div class="col-span-3 sm:col-span-2 space-y-8">
+        {/* Tarjeta de Datos Rápidos */}
+        <div
+          class="bg-white dark:bg-black border border-gray-100 dark:border-gray-700 rounded-3xl p-6 md:p-8 shadow-sm space-y-6"
+        >
+          <h2
+            class="font-body text-base font-medium text-gray-400 dark:text-white/80 tracking-widest"
+          >
+            Detalles de contacto
+          </h2>
+
+          <div class="relative aspect-video overflow-hidden">
+            <img
+              src={location.data.image || "/uploads/store-placeholder.jpg"}
+              alt={location.data.name}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 rounded-2xl dark:border dark:border-gray-700"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex gap-4">
+              <div class="p-3 h-fit">
+                <Icon name="pin" class="w-8 h-8 text-red-600" />
+              </div>
+              <div>
+                <p class="text-sm font-bold text-gray-900 dark:text-white">
+                  Dirección
+                </p>
+                <p
+                  class="text-gray-600 dark:text-white/80 text-sm leading-relaxed"
+                >
+                  {location.data.address}, {location.data.district}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex gap-4">
+              <div class="p-3 h-fit">
+                <Icon name="clock" class="w-8 h-8 text-red-600" />
+              </div>
+              <div>
+                <p class="text-sm font-bold text-gray-900 dark:text-white">
+                  Horario
+                </p>
+                <p class="text-gray-600 dark:text-white/80 text-sm">
+                  {location.data.schedule}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex gap-4">
+              <div class="p-3 h-fit">
+                <Icon
+                  id="icon-phone"
+                  name="phone"
+                  class="w-8 h-8 text-red-600"
+                />
+              </div>
+              <div>
+                <p class="text-sm font-bold text-gray-900 dark:text-white">
+                  Teléfono
+                </p>
+                <p class="text-gray-600 dark:text-white/80 text-sm">
+                  {location.data.phone || "No disponible"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-gray-50 flex flex-wrap gap-3">
+            <a
+              href={location.data.googleMapsUrl}
+              target="_blank"
+              class="group flex-1 bg-linear-to-r from-slate-100 to-slate-300 text-black py-4 px-6 rounded-xl font-bold flex items-center justify-center gap-2 hover:from-slate-200 hover:to-slate-400 hover:text-black/50 transition-colors duration-300"
+            >
+              <Icon name="pin" class="w-6 h-6" /> Google Maps
+            </a>
+            {
+              location.data.wazeUrl && (
+                <a
+                  href={location.data.wazeUrl}
+                  target="_blank"
+                  class="group flex-1 bg-linear-to-r from-sky-200 to-sky-400 text-black py-4 px-6 rounded-xl font-bold flex items-center justify-center gap-2 hover:from-sky-300 hover:to-sky-500 hover:text-black/50 transition-colors duration-300"
+                >
+                  <Icon name="direction" class="w-6 h-6" /> Waze
+                </a>
+              )
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-span-3 sm:col-span-1 space-y-8">
+        {/* Mapa Interactivo */}
+        <div
+          class="w-full rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-lg aspect-square lg:h-112.5"
+          set:html={location.data.mapEmbedUrl
+            ? ""
+            : "<div class='flex items-center justify-center h-full bg-gray-100'><p class='text-gray-500'>Mapa no disponible</p></div>"}
+        />
+
+        {/* Activaciones Activas/Próximas */}
+        {
+          linkedActivations.length > 0 && (
+            <div class="bg-red-50 rounded-3xl p-6 md:p-8 border border-red-100 dark:bg-black dark:border-gray-700 shadow-sm">
+              <h3 class="font-body text-xl font-medium text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                <span class="text-2xl">🔥</span> Eventos en tienda
+              </h3>
+              <div class="space-y-4">
+                {linkedActivations.map((act: any) => (
+                  <a
+                    href={`/activaciones/${act.id || act.slug}`}
+                    class="flex items-center justify-between bg-white dark:bg-black p-4 rounded-2xl border border-orange-200 dark:border-gray-700 hover:border-red-500 hover:shadow-md transition-all group"
+                  >
+                    <div class="flex flex-col">
+                      <span class="font-bold text-gray-900 dark:text-white group-hover:text-red-600 transition-colors">
+                        {act.data.title}
+                      </span>
+                      <span class="text-xs text-gray-500 dark:text-white/80">
+                        {new Date(act.data.startDate).toLocaleDateString(
+                          "es-PE",
+                          { day: "2-digit", month: "long" },
+                        )}
+                      </span>
+                    </div>
+                    <span class="text-red-500 dark:group-hover:text-red-600 dark:text-white font-bold">
+                      →
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</BaseLayout>

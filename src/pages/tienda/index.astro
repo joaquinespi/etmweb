@@ -1,0 +1,79 @@
+---
+// src/pages/tienda/index.astro
+export const prerender = true;
+import { getCollection, getEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import FilterPanel from "../../components/shop/FilterPanel.tsx";
+import BreadCrumb from "../../components/ui/BreadCrumb.astro";
+
+const allProducts = await getCollection("products");
+
+const productIndex = await Promise.all(
+  allProducts.map(async (p: any) => {
+    const brand = p.data.brand ? await getEntry("brands", p.data.brand) : null;
+    const category = p.data.category
+      ? await getEntry("categories", p.data.category)
+      : null;
+
+    return {
+      id: p.id,
+      title: p.data.title,
+      shortDescription: p.data.shortDescription,
+      price: p.data.price,
+      salePrice: p.data.salePrice,
+      brand: brand?.data.name || "Sin Marca",
+      category: category?.data.name || "Sin Categoría",
+      locations: p.data.locations?.map((l: any) => l.location) || [],
+      images: p.data.images,
+      url: `/tienda/producto/${p.id}`,
+    };
+  }),
+);
+
+const brands = [...new Set(productIndex.map((p) => p.brand))];
+const categories = [...new Set(productIndex.map((p) => p.category))];
+const locations = [...new Set(productIndex.flatMap((p) => p.locations))];
+---
+
+<BaseLayout
+  title="Tienda - ExpansionTec"
+  description="Explora nuestra tienda con una amplia variedad de productos tecnológicos. Encuentra celulares, accesorios y más, disponibles en nuestras sucursales. Compra ahora y disfruta de ofertas exclusivas."
+  image="/assets/tienda-banner.jpg"
+>
+  <div class="w-full bg-gray-100 dark:bg-black">
+    <div class="w-full h-20"></div>
+
+    <main class="w-full mx-auto px-4 py-8">
+      <div class="mb-4">
+        <BreadCrumb
+          crumbs={[{ label: "Inicio", href: "/" }, { label: "Tienda" }]}
+        />
+      </div>
+
+      <div
+        class="mb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 items-center align-middle"
+      >
+        <div class="space-y-4">
+          <h1
+            class="font-body text-4xl font-medium text-gray-900 dark:text-white mt-4"
+          >
+            Tienda
+          </h1>
+        </div>
+        <div>
+          <p class="text-gray-500 dark:text-white font-normal mt-2 text-right">
+            {productIndex.length} productos exclusivos
+          </p>
+        </div>
+      </div>
+
+      <FilterPanel
+        client:load
+        products={productIndex}
+        brands={brands}
+        categories={categories}
+        locations={locations}
+      />
+    </main>
+  </div>
+</BaseLayout>

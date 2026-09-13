@@ -1,0 +1,235 @@
+---
+// src/pages/activaciones/[slug].astro
+export const prerender = true;
+import { getCollection, getEntry, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BreadCrumb from "../../components/ui/BreadCrumb.astro";
+import Badge from "../../components/ui/Badge.astro";
+import Icon from "../../components/ui/Icon.astro";
+
+export async function getStaticPaths() {
+  const activations = await getCollection("activations");
+  return activations.map((a: any) => ({
+    params: { slug: a.id },
+  }));
+}
+
+const { slug } = Astro.params;
+const activation = await getEntry("activations", slug!);
+if (!activation) return Astro.redirect("/activaciones");
+
+const { Content } = await render(activation);
+
+const gallery = activation.data.gallery ?? [];
+const hasGallery = gallery.length > 0;
+const heroImages = hasGallery
+  ? gallery
+  : activation.data.banner
+    ? [activation.data.banner]
+    : [];
+
+// 1. Resolución de localizaciones (Múltiples sedes)
+const locationEntries = await Promise.all(
+  (activation.data.locations || []).map((id: string) =>
+    getEntry("locations", id),
+  ),
+);
+const validLocations = locationEntries.filter((l) => l !== undefined);
+
+// 2. Lógica de tiempo blindada (Pre-calculada)
+const nowTime = Date.now();
+const startTime = new Date(activation.data.startDate).getTime();
+const endTime = new Date(activation.data.endDate).getTime();
+
+const isActive = nowTime >= startTime && nowTime <= endTime;
+const isUpcoming = nowTime < startTime;
+
+// 3. Formateo de fechas
+const formatDate = (date: Date) =>
+  date.toLocaleDateString("es-PE", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+const startDisplay = formatDate(new Date(activation.data.startDate));
+const endDisplay = formatDate(new Date(activation.data.endDate));
+---
+
+<BaseLayout
+  title={activation.data.title}
+  description={`${activation.data.title}. Evento disponible en ExpansionTec del ${startDisplay} al ${endDisplay}.`}
+  image={activation.data.banner}
+>
+  <div class="w-full mt-16"></div>
+
+  <article class="container mx-auto px-4 py-8 md:py-12 max-w-4xl">
+    <BreadCrumb
+      crumbs={[
+        { label: "Inicio", href: "/" },
+        { label: "Activaciones", href: "/activaciones" },
+        { label: activation.data.title },
+      ]}
+    />
+
+    {/* Banner o Gallery Hero */}
+    {
+      heroImages.length > 0 && (
+        <section class="relative">
+          <div
+            class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth rounded-2xl scrollbar-none"
+            id="activation-hero-slider"
+          >
+            {heroImages.map((image: any, index: any) => (
+              <div class="min-w-full snap-start relative" data-slide>
+                <img
+                  src={image}
+                  alt={`${activation.data.title} - imagen ${index + 1}`}
+                  class="w-full h-70 sm:h-95 lg:h-125 object-cover"
+                  loading={index === 0 ? "eager" : "lazy"}
+                />
+                <div class="absolute inset-0 bg-black/25" />
+                <div class="absolute inset-x-0 bottom-0 p-6 sm:p-8 text-white">
+                  <p class="text-sm uppercase tracking-[0.2em] text-white/80 mb-2">
+                    Activación
+                  </p>
+                  <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold">
+                    {activation.data.title}
+                  </h1>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {heroImages.length > 1 && (
+            <>
+              <button
+                type="button"
+                id="hero-prev"
+                class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/40 text-white hover:bg-black/60"
+                aria-label="Imagen anterior"
+              >
+                ←
+              </button>
+
+              <button
+                type="button"
+                id="hero-next"
+                class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/40 text-white hover:bg-black/60"
+                aria-label="Siguiente imagen"
+              >
+                →
+              </button>
+            </>
+          )}
+        </section>
+      )
+    }
+
+    <div class="flex flex-col gap-6 mt-4">
+      {/* Estado y Ubicaciones */}
+      <div class="flex flex-wrap items-center gap-4">
+        <Badge
+          variant={isActive ? "success" : isUpcoming ? "primary" : "default"}
+        >
+          {
+            isActive
+              ? "Activa ahora"
+              : isUpcoming
+                ? "Próximamente"
+                : "Evento finalizado"
+          }
+        </Badge>
+
+        <div class="flex flex-wrap gap-3">
+          {
+            validLocations.map((loc) => (
+              <a
+                href={`/sucursales/${loc.id || loc.slug}`}
+                class="flex items-center gap-1.5 text-sm font-bold text-red-600 hover:text-red-700 transition-colors bg-red-50 px-3 py-1.5 rounded-full dark:bg-transparent dark:border dark:border-red-600 dark:text-red-600"
+              >
+                <Icon id="icon-location" name="location" class="w-4 h-4" />
+                {loc.data.name}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- <h1
+        class="font-body text-3xl md:text-5xl font-medium text-gray-900 leading-tight dark:text-white"
+      >
+        {activation.data.title}
+      </h1> -->
+
+      {/* Info Card de Fechas */}
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-gray-50 border border-gray-100 rounded-3xl dark:bg-black dark:border-gray-700"
+      >
+        <div class="space-y-1">
+          <p
+            class="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-white"
+          >
+            Inicia
+          </p>
+          <p class="text-gray-900 font-medium capitalize dark:text-white/80">
+            {startDisplay}
+          </p>
+        </div>
+        <div
+          class="space-y-1 border-t md:border-t-0 md:border-l border-gray-200 pt-4 md:pt-0 md:pl-6 dark:border-gray-700"
+        >
+          <p
+            class="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-white"
+          >
+            Finaliza
+          </p>
+          <p class="text-gray-900 font-bold capitalize dark:text-white/80">
+            {endDisplay}
+          </p>
+        </div>
+      </div>
+
+      {/* Contenido Markdown */}
+      <div
+        class="prose prose-orange prose-lg max-w-none mt-4
+        prose-headings:font-body prose-headings:font-bold prose-headings:text-gray-900
+        prose-p:text-gray-600 prose-p:leading-relaxed
+        prose-li:text-gray-600 prose-strong:text-gray-900"
+      >
+        <Content />
+      </div>
+
+      {/* Botón de Retorno */}
+      <div class="pt-10 border-t border-gray-100 mt-10 dark:border-gray-700">
+        <a
+          href="/activaciones"
+          class="inline-flex items-center gap-2 text-gray-500 hover:text-red-600 font-medium transition-colors dark:text-gray-400 dark:hover:text-red-600"
+        >
+          <Icon name="arrow-left" class="w-5 h-5" />
+          Volver a todas las activaciones
+        </a>
+      </div>
+    </div>
+  </article>
+  <script>
+    const slider = document.getElementById("activation-hero-slider");
+    const slides = slider?.querySelectorAll("[data-slide]") ?? [];
+    const prev = document.getElementById("hero-prev");
+    const next = document.getElementById("hero-next");
+    let current = 0;
+
+    const goTo = (index: any) => {
+      if (!slider || !slides.length) return;
+      current = (index + slides.length) % slides.length;
+      slider.scrollTo({
+        left: slides[current].offsetLeft,
+        behavior: "smooth",
+      });
+    };
+
+    prev?.addEventListener("click", () => goTo(current - 1));
+    next?.addEventListener("click", () => goTo(current + 1));
+  </script>
+</BaseLayout>

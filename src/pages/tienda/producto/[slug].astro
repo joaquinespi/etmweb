@@ -1,0 +1,354 @@
+---
+// src/pages/tienda/producto/[slug].astro
+import { getCollection, getEntry, render } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { TinaMarkdown } from "tinacms/dist/rich-text";
+import { getOptimizedImage } from "../../../lib/images";
+
+// TODO: reemplazar por el número real de WhatsApp de la tienda,
+// con código de país y sin signos (+ / espacios / guiones).
+// Ej. Perú: 51987654321
+const WHATSAPP_NUMBER = "51926206080";
+
+export async function getStaticPaths() {
+  let products = [];
+
+  try {
+    products = await getCollection("products");
+    console.log("✅ Products loaded:", products.length);
+  } catch (e) {
+    console.error("❌ Zod validation error:", e);
+    return [];
+  }
+
+  if (!products || products.length === 0) {
+    console.warn("⚠️ No products after validation!");
+    return [];
+  }
+
+  return products.map((p:any) => ({
+    params: { slug: p.id },
+  }));
+}
+
+const { slug } = Astro.params;
+
+if (!slug || slug === "no-products") {
+  return Astro.redirect("/tienda");
+}
+
+const product = await getEntry("products", slug);
+if (!product) return Astro.redirect("/tienda");
+
+const { Content } = await render(product);
+
+const safeTitle = product.data.title
+  .toLowerCase()
+  .replace(/\//g, "-")
+  .replace(/[^a-z0-9]/gi, "-")
+  .replace(/-+/g, "-")
+  .replace(/^-|-$/g, "");
+
+const pdfUrl = `/specs/${safeTitle}.pdf`;
+
+const discount = product.data.salePrice
+  ? Math.round((1 - product.data.salePrice / product.data.price) * 100)
+  : null;
+
+// Link de WhatsApp con el mensaje precargado: nombre del producto + URL de la página actual.
+const productPageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
+const whatsappMessage = `Hola, quiero consultar sobre este producto: ${product.data.title}\n${productPageUrl}`;
+const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`;
+
+function mdToHtml(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.*?)\*/g, "<em>$1</em>")
+    .replace(/\\n|\n/g, "<br>")
+    .replace(/\\\*/g, "*");
+}
+
+function normalizeImagePath(path?: string) {
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  return path.startsWith("/") ? path : `/${path}`;
+}
+
+// mainImage tiene prioridad; si no existe, se usa el primer elemento de images.
+// Se aplica el índice ANTES de normalizar (bug previo: se normalizaba el array completo).
+const specsImageRaw = product.data.mainImage || product.data.images?.[0];
+const specsImagePath = normalizeImagePath(specsImageRaw);
+const specsImage = specsImagePath ? getOptimizedImage(specsImagePath) : null;
+---
+
+<BaseLayout
+  title={product.data.seoTitle ?? product.data.title}
+  description={product.data.seoDescription ??
+    `Compra ${product.data.title} en ExpansionTec Lima.`}
+  image={product.data.images[0]}
+  type="product"
+>
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: product.data.title,
+      image: product.data.images,
+      offers: {
+        "@type": "Offer",
+        price: product.data.salePrice ?? product.data.price,
+        priceCurrency: "PEN",
+        availability: product.data.inStock
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+      },
+    })}
+  />
+
+  <div class="w-full mx-auto bg-white dark:bg-black">
+    <div class="w-full h-22"></div>
+
+    <div
+      class="z-40 w-full bg-linear-to-r from-blue-100 to-teal-200 shadow-sm overflow-x-auto dark:from-gray-900 dark:to-gray-950"
+    >
+      <div
+        class="w-full mx-auto px-4 pt-5 pb-4 h-20 flex items-center justify-between gap-8 whitespace-nowrap"
+      >
+        <div class="flex items-center gap-4">
+          <h1
+            class="text-2xl font-body font-medium text-gray-900 uppercase tracking-tight dark:text-white"
+          >
+            {product.data.title}
+          </h1>
+
+          {
+            discount && (
+              <span class="bg-linear-to-r from-red-700 to-red-300 text-white px-3 py-1 rounded-full text-xs font-black">
+                -{discount}%
+              </span>
+            )
+          }
+
+          {
+            !product.data.inStock && (
+              <span class="bg-gray-900 text-white px-3 py-1 rounded-full text-xs font-black uppercase">
+                Agotado
+              </span>
+            )
+          }
+        </div>
+
+        <nav class="hidden md:flex items-center gap-10">
+          <button
+            data-tab-target="general"
+            class="tab-btn active-tab font-medium text-gray-800 hover:text-red-600 transition-colors tracking-wider dark:text-white"
+          >
+            General
+          </button>
+
+          <button
+            data-tab-target="specs"
+            class="tab-btn font-normal text-gray-800 hover:text-red-600 transition-colors tracking-wider dark:text-white"
+          >
+            Especificaciones
+          </button>
+
+          {
+            product.data.specs && product.data.specs.length > 0 && (
+              <a
+                href={pdfUrl}
+                download
+                class="flex items-center gap-2 text-red-600 font-normal hover:text-red-700 transition-colors tracking-wider"
+              >
+                Ficha Técnica
+              </a>
+            )
+          }
+        </nav>
+
+        <div class="flex items-center gap-6">
+          <!-- <div class="flex flex-col items-end">
+            {
+              product.data.salePrice && (
+                <span class="text-xs text-gray-400 line-through">
+                  S/ {product.data.price}
+                </span>
+              )
+            }
+            <span class="text-2xl font-black text-gray-900 leading-none dark:text-white">
+              S/ {product.data.salePrice || product.data.price}
+            </span>
+          </div> -->
+
+          {
+            product.data.inStock ? (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Consultar por WhatsApp sobre ${product.data.title}`}
+                class="bg-black text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-slate-800 transition-all dark:bg-red-600 inline-flex items-center gap-2"
+              >
+                Comprar ahora
+              </a>
+            ) : (
+              <button
+                type="button"
+                disabled
+                class="bg-gray-300 text-gray-500 px-8 py-3 rounded-full font-bold text-sm cursor-not-allowed dark:bg-gray-700 dark:text-gray-400"
+              >
+                Agotado
+              </button>
+            )
+          }
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="max-w-7xl mx-auto px-4 py-12 justify-center bg-white dark:bg-black mt-2"
+    >
+      <div id="general" class="tab-content block">
+        <div class="grid grid-cols-1 gap-12 mb-20">
+          <div>
+            <div class="text-3xl font-sans font-medium mb-4 text-center">
+              {product.data.shortDescription}
+            </div>
+            <div
+              class="product-body
+              prose
+              prose-lg
+              max-w-none
+              prose-headings:font-bold
+              prose-headings:text-blue-900
+              prose-p:text-center
+              prose-p:text-gray-700
+              prose-p:leading-relaxed
+              prose-a:text-blue-800
+              prose-strong:text-gray-900
+              prose-ul:text-gray-700
+              prose-ol:text-gray-700
+              prose-blockquote:border-blue-900
+              prose-blockquote:text-gray-600"
+            >
+              <Content />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="specs"
+        class="tab-content w-full mx-auto px-6 hidden animate-in fade-in duration-500"
+      >
+        <div>
+          <div id="product-image" class="flex justify-center">
+            {specsImage && (
+              <img
+                src={specsImage.full}
+                alt={product.data.title}
+                class="w-full py-16 object-contain max-h-160"
+                loading="lazy"
+              />
+            )}
+          </div>
+          {
+            product.data.availableColors?.length > 0 && (
+              <div class="grid grid-cols-1 gap-4 py-16">
+                <div class="flex flex-wrap justify-center gap-4">
+                  {product.data.availableColors.map((color:any) => (
+                    <div class="flex items-center gap-6">
+                      <span
+                        class="w-8 h-8 rounded-full border-2 shadow-xs"
+                        style={`background-color: ${color.hex}; border-color: ${color.hex};`}
+                        title={color.name}
+                      />
+                      <span class="text-xl text-gray-700">{color.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          }
+          {
+            product.data.specs?.map(
+              (spec:any) =>
+                spec && (
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 py-16 border-t border-black">
+                    <div class="text-4xl font-medium text-black capitalize tracking-normal dark:text-white">
+                      {spec.key}
+                    </div>
+
+                    <div
+                      class="col-span-2
+                        text-gray-950
+                        prose
+                        prose-lg
+                        max-w-none
+                        prose-headings:font-bold
+                        prose-headings:text-blue-900
+                        prose-p:text-gray-700
+                        prose-p:leading-relaxed
+                        prose-a:text-blue-800
+                        prose-strong:text-gray-900
+                        prose-ul:text-gray-700
+                        prose-ol:text-gray-700
+                        prose-blockquote:border-blue-900
+                        prose-blockquote:text-gray-600
+                        dark:text-white
+                    "
+                    >
+                      {typeof spec.value === "string" ? (
+                        <Fragment set:html={mdToHtml(spec.value)} />
+                      ) : (
+                        <TinaMarkdown content={spec.value} />
+                      )}
+                    </div>
+                  </div>
+                ),
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const tabContents = document.querySelectorAll(".tab-content");
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-tab-target");
+        tabBtns.forEach((b) => b.classList.remove("active-tab", "font-normal", "font-medium"));
+        btn.classList.add("active-tab", "font-medium");
+
+        tabContents.forEach((content) => {
+          if (content.id === target) {
+            content.classList.remove("hidden");
+            content.classList.add("block");
+          } else {
+            content.classList.add("hidden");
+            content.classList.remove("block");
+          }
+        });
+      });
+    });
+  </script>
+  <style>
+    .product-body p:has(img) {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .product-body p img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</BaseLayout>

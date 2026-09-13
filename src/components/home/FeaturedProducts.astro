@@ -1,0 +1,209 @@
+---
+// src/components/products/FeaturedProducts.astro
+import type { CollectionEntry } from "astro:content";
+import Icon from "../ui/Icon.astro";
+import { getOptimizedImage } from "../../lib/images";
+
+interface Props {
+  products: CollectionEntry<"products">[];
+  title?: string;
+}
+
+const { products, title = "Productos Destacados" } = Astro.props;
+
+const currency = new Intl.NumberFormat("es-PE", {
+  style: "currency",
+  currency: "PEN",
+});
+
+// Separamos el primer producto para el banner grande y el resto para la grilla
+const mainProduct = products[0];
+const gridProducts = products.slice(1);
+
+function getDiscountPercent(price: number, salePrice?: number | null) {
+  if (!salePrice || !price) return null;
+  return Math.round((1 - salePrice / price) * 100);
+}
+
+function getSavings(price: number, salePrice?: number | null) {
+  if (!salePrice || !price) return null;
+  return (price - salePrice).toFixed(0);
+}
+
+// El path original de "products" ya incluye su propia subcarpeta
+// (/uploads/products/xxx.png); getOptimizedImage detecta eso solo.
+function mainImageOf(p: CollectionEntry<"products">) {
+  const raw = p.data.mainImage ?? p.data.images[0];
+  return raw ? getOptimizedImage(raw) : null;
+}
+---
+
+{
+  products.length > 0 && (
+    <section class="py-12 sm:py-16">
+      <div class="container mx-auto px-4">
+        <div class="flex justify-center items-center mb-8">
+          <div class="flex items-center gap-3">
+            <Icon id="icon-bag" name="bag" class="w-8 h-8 text-red-600" />
+            <h2 class="font-body text-3xl sm:text-4xl font-medium text-gray-900 dark:text-white">
+              {title}
+            </h2>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-4 sm:gap-4 lg:gap-4">
+          {/* BANNER GRANDE (Primer producto) */}
+          {mainProduct && (
+            <div class="col-span-1 sm:col-span-2">
+              <article class={`group relative bg-linear-to-r from-blue-100 to-teal-200 to-50% rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 h-64 dark:from-slate-800 dark:to-slate-900 dark:border dark:border-gray-700 ${!mainProduct.data.inStock ? "opacity-75" : ""}`}>
+                <a
+                  href={`/tienda/producto/${mainProduct.id}`}
+                  class="h-full w-full flex flex-col"
+                >
+                  {!mainProduct.data.inStock && (
+                    <span class="absolute top-4 right-4 z-20 px-3 py-1 bg-gray-900/90 text-white text-xs font-bold rounded-lg uppercase tracking-wide">
+                      Agotado
+                    </span>
+                  )}
+                  <div class="absolute top-4 left-4 right-4 z-10 flex flex-col gap-2">
+                    <h3 class="font-body font-medium text-2xl text-black group-hover:text-black/50 transition-colors line-clamp-2 dark:text-white tracking-wide dark:group-hover:text-red-600">
+                      {mainProduct.data.title}
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                      {mainProduct.data.salePrice && (
+                        <span class="px-3 py-1 bg-linear-to-r from-red-600 to-red-800 text-white text-xs font-bold rounded-lg dark:text-white">
+                          Te ahorras{" "}
+                          {getSavings(
+                            mainProduct.data.price,
+                            mainProduct.data.salePrice
+                          )}{" "}
+                          S/
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div class="relative h-full flex justify-end items-center overflow-hidden">
+                    {(() => {
+                      const img = mainImageOf(mainProduct);
+                      return img ? (
+                        <img
+                          src={img.full}
+                          alt={mainProduct.data.title}
+                          width="320"
+                          height="288"
+                          class={`h-full w-auto max-w-full object-contain transform group-hover:scale-125 transition-transform duration-500 ${!mainProduct.data.inStock ? "grayscale" : ""}`}
+                          loading="eager"
+                          fetchpriority="high"
+                        />
+                      ) : (
+                        <div class="h-full w-full bg-gray-200 dark:bg-gray-700" />
+                      );
+                    })()}
+                  </div>
+                  <div class="absolute bottom-4 left-4 right-4 z-10 flex-1 flex flex-col">
+                    <div class="flex items-baseline gap-2">
+                      <span class="text-sm text-black dark:text-white">
+                        A
+                      </span>
+                      <span class="text-2xl font-bold text-black dark:text-white">
+                        {currency.format(
+                          mainProduct.data.salePrice ?? mainProduct.data.price
+                        )}
+                      </span>
+                    </div>
+                    {mainProduct.data.salePrice && (
+                      <div class="text-sm text-black/30 dark:text-white">
+                        de{" "}
+                        <span class="line-through">
+                          {currency.format(mainProduct.data.price)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </a>
+              </article>
+            </div>
+          )}
+
+          {/* GRILLA DE PRODUCTOS RESTANTES */}
+          {gridProducts.map((p) => {
+            const discount = getDiscountPercent(
+              p.data.price,
+              p.data.salePrice
+            );
+            const img = mainImageOf(p);
+            return (
+              <article class={`group relative bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 h-64 dark:border-gray-700 dark:bg-black ${!p.data.inStock ? "opacity-75" : ""}`}>
+                <a
+                  href={`/tienda/producto/${p.id}`}
+                  class="h-full w-full flex flex-col"
+                >
+                  {!p.data.inStock && (
+                    <span class="absolute top-2 left-2 z-20 px-2 py-1 bg-gray-900/90 text-white text-[0.65rem] font-bold rounded-full uppercase tracking-wide">
+                      Agotado
+                    </span>
+                  )}
+                  <div class="relative p-4 flex flex-col gap-1 min-h-27.5 bg-linear-to-r from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-900">
+                    <h3 class="font-body font-medium text-base text-gray-900 tracking-wide group-hover:text-red-600 transition-colors line-clamp-2 dark:text-white">
+                      {p.data.title}
+                    </h3>
+                    {p.data.shortDescription && (
+                      <p class="text-[0.75rem] text-gray-600 line-clamp-1 dark:text-white/70 mb-2">
+                        {p.data.shortDescription}
+                      </p>
+                    )}
+                    {p.data.salePrice && (
+                      <span class="w-fit px-2 py-0.5 bg-red-50 text-red-700 text-[0.7rem] font-bold rounded border border-red-100">
+                        Ahorras {getSavings(p.data.price, p.data.salePrice)}{" "}
+                        S/
+                      </span>
+                    )}
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2 flex-1">
+                    <div class="p-4 flex flex-col justify-end">
+                      {p.data.salePrice ? (
+                        <div class="flex flex-col">
+                          <span class="text-xs text-gray-500 line-through dark:text-white/50">
+                            {currency.format(p.data.price)}
+                          </span>
+                          <span class="text-lg font-bold text-gray-900 dark:text-white">
+                            {currency.format(p.data.salePrice)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span class="text-lg font-bold text-gray-900">
+                          {currency.format(p.data.price)}
+                        </span>
+                      )}
+                    </div>
+                    <div class="relative h-32 w-full p-2">
+                      {img ? (
+                        <img
+                          src={img.thumb}
+                          alt={p.data.title}
+                          width="128"
+                          height="128"
+                          class={`w-full h-full object-contain transform group-hover:scale-125 transition-all ${!p.data.inStock ? "grayscale" : ""}`}
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div class="w-full h-full bg-gray-100 dark:bg-gray-800 rounded" />
+                      )}
+                    </div>
+                  </div>
+
+                  {discount && (
+                    <span class="absolute top-2 right-2 px-2 py-1 bg-red-600 text-white text-[0.65rem] font-bold rounded-full">
+                      -{discount}%
+                    </span>
+                  )}
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}

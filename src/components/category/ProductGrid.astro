@@ -1,0 +1,91 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  products: CollectionEntry<"products">[];
+  emptyLabel?: string;
+}
+const { products, emptyLabel = "esta categoría" } = Astro.props;
+---
+
+{products.length === 0 ? (
+  <!-- Estado vacío -->
+  <div class="flex flex-col items-center justify-center text-center py-24 gap-4">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="1.5" class="text-text-faint">
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+      <line x1="12" y1="22.08" x2="12" y2="12"/>
+    </svg>
+    <h3 class="text-text font-semibold text-lg">Sin productos disponibles</h3>
+    <p class="text-text-muted text-sm max-w-xs">
+      Aún no hay productos en {emptyLabel}. Vuelve pronto.
+    </p>
+    <a href="/tienda"
+      class="mt-2 inline-flex items-center gap-2 border border-border text-text-muted px-4 py-2 rounded-full text-sm hover:border-primary hover:text-primary transition-colors">
+      Ver toda la tienda →
+    </a>
+  </div>
+) : (
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+    {products.map((product) => {
+      const { title, price, salePrice, images, inStock } = product.data;
+      const discount = salePrice
+        ? Math.round((1 - salePrice / price) * 100)
+        : null;
+      return (
+        <a
+          href={`/tienda/${product.slug}`}
+          class="group bg-surface border border-border rounded-xl overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+        >
+          <!-- Imagen -->
+          <div class="relative aspect-square bg-surface-offset overflow-hidden">
+            <img
+              src={images[0]}
+              alt={title}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+              width="300"
+              height="300"
+            />
+            {discount && (
+              <span class="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                -{discount}%
+              </span>
+            )}
+            {!inStock && (
+              <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <span class="text-white text-xs font-semibold bg-black/60 px-3 py-1 rounded-full">
+                  Agotado
+                </span>
+              </div>
+            )}
+          </div>
+
+          <!-- Info -->
+          <div class="p-3 md:p-4">
+            <h3 class="text-text text-sm font-medium leading-snug line-clamp-2 mb-2 group-hover:text-primary transition-colors">
+              {title}
+            </h3>
+            <div class="flex items-baseline gap-2 flex-wrap">
+              {salePrice ? (
+                <>
+                  <span class="text-primary font-bold text-base">
+                    S/ {salePrice.toFixed(2)}
+                  </span>
+                  <span class="text-text-faint text-xs line-through">
+                    S/ {price.toFixed(2)}
+                  </span>
+                </>
+              ) : (
+                <span class="text-text font-bold text-base">
+                  S/ {price.toFixed(2)}
+                </span>
+              )}
+            </div>
+          </div>
+        </a>
+      );
+    })}
+  </div>
+)}

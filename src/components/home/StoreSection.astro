@@ -1,0 +1,174 @@
+---
+// src/components/home/StoreSection.astro
+import Icon from "../ui/Icon.astro";
+
+interface Props {
+  locations: any[];
+}
+
+const { locations } = Astro.props;
+---
+
+<section class="py-16 bg-gray-50 dark:bg-gray-950">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-10">
+      <h2
+        class="font-body text-4xl font-medium text-gray-900 dark:text-white mb-8 flex items-center justify-center gap-2"
+      >
+        <Icon id="icon-store" name="store" class="w-8 h-8 text-red-600" />
+        Nuestras Tiendas
+      </h2>
+
+      <div class="relative">
+        <div class="flex gap-4 justify-start md:justify-center overflow-x-auto">
+          {
+            locations.map((loc, index) => (
+              <button
+                class={`tab-btn px-6 py-4 font-medium text-base transition-all whitespace-nowrap flex items-center gap-2 border-b-2 relative ${
+                  index === 0
+                    ? "border-red-600 text-black tab-active dark:text-white"
+                    : "border-transparent text-gray-500 hover:text-black hover:border-red-600 dark:text-white dark:hover:text-white"
+                }`}
+                data-target={`store-${loc.id}`}
+              >
+                <Icon
+                  id={`icon-location-${loc.id}`}
+                  name="location"
+                  class="w-6 h-6 text-red-600"
+                />
+                {loc.data.name}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto">
+      {
+        locations.map((loc, index) => (
+          <div
+            id={`store-${loc.id}`}
+            class={`store-content grid md:grid-cols-2 gap-8 bg-white dark:bg-black p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 dark:border-black ${index === 0 ? "" : "hidden"}`}
+          >
+            {/* Información y Foto */}
+            <div class="space-y-6">
+              <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{loc.data.name}</h3>
+
+              <div class="aspect-video rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+                <img
+                  src={loc.data.image || "/uploads/store-placeholder.jpg"}
+                  alt={loc.data.name}
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                  width="600"
+                  height="338"
+                />
+              </div>
+
+              <div class="space-y-5">
+                <div class="flex items-center gap-3">
+                  <div>
+                    <Icon name="pin" class="w-7 h-7 text-red-600" />
+                  </div>
+                  <div>
+                    <p class="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider">
+                      Dirección
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                      {loc.data.address || "Dirección no disponible"}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                  <div>
+                    <Icon name="clock" class="w-6 h-6 text-red-600" />
+                  </div>
+                  <div>
+                    <p class="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider">
+                      Horario de atención
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                      {loc.data.schedule || "Lun - Sáb: 9:00 AM - 8:00 PM"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-col sm:flex-row gap-3 pt-4">
+                {loc.data.googleMapsUrl && (
+                  <a
+                    href={loc.data.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group flex-1 bg-linear-to-r from-slate-100 to-slate-300 text-black py-4 px-6 rounded-xl font-bold flex items-center justify-center gap-2 hover:from-slate-200 hover:to-slate-400 hover:text-black/50 transition-colors duration-300"
+                  >
+                    <Icon
+                      name="pin"
+                      class="w-5 h-5 text-black group-hover:text-black/50"
+                    />
+                    Google Maps
+                  </a>
+                )}
+                {loc.data.wazeUrl && (
+                  <a
+                    href={loc.data.wazeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group flex-1 bg-linear-to-r from-sky-200 to-sky-400 text-black py-4 px-6 rounded-xl font-bold flex items-center justify-center gap-2 hover:from-sky-300 hover:to-sky-500 hover:text-black/50 transition-colors duration-300"
+                  >
+                    <Icon
+                      name="direction"
+                      class="w-6 h-6 text-black group-hover:text-black/50"
+                    />
+                    Waze
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* Mapa embebido */}
+            {loc.data.mapEmbedUrl && (
+              <div class="h-full min-h-87 md:min-h-full rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-inner" set:html={loc.data.mapEmbedUrl}>
+              </div>
+            )}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  function setupTabs() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(".tab-btn");
+    const contents = document.querySelectorAll<HTMLElement>(".store-content");
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.getAttribute("data-target");
+        if (!targetId) return;
+
+        // Resetear todos los botones
+        buttons.forEach((b) => {
+          b.classList.remove("border-red-600", "text-black", "tab-active");
+          b.classList.add("border-transparent", "text-gray-500");
+        });
+
+        // Activar botón clickeado
+        btn.classList.remove("border-transparent", "text-gray-500");
+        btn.classList.add("border-red-600", "text-black", "tab-active");
+
+        // Ocultar todos los contenidos
+        contents.forEach((c) => c.classList.add("hidden"));
+
+        // Mostrar el seleccionado
+        document.getElementById(targetId)?.classList.remove("hidden");
+      });
+    });
+  }
+
+  setupTabs();
+  document.addEventListener("astro:after-swap", setupTabs);
+</script>

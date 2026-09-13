@@ -1,0 +1,279 @@
+---
+// src/components/layout/Header.astro
+import Icon from "../../components/ui/Icon.astro";
+import CartIcon from "../../components/shop/CartIcon.tsx";
+import ThemeToggle from "../../components/ui/ThemeToggle";
+const navLinks = [
+  { href: "/tienda", label: "Tienda" },
+  { href: "/sucursales", label: "Sucursales" },
+  { href: "/activaciones", label: "Activaciones" },
+  { href: "/contacto", label: "Contáctanos" },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<header
+  class="fixed w-full top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-black/80 dark:border dark:border-white/20"
+>
+  <div
+    class="w-full mx-auto items-center text-sm pt-1 pb-0.5 text-center text-white font-medium bg-red-600"
+  >
+    Distribuidor Autorizado
+    <img
+      src="/icons/claro.svg"
+      alt="Distribuidor Autorizado de Claro"
+      class="h-4 w-auto inline-flex mb-2.5 mt-0.5"
+      width="120"
+      height="40"
+    />
+  </div>
+  <div class="w-full mx-auto px-4">
+    <div class="flex items-center justify-between h-14">
+      <!-- LOGO -->
+      <a
+        href="/"
+        class="flex items-center gap-2 text-lg font-bold shrink-0"
+        aria-label="Expansion - Inicio"
+      >
+        <!-- Ícono circular rojo -->
+        <img
+          src="/logo.svg"
+          alt="Expansion Logo"
+          class="h-12 w-auto transition-transform group-hover:scale-105 dark:hidden"
+          width="120"
+          height="40"
+        />
+        <img
+          src="/logo_dark.svg"
+          alt="Expansion Logo"
+          class="hidden h-12 w-auto transition-transform group-hover:scale-105 dark:flex"
+          width="120"
+          height="40"
+        />
+      </a>
+
+      <!-- NAV DESKTOP -->
+      <nav
+        id="nav-desktop"
+        class="hidden items-center gap-1"
+        aria-label="Navegación principal"
+      >
+        {
+          navLinks.map(({ href, label }) => {
+            const isActive =
+              href === "/" ? currentPath === "/" : currentPath.startsWith(href);
+            return (
+              <a
+                href={href}
+                class="font-body px-3.5 py-1.5 font-medium text-base tracking-wider text-gray-700 hover:text-red-600 dark:text-slate-50 dark:hover:text-red-600"
+                style={`
+                transition: all 180ms ease;
+                ${isActive ? "color: #ea580c" : "var(--color-text)"}
+              `}
+              >
+                {label}
+              </a>
+            );
+          })
+        }
+      </nav>
+
+      <!-- ACCIONES DERECHA -->
+      <div class="flex items-center gap-2 shrink-0">
+        <!-- Redes sociales — solo desktop -->
+        <div id="social-links" class="hidden items-center gap-1">
+          {
+            [
+              {
+                href: "https://facebook.com",
+                label: "Facebook",
+                icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>`,
+              },
+              {
+                href: "https://instagram.com",
+                label: "Instagram",
+                icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`,
+              },
+              {
+                href: "https://tiktok.com",
+                label: "TikTok",
+                icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/></svg>`,
+              },
+              {
+                href: "https://youtube.com",
+                label: "YouTube",
+                icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.84499 4.77535C10.4365 4.40822 13.5635 4.40822 16.155 4.77535C18.5096 5.10891 20.3341 6.76142 20.6831 8.54141C21.1056 10.6962 21.1056 13.3038 20.6831 15.4586C20.3341 17.2386 18.5096 18.8911 16.1551 19.2247C13.5635 19.5918 10.4365 19.5918 7.84499 19.2247C5.49049 18.8911 3.666 17.2386 3.31691 15.4586C2.89434 13.3038 2.89438 10.6962 3.31692 8.54142C3.66596 6.76141 5.49048 5.10891 7.84499 4.77535ZM16.4356 2.79512C13.658 2.40163 10.3421 2.40163 7.56446 2.79512C4.54986 3.22219 1.90016 5.37282 1.35429 8.15657C0.881927 10.5655 0.881875 13.4345 1.3543 15.8434C1.90021 18.6272 4.54984 20.7778 7.56446 21.2049C10.3421 21.5984 13.658 21.5984 16.4356 21.2049C19.4502 20.7778 22.0999 18.6272 22.6458 15.8434C23.1181 13.4345 23.1181 10.5655 22.6458 8.15658C22.0999 5.37281 19.4502 3.22219 16.4356 2.79512ZM10.5547 7.16795C10.2478 6.96338 9.8533 6.94431 9.52814 7.11833C9.20299 7.29234 9 7.6312 9 8V16C9 16.3688 9.20299 16.7077 9.52814 16.8817C9.8533 17.0557 10.2478 17.0366 10.5547 16.8321L16.5547 12.8321C16.8329 12.6466 17 12.3344 17 12C17 11.6656 16.8329 11.3534 16.5547 11.1679L10.5547 7.16795ZM14.1972 12L11 14.1315V9.86852L14.1972 12Z"/></svg>`,
+              },
+              {
+                href: "https://wa.me/51999999999",
+                label: "WhatsApp",
+                icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>`,
+              },
+            ].map((s) => (
+              <a
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                class="w-8 h-8 flex items-center justify-center px-1.5 text-gray-800 hover:text-orange-600 transition-colors duration-200 dark:text-white dark:hover:text-orange-600"
+              >
+                <Fragment set:html={s.icon} />
+              </a>
+            ))
+          }
+
+          <!-- Separador -->
+          <div class="w-px h-5 bg-gray-800 mx-2 dark:bg-white"></div>
+        </div>
+
+        <!-- Búsqueda -->
+        <!-- <button
+          id="search-btn"
+          aria-label="Buscar"
+          class="w-8 h-8 flex items-center justify-center text-gray-800 hover:text-orange-600 transition-colors duration-200 dark:text-white dark:hover:text-orange-600"
+        >
+          <Icon id="icon-search" name="search" class="w-5 h-5" />
+        </button> -->
+
+        <!-- <CartIcon client:load /> -->
+
+        <ThemeToggle client:load />
+
+        <!-- Hamburguesa mobile -->
+        <button
+          id="mobile-menu-btn"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          class="w-9 h-9 flex items-center justify-center text-gray-700 md:text-gray-700 dark:text-white cursor-pointer"
+        >
+          <Icon name="hamburger" id="hamburger-icon" class="w-5 h-5" />
+          <Icon name="close" id="close-icon" class="w-5 h-5 hidden" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE MENU -->
+  <nav
+    id="mobile-menu"
+    style="display:none;background:var(--color-surface);border-top:1px solid var(--color-border);padding:1rem 1.25rem;"
+    aria-label="Menú móvil"
+  >
+    <!-- Links nav -->
+    <div
+      class="flex flex-col gap-2 mb-4"
+    >
+      {
+        navLinks.map(({ href, label }) => {
+          const isActive =
+            href === "/" ? currentPath === "/" : currentPath.startsWith(href);
+          return (
+            <a
+              href={href}
+              class="px-3.5 py-1.5 font-medium text-base tracking-wider text-gray-700 dark:text-white/80 hover:text-orange-600  dark:hover:text-red-600"
+              style={`
+              transition: all 180ms ease;
+              ${isActive ? "color: #cc2200;" : ""}
+            `}
+            >
+              {label}
+            </a>
+          );
+        })
+      }
+    </div>
+
+    <!-- Redes sociales mobile -->
+    <div
+      class="flex items-center gap-4 border-t border-gray-300 pt-4 justify-center"
+    >
+      {
+        [
+          {
+            href: "https://facebook.com",
+            label: "Facebook",
+            icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>`,
+          },
+          {
+            href: "https://instagram.com",
+            label: "Instagram",
+            icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`,
+          },
+          {
+            href: "https://tiktok.com",
+            label: "TikTok",
+            icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/></svg>`,
+          },
+          {
+            href: "https://youtube.com",
+            label: "YouTube",
+            icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.84499 4.77535C10.4365 4.40822 13.5635 4.40822 16.155 4.77535C18.5096 5.10891 20.3341 6.76142 20.6831 8.54141C21.1056 10.6962 21.1056 13.3038 20.6831 15.4586C20.3341 17.2386 18.5096 18.8911 16.1551 19.2247C13.5635 19.5918 10.4365 19.5918 7.84499 19.2247C5.49049 18.8911 3.666 17.2386 3.31691 15.4586C2.89434 13.3038 2.89438 10.6962 3.31692 8.54142C3.66596 6.76141 5.49048 5.10891 7.84499 4.77535ZM16.4356 2.79512C13.658 2.40163 10.3421 2.40163 7.56446 2.79512C4.54986 3.22219 1.90016 5.37282 1.35429 8.15657C0.881927 10.5655 0.881875 13.4345 1.3543 15.8434C1.90021 18.6272 4.54984 20.7778 7.56446 21.2049C10.3421 21.5984 13.658 21.5984 16.4356 21.2049C19.4502 20.7778 22.0999 18.6272 22.6458 15.8434C23.1181 13.4345 23.1181 10.5655 22.6458 8.15658C22.0999 5.37281 19.4502 3.22219 16.4356 2.79512ZM10.5547 7.16795C10.2478 6.96338 9.8533 6.94431 9.52814 7.11833C9.20299 7.29234 9 7.6312 9 8V16C9 16.3688 9.20299 16.7077 9.52814 16.8817C9.8533 17.0557 10.2478 17.0366 10.5547 16.8321L16.5547 12.8321C16.8329 12.6466 17 12.3344 17 12C17 11.6656 16.8329 11.3534 16.5547 11.1679L10.5547 7.16795ZM14.1972 12L11 14.1315V9.86852L14.1972 12Z"/></svg>`,
+          },
+          {
+            href: "https://wa.me/51999999999",
+            label: "WhatsApp",
+            icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>`,
+          },
+        ].map((s) => (
+          <a
+            href={s.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={s.label}
+            class="w-8 h-8 flex items-center justify-center px-1.5 text-gray-500 hover:text-orange-600 transition-colors duration-200 dark:text-gray-400 dark:hover:text-orange-600 dark:hover:bg-red-50 rounded"
+          >
+            <Fragment set:html={s.icon} />
+          </a>
+        ))
+      }
+    </div>
+  </nav>
+</header>
+
+<script is:inline>
+  (function () {
+    // ── Responsive ────────────────────────────────────────
+    const navDesktop = document.getElementById("nav-desktop");
+    const socialLinks = document.getElementById("social-links");
+    const mobileBtn = document.getElementById("mobile-menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+    const hamburgerIcon = document.getElementById("hamburger-icon");
+    const closeIcon = document.getElementById("close-icon");
+
+    function handleResize() {
+      const isDesktop = window.innerWidth >= 768;
+      if (navDesktop) navDesktop.style.display = isDesktop ? "flex" : "none";
+      if (socialLinks) socialLinks.style.display = isDesktop ? "flex" : "none";
+      if (mobileBtn) mobileBtn.style.display = isDesktop ? "none" : "flex";
+      if (isDesktop && mobileMenu) {
+        mobileMenu.style.display = "none";
+        if (hamburgerIcon) hamburgerIcon.style.display = "block";
+        if (closeIcon) closeIcon.style.display = "none";
+      }
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    // ── Mobile menu toggle ────────────────────────────────
+    let menuOpen = false;
+    mobileBtn?.addEventListener("click", () => {
+      menuOpen = !menuOpen;
+      if (mobileMenu) mobileMenu.style.display = menuOpen ? "block" : "none";
+      if (hamburgerIcon)
+        hamburgerIcon.style.display = menuOpen ? "none" : "block";
+      if (closeIcon) closeIcon.style.display = menuOpen ? "block" : "none";
+      mobileBtn.setAttribute("aria-expanded", String(menuOpen));
+    });
+
+    // Cierra el menú al hacer click en un link
+    mobileMenu?.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        menuOpen = false;
+        if (mobileMenu) mobileMenu.style.display = "none";
+        if (hamburgerIcon) hamburgerIcon.style.display = "block";
+        if (closeIcon) closeIcon.style.display = "none";
+        mobileBtn?.setAttribute("aria-expanded", "false");
+      });
+    });
+  })();
+</script>

@@ -1,0 +1,49 @@
+---
+import { getCollection } from "astro:content";
+
+const categories = await getCollection("categories");
+const sorted = categories.sort((a: any, b: any) => a.data.name.localeCompare(b.data.name));
+---
+
+<section class="py-8 sm:py-12">
+  <div class="max-w-[var(--content-wide)] mx-auto px-4">
+
+    <!-- Grid de categorías -->
+    <div class="flex flex-wrap justify-center gap-4 sm:gap-6">
+      {sorted.map((cat: any) => {
+        const { name, image, slug } = cat.data;
+        const href = `/categoria/${slug ?? cat.id}`;
+        return (
+          <a
+            href={href}
+            class="group flex flex-col items-center gap-3 p-4 rounded-xl hover:bg-gray-50 transition-colors duration-200"
+          >
+            <!-- Imagen del producto / categoría -->
+            <div class="w-20 h-20 md:w-20 md:h-20 flex items-center justify-center">
+              {image ? (
+                <img
+                  src={image}
+                  alt={name}
+                  width="120"
+                  height="120"
+                  loading="lazy"
+                  class="w-full h-full object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-200"
+                />
+              ) : (
+                <div class="w-full h-full rounded-full bg-surface-offset flex items-center justify-center text-text-faint text-2xl">
+                  📦
+                </div>
+              )}
+            </div>
+
+            <!-- Nombre -->
+            <span class="text-text text-base md:text-base text-center font-medium tracking-wider group-hover:text-orange-600 transition-colors">
+              {name}
+            </span>
+          </a>
+        );
+      })}
+    </div>
+
+  </div>
+</section>

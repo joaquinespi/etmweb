@@ -1,0 +1,43 @@
+/* src/styles/global.css */
+@import "tailwindcss";
+
+/* ============================================
+CONFIGURACIÓN DARK MODE
+============================================ */
+@variant dark (&:where(.dark, .dark *));
+
+/* ============================================
+THEME - Colores base (modo claro)
+============================================ */
+@theme {
+  --font-display: 'Cabinet Grotesk', 'Georgia', serif;
+  --font-body: 'Satoshi', 'Inter', system-ui, sans-serif;
+
+  /* Colores modo CLARO (default) */
+  --color-text:#374151;
+}
+
+/* ============================================
+   DARK MODE - Redefinir variables
+   ============================================ */
+.dark {
+  --color-text: rgba(255,255,255,0.5);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+  }
+}

@@ -1,0 +1,252 @@
+---
+// src/pages/trabaja-con-nosotros/index.astro
+export const prerender = true;
+
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BreadCrumb from "../../components/ui/BreadCrumb.astro";
+import Icon from "../../components/ui/Icon.astro";
+
+const locations: CollectionEntry<"locations">[] = await getCollection(
+  "locations",
+  ({ data }) => data.isActive,
+);
+---
+
+<BaseLayout
+  title="Trabaja con nosotros"
+  description="Postula a ExpansionTec y envía tu CV para trabajar en una de nuestras sucursales en Lima."
+>
+  <div class="w-full mt-20"></div>
+
+  <main class="container mx-auto max-w-4xl px-4 py-8 sm:py-12 lg:py-12">
+    <BreadCrumb
+      crumbs={[
+        { label: "Inicio", href: "/" },
+        { label: "Contacto", href: "/contacto" },
+        { label: "Trabaja con nosotros" },
+      ]}
+    />
+
+    <section class="rounded-3xl border border-gray-100 bg-white p-7 sm:p-10 dark:border-gray-700 dark:bg-black">
+      <div class="mb-8 text-center">
+        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-950/40">
+          <Icon name="briefcase" class="h-7 w-7" />
+        </div>
+        <h1 class="font-body text-3xl font-medium tracking-tight text-gray-900 dark:text-white">
+          Trabaja con nosotros
+        </h1>
+        <p class="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+          Completa tus datos y adjunta tu CV. Evaluaremos tu perfil para las oportunidades disponibles en ExpansionTec.
+        </p>
+      </div>
+
+      <!--
+        Importante: el envío de archivos requiere un endpoint real con
+        multipart/form-data (por ejemplo /api/job-application, Formspree,
+        Supabase Storage + Edge Function, o un backend propio). El atributo
+        enctype es obligatorio para enviar el archivo correctamente.
+      -->
+      <form
+        id="job-application-form"
+        class="flex flex-col gap-6"
+        enctype="multipart/form-data"
+        novalidate
+      >
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label
+              for="full-name"
+              class="mb-2 block font-body text-sm font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+            >
+              Nombres y apellidos <span aria-hidden="true">*</span>
+            </label>
+            <input
+              id="full-name"
+              name="fullName"
+              type="text"
+              required
+              autocomplete="name"
+              placeholder="Nombres y apellidos completos"
+              class="w-full rounded-sm border border-red-200 px-4 py-2 text-gray-700 placeholder:text-gray-300 focus:border-red-600 focus:ring-2 focus:ring-red-600/50 dark:border-red-600 dark:bg-transparent dark:text-white dark:placeholder:text-gray-500"
+            />
+          </div>
+
+          <div>
+            <label
+              for="phone"
+              class="mb-2 block font-body text-sm font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+            >
+              Número de teléfono <span aria-hidden="true">*</span>
+            </label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              required
+              autocomplete="tel"
+              inputmode="tel"
+              placeholder="Ej. 999 999 999"
+              class="w-full rounded-sm border border-red-200 px-4 py-2 text-gray-700 placeholder:text-gray-300 focus:border-red-600 focus:ring-2 focus:ring-red-600/50 dark:border-red-600 dark:bg-transparent dark:text-white dark:placeholder:text-gray-500"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label
+              for="email"
+              class="mb-2 block font-body text-sm font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+            >
+              Correo electrónico <span aria-hidden="true">*</span>
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              autocomplete="email"
+              placeholder="tu@email.com"
+              class="w-full rounded-sm border border-red-200 px-4 py-2 text-gray-700 placeholder:text-gray-300 focus:border-red-600 focus:ring-2 focus:ring-red-600/50 dark:border-red-600 dark:bg-transparent dark:text-white dark:placeholder:text-gray-500"
+            />
+          </div>
+
+          <div>
+            <label
+              for="location"
+              class="mb-2 block font-body text-sm font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+            >
+              Sucursal donde deseas trabajar <span aria-hidden="true">*</span>
+            </label>
+            <select
+              id="location"
+              name="location"
+              required
+              class="w-full rounded-sm border border-red-200 px-4 py-2 text-gray-700 focus:border-red-600 focus:ring-2 focus:ring-red-600/50 dark:border-red-600 dark:bg-transparent dark:text-white"
+            >
+              <option value="">Selecciona una sucursal</option>
+              {locations.map((loc) => (
+                <option value={loc.id}>
+                  {loc.data.name} — {loc.data.district}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label
+            for="cv"
+            class="mb-2 block font-body text-sm font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+          >
+            Currículum vitae <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="cv"
+            name="cv"
+            type="file"
+            required
+            accept=".pdf,.doc,.docx,image/png,image/jpeg,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            class="block w-full cursor-pointer rounded-xl border border-dashed border-red-300 bg-red-50/40 px-4 py-4 text-sm text-gray-600 file:mr-4 file:rounded-lg file:border-0 file:bg-red-600 file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 dark:border-red-800 dark:bg-red-950/20 dark:text-gray-300"
+          />
+          <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+            Formatos permitidos: PDF, Word (.doc/.docx), JPG, PNG o WebP. Tamaño máximo: 5 MB.
+          </p>
+        </div>
+
+        <label class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-300">
+          <input
+            id="privacy"
+            name="privacy"
+            type="checkbox"
+            required
+            class="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-600"
+          />
+          <span>
+            Autorizo el tratamiento de mis datos personales únicamente para fines de evaluación de esta postulación.
+            <span aria-hidden="true">*</span>
+          </span>
+        </label>
+
+        <button
+          id="job-submit-btn"
+          type="submit"
+          class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-red-400 to-red-600 px-6 py-4 font-bold text-black transition-colors hover:from-red-500 hover:to-red-700 hover:text-black/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <Icon name="upload" class="h-5 w-5" />
+          Enviar postulación
+        </button>
+
+        <div id="job-form-feedback" class="hidden" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("#job-application-form");
+  const fileInput = document.querySelector<HTMLInputElement>("#cv");
+  const feedback = document.querySelector<HTMLElement>("#job-form-feedback");
+
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  const ALLOWED_FILE_TYPES = new Set([
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+  ]);
+
+  function showFeedback(message: string, type: "success" | "error") {
+    if (!feedback) return;
+    feedback.className =
+      type === "success"
+        ? "rounded-lg bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+        : "rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-800 dark:bg-red-950/40 dark:text-red-300";
+    feedback.textContent = message;
+  }
+
+  fileInput?.addEventListener("change", () => {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+
+    if (!ALLOWED_FILE_TYPES.has(file.type)) {
+      fileInput.value = "";
+      showFeedback("Formato no permitido. Adjunta un PDF, Word, JPG, PNG o WebP.", "error");
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      fileInput.value = "";
+      showFeedback("El archivo supera el límite de 5 MB.", "error");
+    }
+  });
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const file = fileInput?.files?.[0];
+    if (!file || !ALLOWED_FILE_TYPES.has(file.type) || file.size > MAX_FILE_SIZE) {
+      showFeedback("Revisa el archivo adjunto antes de enviar la postulación.", "error");
+      return;
+    }
+
+    // Reemplaza este bloque con tu endpoint de backend multipart/form-data.
+    // Ejemplo:
+    // const response = await fetch("/api/job-application", {
+    //   method: "POST",
+    //   body: new FormData(form),
+    // });
+    // if (!response.ok) throw new Error("No se pudo enviar la postulación");
+    showFeedback(
+      "El formulario está listo, pero aún falta configurar el servicio seguro para recibir postulaciones y archivos.",
+      "error",
+    );
+  });
+</script>

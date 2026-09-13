@@ -1,0 +1,163 @@
+---
+// src/pages/index.astro
+export const prerender = true;
+
+import { getCollection, getEntry, type CollectionEntry } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HeroSlider from "../components/home/HeroSlider.astro";
+import CategoryList from "../components/home/CategoryList.astro";
+import FeaturedProducts from "../components/home/FeaturedProducts.astro";
+import ProductSection from "../components/home/ProductSection.astro";
+import StoreSection from "../components/home/StoreSection.astro";
+import BrandList from "../components/home/BrandList.astro";
+import ActivationSection from "../components/home/ActivationSection.astro";
+
+const FEATURED_LIMIT = 7;
+const CATEGORY_SECTION_LIMIT = 5;
+
+type Product = CollectionEntry<"products">;
+type Activation = CollectionEntry<"activations">;
+
+type HydratedProduct = Product & {
+  brandName: string;
+  categoryName: string;
+};
+
+type HydratedActivation = Activation & {
+  locationNames: string[];
+};
+
+// Resuelve nombre de marca/categoría de un producto, reutilizando un cache
+// en memoria para no repetir getEntry() si varios productos comparten
+// la misma marca o categoría.
+function createProductHydrator() {
+  const brandCache = new Map<string, string>();
+  const categoryCache = new Map<string, string>();
+
+  async function resolveName(
+    collection: "brands" | "categories",
+    id: string,
+    cache: Map<string, string>,
+  ): Promise<string> {
+    if (cache.has(id)) return cache.get(id)!;
+    const entry = await getEntry(collection, id);
+    const name = entry?.data.name ?? "";
+    cache.set(id, name);
+    return name;
+  }
+
+  return async function hydrate(p: Product): Promise<HydratedProduct> {
+    const [brandName, categoryName] = await Promise.all([
+      p.data.brand ? resolveName("brands", p.data.brand, brandCache) : "",
+      p.data.category
+        ? resolveName("categories", p.data.category, categoryCache)
+        : "",
+    ]);
+    return { ...p, brandName, categoryName };
+  };
+}
+
+async function hydrateActivation(a: Activation): Promise<HydratedActivation> {
+  const locationEntries = await Promise.all(
+    a.data.locations.map((id:any) => getEntry("locations", id)),
+  );
+
+  const locationNames: string[] = [];
+  locationEntries.forEach((entry, i) => {
+    if (!entry) {
+      console.warn(
+        `[activations] "${a.id}" referencia una location inexistente: "${a.data.locations[i]}"`,
+      );
+      return;
+    }
+    locationNames.push(entry.data.name);
+  });
+
+  return { ...a, locationNames };
+}
+
+const hydrateProduct = createProductHydrator();
+
+// Se muestran todos los productos, con o sin stock: los agotados se marcan
+// visualmente en el componente (badge "Agotado"), en vez de ocultarse.
+const allProducts = await getCollection("products");
+
+const now = new Date();
+const allActivations = await getCollection("activations");
+const upcomingActivations = allActivations.filter(
+  (a) =>
+    a.data.isPublished &&
+    new Date(a.data.endDate) > now &&
+    Array.isArray(a.data.locations),
+);
+
+// Destacados: primero los que tienen stock, luego los agotados, para no
+// promocionar como prioridad algo que no se puede comprar ahora mismo.
+const featuredCandidates = allProducts
+  .filter((p) => p.data.featured)
+  .sort((a, b) => Number(b.data.inStock) - Number(a.data.inStock))
+  .slice(0, FEATURED_LIMIT);
+
+const smartphoneCandidates = allProducts
+  .filter((p) => p.data.category === "equipo-celular")
+  .sort((a, b) => Number(b.data.inStock) - Number(a.data.inStock))
+  .slice(0, CATEGORY_SECTION_LIMIT);
+
+const accessoryCandidates = allProducts
+  .filter((p) => p.data.category === "accesorios")
+  .sort((a, b) => Number(b.data.inStock) - Number(a.data.inStock))
+  .slice(0, CATEGORY_SECTION_LIMIT);
+
+const [featuredWithData, smartphones, accessories, activationsWithLocation, locations] =
+  await Promise.all([
+    Promise.all(featuredCandidates.map(hydrateProduct)),
+    Promise.all(smartphoneCandidates.map(hydrateProduct)),
+    Promise.all(accessoryCandidates.map(hydrateProduct)),
+    Promise.all(upcomingActivations.map(hydrateActivation)),
+    getCollection("locations", (l) => l.data.isActive),
+  ]);
+
+// Las más próximas a comenzar van primero
+activationsWithLocation.sort(
+  (a, b) =>
+    new Date(a.data.startDate).getTime() - new Date(b.data.startDate).getTime(),
+);
+---
+
+<BaseLayout
+  title="Inicio"
+  description="ExpansionTec — Tecnología y periféricos gaming al mejor precio en Lima. Visítanos en nuestras sucursales."
+>
+  <HeroSlider />
+
+  <!-- CATEGORIAS -->
+  <CategoryList />
+
+  <!-- PRODUCTOS DESTACADOS -->
+  <FeaturedProducts products={featuredWithData} title="Productos Destacados" />
+
+  {/* SECCIÓN CELULARES */}
+  <ProductSection
+    products={smartphones}
+    title="Celulares y Smartphones"
+    icon="device-mobile"
+    gradient="from-slate-900 via-slate-800 to-slate-900"
+  />
+
+  {/* SECCIÓN ACCESORIOS */}
+  <ProductSection
+    products={accessories}
+    title="Accesorios Originales"
+    icon="headphones"
+    gradient="from-orange-500 to-rose-500"
+  />
+
+  <!-- SUCURSALES -->
+  <StoreSection locations={locations} />
+
+  <!-- ACTIVACIONES PRÓXIMAS -->
+  <ActivationSection activations={activationsWithLocation} />
+
+  <!-- MARCAS -->
+  <BrandList />
+</BaseLayout>

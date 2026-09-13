@@ -1,0 +1,77 @@
+---
+// src/layouts/BaseLayout.astro
+import "../styles/global.css";
+import SEOHead from "../components/layout/SEOHead.astro";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  type?: "website" | "product" | "article";
+  noindex?: boolean;
+}
+
+const { title, description, image, type, noindex } = Astro.props;
+
+// ✅ La condición se evalúa en el servidor (frontmatter), no en el script
+// const tinaEnabled = import.meta.env.PUBLIC_TINA_ENABLED === "true";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <script is:inline>
+      (function () {
+        const saved = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        if (saved === "dark" || (!saved && prefersDark)) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+
+    <SEOHead
+      title={title}
+      description={description}
+      {...image ? { image } : {}}
+      {...type ? { type } : {}}
+      {...noindex ? { noindex } : {}}
+    />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&f[]=satoshi@400,500,600,700&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: "ExpansionTec",
+        url: Astro.site,
+        logo: new URL("/favicon.svg", Astro.site).href,
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer service",
+          areaServed: "PE",
+          availableLanguage: "Spanish",
+        },
+      })}
+    />
+  </head>
+  <body class="bg-gray-100 dark:bg-black">
+    <Header />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- ✅ Fuera de <main>, justo antes de </body> -->
+    <!-- ✅ Condición evaluada en frontmatter, no en script -->
+    <!-- {tinaEnabled && <script src="/admin/index.html" type="module" is:inline />} -->
+  </body>
+</html>

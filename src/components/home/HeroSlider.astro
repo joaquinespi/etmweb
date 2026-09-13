@@ -1,0 +1,161 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import { getOptimizedImage } from "../../lib/images";
+
+type Slide = CollectionEntry<"sliders">;
+
+const allSlides = await getCollection("sliders");
+const slides: Slide[] = allSlides
+  .filter((s:any) => s.data.active)
+  .sort((a:any, b:any) => a.data.order - b.data.order);
+---
+
+<section class="hero-slider relative w-full h-120 md:h-96 lg:h-120 overflow-hidden">
+  <!-- Slides -->
+  {slides.map((slide, i) => {
+    const isFirst = i === 0;
+    const { full } = getOptimizedImage(slide.data.image);
+
+    return (
+      <div
+        class={`slide absolute inset-0 transition-opacity w-full h-full duration-700 ${isFirst ? "opacity-100 z-10" : "opacity-0 z-0"}`}
+        data-index={i}
+      >
+        <!-- Imagen de fondo -->
+        <img
+          src={full}
+          width="2880"
+          height="936"
+          alt={slide.data.imageAlt ?? slide.data.title ?? ""}
+          loading={isFirst ? "eager" : "lazy"}
+          fetchpriority={isFirst ? "high" : "low"}
+          decoding={isFirst ? "sync" : "async"}
+          class="absolute inset-0 w-full h-full object-cover md:object-cover object-[60%_75%] md:object-center"
+        />
+        <!-- Overlay oscuro -->
+        <div class="absolute inset-0 bg-linear-to-r from-black/80 via-black/50 to-black/10"></div>
+
+        <!-- Contenido -->
+        <div class="relative z-10 h-full flex flex-col justify-end md:justify-center px-12 max-w-2xl">
+          <h2 class="text-white font-display font-black text-3xl md:text-6xl leading-tight mb-1 md:mb-3 ">
+            {slide.data.title}
+          </h2>
+          {slide.data.subtitle && (
+            <p class="text-white/80 text-lg mb-2 md:mb-6 text-left">
+              {slide.data.subtitle}
+            </p>
+          )}
+          {slide.data.ctaUrl && slide.data.ctaLabel && (
+            <a
+              href={slide.data.ctaUrl}
+              class="justify-center md:inline-flex items-center gap-2 self-start border border-white text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white hover:text-black transition-colors duration-200 mb-10 md:mb-0"
+            >
+              {slide.data.ctaLabel}
+              <span>→</span>
+            </a>
+          )}
+        </div>
+      </div>
+    );
+  })}
+
+  <!-- Flecha izquierda -->
+  <button
+    id="prev-btn"
+    aria-label="Slide anterior"
+    class="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+  >‹</button>
+
+  <!-- Flecha derecha -->
+  <button
+    id="next-btn"
+    aria-label="Siguiente slide"
+    class="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+  >›</button>
+
+  <!-- Dots -->
+  <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+    {slides.map((_, i) => (
+      <button
+        class={`cursor-pointer dot h-2 rounded-full transition-all duration-300 ${i === 0 ? "w-10 bg-white" : "w-2 bg-white/40"}`}
+        data-dot={i}
+        aria-label={`Ir al slide ${i + 1}`}
+      />
+    ))}
+  </div>
+</section>
+
+<script>
+  const AUTOPLAY_MS = 5000;
+  const root = document.querySelector<HTMLElement>(".hero-slider");
+  const slides = document.querySelectorAll<HTMLElement>(".slide");
+  const dots = document.querySelectorAll<HTMLElement>(".dot");
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  let current = 0;
+  let timer: ReturnType<typeof setInterval> | undefined;
+  let isPaused = false;
+
+  function goTo(index: number) {
+    const currentSlide = slides[current];
+    const currentDot = dots[current];
+    if (!currentSlide || !currentDot) return;
+
+    currentSlide.classList.replace("opacity-100", "opacity-0");
+    currentSlide.classList.replace("z-10", "z-0");
+    currentDot.classList.remove("w-10", "bg-white");
+    currentDot.classList.add("w-2", "bg-white/40");
+
+    current = (index + slides.length) % slides.length;
+
+    const nextSlide = slides[current];
+    const nextDot = dots[current];
+    if (!nextSlide || !nextDot) return;
+
+    nextSlide.classList.replace("opacity-0", "opacity-100");
+    nextSlide.classList.replace("z-0", "z-10");
+    nextDot.classList.remove("w-2", "bg-white/40");
+    nextDot.classList.add("w-10", "bg-white");
+  }
+
+  function startTimer() {
+    if (prefersReducedMotion || slides.length <= 1) return;
+    clearInterval(timer);
+    timer = setInterval(() => {
+      if (!isPaused) goTo(current + 1);
+    }, AUTOPLAY_MS);
+  }
+
+  function resetTimer() {
+    clearInterval(timer);
+    startTimer();
+  }
+
+  document.getElementById("prev-btn")?.addEventListener("click", () => {
+    goTo(current - 1);
+    resetTimer();
+  });
+  document.getElementById("next-btn")?.addEventListener("click", () => {
+    goTo(current + 1);
+    resetTimer();
+  });
+  dots.forEach((dot, i) =>
+    dot.addEventListener("click", () => {
+      goTo(i);
+      resetTimer();
+    })
+  );
+
+  root?.addEventListener("mouseenter", () => (isPaused = true));
+  root?.addEventListener("mouseleave", () => (isPaused = false));
+  root?.addEventListener("focusin", () => (isPaused = true));
+  root?.addEventListener("focusout", () => (isPaused = false));
+
+  document.addEventListener("visibilitychange", () => {
+    isPaused = document.hidden;
+  });
+
+  startTimer();
+</script>
