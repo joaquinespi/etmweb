@@ -131,6 +131,7 @@ jobs:
         run: |
           rsync \
             -az \
+            --delete \
             --exclude=".well-known/" \
             -e "ssh -i ~/.ssh/id_ed25519 -p $CPANEL_SSH_PORT" \
             dist/ \
@@ -148,3 +149,25 @@ jobs:
             "test -f ~/etmweb/index.html && test -f ~/etmweb/admin/index.html"
 
           echo "✅ Deployment completed successfully"
+      # ---------------------------------------------------------
+      # 13. comprobacion HTTP
+      # ---------------------------------------------------------
+      - name: Check production website
+        run: |
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --location \
+            "https://fit-tan-parrot.106-0-62-104.cpanel.site/" \
+            > /dev/null
+
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --location \
+            "https://fit-tan-parrot.106-0-62-104.cpanel.site/admin/" \
+            > /dev/null
+          echo "✅ Website online"
+          echo "✅ TinaCMS admin online"
