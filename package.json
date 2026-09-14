@@ -9,7 +9,7 @@
     "dev": "node scripts/generate-specs.mjs && astro dev",
     "dev:cms": "tinacms dev -c \"astro dev\"",
     "build": "node scripts/optimize-images.mjs && node scripts/generate-specs.mjs && NODE_OPTIONS='--max-old-space-size=4096' astro build",
-    "build:cms": "node scripts/optimize-images.mjs && NODE_OPTIONS='--max-old-space-size=4096' tinacms build && astro build",
+    "build:cms": "node scripts/optimize-images.mjs && tinacms build && astro build",
     "build:tina": "node scripts/generate-specs.mjs && node scripts/build-with-tina.mjs",
     "build:full": "node scripts/generate-specs.mjs && npm run build:cms && npm run build",
     "preview": "astro preview",
