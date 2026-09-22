@@ -220,7 +220,7 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
 
     if (file.size > MAX_FILE_SIZE) {
       fileInput.value = "";
-      showFeedback("El archivo supera el límite de 5 MB.", "error");
+      showFeedback("El archivo supera el límite de 2 MB.", "error");
     }
   });
 
@@ -237,14 +237,6 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
       showFeedback("Revisa el archivo adjunto antes de enviar la postulación.", "error");
       return;
     }
-
-    // Reemplaza este bloque con tu endpoint de backend multipart/form-data.
-    // Ejemplo:
-    // const response = await fetch("/api/job-application", {
-    //   method: "POST",
-    //   body: new FormData(form),
-    // });
-    // if (!response.ok) throw new Error("No se pudo enviar la postulación");
 
     const submitButton =
       document.querySelector<HTMLButtonElement>("#job-submit-btn");
@@ -302,10 +294,5 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
         submitButton.disabled = false;
       }
     }
-
-    showFeedback(
-      "El formulario está listo, pero aún falta configurar el servicio seguro para recibir postulaciones y archivos.",
-      "error",
-    );
   });
 </script>
