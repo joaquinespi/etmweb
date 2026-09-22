@@ -18,3 +18,5 @@ public/uploads/optimized/
 
 # Tina CMS
 admin/index.html
+# PHP Composer
+/vendor/

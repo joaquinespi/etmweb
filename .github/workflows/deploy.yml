@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+
   workflow_dispatch:
 
 # Evita que dos deploys modifiquen producción simultáneamente.
@@ -41,6 +42,7 @@ jobs:
       # Deployment
       # ---------------------------------------------------------
       DEPLOY_PATH: ~/etmweb
+      PRIVATE_PATH: ~/etm-private
       SITE_URL: https://fit-tan-parrot.106-0-62-104.cpanel.site
 
     steps:
@@ -62,7 +64,17 @@ jobs:
           cache-dependency-path: package-lock.json
 
       # =========================================================
-      # 3. VALIDAR CONFIGURACIÓN
+      # 3. PHP + COMPOSER
+      # =========================================================
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          tools: composer:v2
+          coverage: none
+
+      # =========================================================
+      # 4. VALIDAR CONFIGURACIÓN
       # =========================================================
       - name: Validate deployment configuration
         shell: bash
@@ -102,28 +114,47 @@ jobs:
           echo "✅ Deployment configuration OK"
 
       # =========================================================
-      # 4. INFORMACIÓN DEL ENTORNO
+      # 5. INFORMACIÓN DEL ENTORNO
       # =========================================================
       - name: Show environment versions
         run: |
-          echo "Node: $(node --version)"
-          echo "npm:  $(npm --version)"
-          echo "rsync: $(rsync --version | head -n 1)"
+          echo "Node:     $(node --version)"
+          echo "npm:      $(npm --version)"
+          echo "PHP:      $(php --version | head -n 1)"
+          echo "Composer: $(composer --version)"
+          echo "rsync:    $(rsync --version | head -n 1)"
 
       # =========================================================
-      # 5. DEPENDENCIAS
+      # 6. DEPENDENCIAS NODE
       # =========================================================
-      - name: Install dependencies
+      - name: Install Node dependencies
         run: npm ci --legacy-peer-deps
 
       # =========================================================
-      # 6. BUILD
+      # 7. DEPENDENCIAS PHP
+      # =========================================================
+      - name: Install PHP dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          composer install \
+            --no-dev \
+            --prefer-dist \
+            --no-interaction \
+            --no-progress \
+            --optimize-autoloader
+
+          echo "✅ PHP dependencies installed"
+
+      # =========================================================
+      # 8. BUILD
       # =========================================================
       - name: Build TinaCMS + Astro
         run: npm run build:cms
 
       # =========================================================
-      # 7. VALIDAR BUILD
+      # 9. VALIDAR BUILD
       # =========================================================
       - name: Verify build
         shell: bash
@@ -140,6 +171,21 @@ jobs:
             exit 1
           }
 
+          test -f vendor/autoload.php || {
+            echo "::error::vendor/autoload.php no existe"
+            exit 1
+          }
+
+          test -f vendor/phpmailer/phpmailer/src/PHPMailer.php || {
+            echo "::error::PHPMailer no está instalado"
+            exit 1
+          }
+
+          test -f dist/api/lib/Mailer.php || {
+            echo "::error::dist/api/lib/Mailer.php no existe"
+            exit 1
+          }
+
           test -f dist/sitemap-index.xml || {
             echo "::warning::dist/sitemap-index.xml no existe"
           }
@@ -147,6 +193,9 @@ jobs:
           echo "----------------------------------------"
           echo "✅ Astro website OK"
           echo "✅ TinaCMS admin OK"
+          echo "✅ PHP API OK"
+          echo "✅ Composer autoload OK"
+          echo "✅ PHPMailer OK"
           echo "----------------------------------------"
 
           echo "Archivos generados:"
@@ -155,8 +204,11 @@ jobs:
           echo "Tamaño del build:"
           du -sh dist
 
+          echo "Tamaño de dependencias PHP:"
+          du -sh vendor
+
       # =========================================================
-      # 8. CONFIGURAR SSH
+      # 10. CONFIGURAR SSH
       # =========================================================
       - name: Configure SSH
         env:
@@ -186,7 +238,7 @@ jobs:
           echo "✅ SSH configured"
 
       # =========================================================
-      # 9. VALIDAR CLAVE PRIVADA
+      # 11. VALIDAR CLAVE PRIVADA
       # =========================================================
       - name: Validate SSH private key
         run: |
@@ -197,7 +249,7 @@ jobs:
           echo "✅ SSH private key valid"
 
       # =========================================================
-      # 10. PROBAR CONEXIÓN
+      # 12. PROBAR CONEXIÓN
       # =========================================================
       - name: Test SSH connection
         run: |
@@ -212,23 +264,35 @@ jobs:
             "echo '✅ SSH connection successful'"
 
       # =========================================================
-      # 11. VALIDAR DESTINO
+      # 13. PREPARAR DESTINOS
       # =========================================================
-      - name: Verify cPanel destination
+      - name: Prepare cPanel directories
+        shell: bash
         run: |
+          set -euo pipefail
+
           ssh \
             -o BatchMode=yes \
             -i ~/.ssh/cpanel_deploy \
             -p "$CPANEL_SSH_PORT" \
             "$CPANEL_USER@$CPANEL_HOST" \
-            "test -d $DEPLOY_PATH"
+            "
+              set -e
 
-          echo "✅ $DEPLOY_PATH exists"
+              test -d $DEPLOY_PATH
+
+              mkdir -p $PRIVATE_PATH/vendor
+              mkdir -p $PRIVATE_PATH/config
+              mkdir -p $PRIVATE_PATH/logs
+              mkdir -p $PRIVATE_PATH/uploads/cv
+            "
+
+          echo "✅ Public and private directories ready"
 
       # =========================================================
-      # 12. DEPLOY
+      # 14. DEPLOY SITIO + API
       # =========================================================
-      - name: Deploy to cPanel
+      - name: Deploy website to cPanel
         shell: bash
         run: |
           set -euo pipefail
@@ -253,27 +317,70 @@ jobs:
             dist/ \
             "$CPANEL_USER@$CPANEL_HOST:$DEPLOY_PATH/"
 
-          echo "✅ rsync completed"
+          echo "✅ Website rsync completed"
 
       # =========================================================
-      # 13. VALIDAR ARCHIVOS REMOTOS
+      # 15. DEPLOY DEPENDENCIAS PHP PRIVADAS
+      # =========================================================
+      - name: Deploy PHP dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "Deploying vendor/ → $PRIVATE_PATH/vendor"
+
+          rsync \
+            -az \
+            --delete \
+            --delete-delay \
+            --human-readable \
+            --stats \
+            -e "ssh \
+              -o BatchMode=yes \
+              -o ConnectTimeout=15 \
+              -o ServerAliveInterval=15 \
+              -o ServerAliveCountMax=3 \
+              -i ~/.ssh/cpanel_deploy \
+              -p $CPANEL_SSH_PORT" \
+            vendor/ \
+            "$CPANEL_USER@$CPANEL_HOST:$PRIVATE_PATH/vendor/"
+
+          echo "✅ PHP dependencies deployed"
+
+      # =========================================================
+      # 16. VALIDAR ARCHIVOS REMOTOS
       # =========================================================
       - name: Verify remote deployment
+        shell: bash
         run: |
+          set -euo pipefail
+
           ssh \
             -o BatchMode=yes \
             -i ~/.ssh/cpanel_deploy \
             -p "$CPANEL_SSH_PORT" \
             "$CPANEL_USER@$CPANEL_HOST" \
             "
-              test -f $DEPLOY_PATH/index.html &&
+              set -e
+
+              test -f $DEPLOY_PATH/index.html
               test -f $DEPLOY_PATH/admin/index.html
+
+              test -f $DEPLOY_PATH/api/lib/Mailer.php
+
+              test -f $PRIVATE_PATH/vendor/autoload.php
+              test -f $PRIVATE_PATH/vendor/phpmailer/phpmailer/src/PHPMailer.php
+
+              test -f $PRIVATE_PATH/config/database.php
+              test -f $PRIVATE_PATH/config/mail.php
             "
 
           echo "✅ Remote files verified"
+          echo "✅ PHPMailer verified"
+          echo "✅ Private configuration verified"
 
       # =========================================================
-      # 14. HEALTH CHECK WEB
+      # 17. HEALTH CHECK WEB
       # =========================================================
       - name: Verify production website
         shell: bash
@@ -306,7 +413,7 @@ jobs:
           check_url "$SITE_URL/admin/" "TinaCMS Admin"
 
       # =========================================================
-      # 15. RESUMEN
+      # 18. RESUMEN
       # =========================================================
       - name: Deployment summary
         if: success()
@@ -318,8 +425,11 @@ jobs:
             echo "|---|---|"
             echo "| Astro build | ✅ |"
             echo "| TinaCMS admin | ✅ |"
+            echo "| PHP API | ✅ |"
+            echo "| PHPMailer | ✅ |"
             echo "| SSH | ✅ |"
-            echo "| rsync | ✅ |"
+            echo "| Website rsync | ✅ |"
+            echo "| Private vendor rsync | ✅ |"
             echo "| Remote files | ✅ |"
             echo "| Website | ✅ |"
             echo "| Admin | ✅ |"
@@ -327,12 +437,15 @@ jobs:
             echo "### Environment"
             echo ""
             echo "- Node: $(node --version)"
-            echo "- Target: \`$DEPLOY_PATH\`"
+            echo "- PHP: $(php --version | head -n 1)"
+            echo "- Composer: $(composer --version)"
+            echo "- Public target: \`$DEPLOY_PATH\`"
+            echo "- Private target: \`$PRIVATE_PATH\`"
             echo "- URL: $SITE_URL"
           } >> "$GITHUB_STEP_SUMMARY"
 
       # =========================================================
-      # 16. LIMPIEZA
+      # 19. LIMPIEZA
       # =========================================================
       - name: Cleanup SSH credentials
         if: always()
