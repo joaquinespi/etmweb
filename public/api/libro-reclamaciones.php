@@ -6,7 +6,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
 require_once __DIR__ . '/lib/Database.php';
-
+require_once __DIR__ . '/lib/Mailer.php';
 
 function response(int $status, array $data): never
 {
