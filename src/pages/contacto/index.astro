@@ -99,6 +99,28 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
                 class="w-full px-4 py-2 rounded-sm border border-red-200 focus:ring-2 focus:ring-red-600/50 text-gray-700 placeholder:text-gray-300 focus:border-red-600 dark:bg-transparent dark:border-red-600 dark:text-white dark:placeholder:text-gray-500"
               />
             </div>
+            <div>
+              <label
+                for="phone"
+                class="font-body text-sm font-medium mb-2 uppercase tracking-wide text-gray-500 dark:text-gray-400"
+              >
+                Celular <span aria-hidden="true">*</span>
+              </label>
+
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                required
+                autocomplete="tel"
+                inputmode="numeric"
+                minlength="9"
+                maxlength="9"
+                pattern="[0-9]{9}"
+                placeholder="987654321"
+                class="w-full px-4 py-2 rounded-sm border border-red-200 focus:ring-2 focus:ring-red-600/50 text-gray-700 placeholder:text-gray-300 focus:border-red-600 dark:bg-transparent dark:border-red-600 dark:text-white dark:placeholder:text-gray-500"
+              />
+            </div>
           </div>
 
           <div>
@@ -111,14 +133,19 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
             <select
               id="subject"
               name="subject"
+              required
               class="w-full px-4 py-2 rounded-sm border border-red-200 focus:ring-2 focus:ring-red-600/50 text-gray-700 focus:border-red-600 dark:bg-transparent dark:border-red-600 dark:text-white"
             >
               <option value="">Selecciona un tema</option>
-              <option value="producto">Consulta de producto</option>
-              <option value="disponibilidad">Disponibilidad en sucursal</option>
-              <option value="precio">Precio y ofertas</option>
-              <option value="soporte">Soporte técnico</option>
-              <option value="otro">Otro</option>
+              <option value="Quiero Comprar Celular">
+                Quiero Comprar Celular
+              </option>
+              <option value="Quiero Cambiar a Claro">
+                Quiero Cambiar a Claro
+              </option>
+              <option value="Quiero Catalogo de Equipos">
+                Quiero Catálogo de Equipos
+              </option>
             </select>
           </div>
 
@@ -133,6 +160,7 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
               id="message"
               name="message"
               required
+              maxlength="600"
               rows="5"
               placeholder="¿En qué podemos ayudarte?"
               class="w-full px-4 py-2 rounded-sm border border-red-200 focus:ring-2 focus:ring-red-600/50 text-gray-700 placeholder:text-gray-300 focus:border-red-600 dark:bg-transparent dark:border-red-600 dark:text-white dark:placeholder:text-gray-500"
@@ -153,7 +181,7 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
             >
               <option value="">Cualquier sucursal</option>
               {locations.map((loc) => (
-                <option value={loc.id}>
+                <option value={loc.data.name}>
                   {loc.data.name} — {loc.data.district}
                 </option>
               ))}
@@ -222,12 +250,16 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
   const button = document.querySelector<HTMLButtonElement>("#submit-btn");
   const feedback = document.querySelector<HTMLElement>("#form-feedback");
 
+  const originalButtonHTML = button?.innerHTML ?? "Enviar mensaje →";
+
   function showFeedback(message: string, type: "success" | "error") {
     if (!feedback) return;
+
     feedback.className =
       type === "success"
         ? "rounded-lg bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
         : "rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-800 dark:bg-red-950/40 dark:text-red-300";
+
     feedback.textContent = message;
   }
 
@@ -239,29 +271,67 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
       return;
     }
 
-    // Conecta aquí tu endpoint real. No se simula un éxito para no engañar
-    // al usuario con mensajes que no fueron enviados.
-    showFeedback(
-      "El formulario está listo, pero aún falta configurar el servicio de envío.",
-      "error",
-    );
+    if (!button) return;
 
-    // Ejemplo para un endpoint propio:
-    // button!.disabled = true;
-    // button!.textContent = "Enviando...";
-    // try {
-    //   const response = await fetch("/api/contact", {
-    //     method: "POST",
-    //     body: new FormData(form),
-    //   });
-    //   if (!response.ok) throw new Error("No se pudo enviar el formulario");
-    //   form.reset();
-    //   showFeedback("Mensaje enviado. Te contactaremos pronto.", "success");
-    // } catch {
-    //   showFeedback("No pudimos enviar tu mensaje. Inténtalo nuevamente.", "error");
-    // } finally {
-    //   button!.disabled = false;
-    //   button!.textContent = "Enviar mensaje →";
-    // }
+    // Evitar doble envío
+    button.disabled = true;
+    button.textContent = "Enviando...";
+
+    // Ocultar mensaje anterior
+    if (feedback) {
+      feedback.className = "hidden";
+      feedback.textContent = "";
+    }
+
+    try {
+      const formData = new FormData(form);
+
+      const response = await fetch("/api/contacto.php", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      let data: {
+        success?: boolean;
+        message?: string;
+        id?: number;
+      };
+
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error(
+          "El servidor devolvió una respuesta no válida.",
+        );
+      }
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message ||
+            "No pudimos enviar tu mensaje. Inténtalo nuevamente.",
+        );
+      }
+
+      form.reset();
+
+      showFeedback(
+        data.message ||
+          "Tu mensaje fue recibido correctamente.",
+        "success",
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "No pudimos enviar tu mensaje. Inténtalo nuevamente.";
+
+      showFeedback(message, "error");
+    } finally {
+      button.disabled = false;
+      button.innerHTML = originalButtonHTML;
+    }
   });
 </script>
