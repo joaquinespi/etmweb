@@ -175,6 +175,8 @@ try {
 
     response(500, [
         'success' => false,
-        'message' => 'No pudimos registrar tu mensaje. Inténtalo nuevamente.',
+        'message' => 'Error temporal de diagnóstico.',
+        'error_type' => get_class($e),
+        'error_message' => $e->getMessage(),
     ]);
 }
