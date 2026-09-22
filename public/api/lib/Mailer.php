@@ -7,7 +7,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 final class Mailer
 {
-    private array $config;
+    /** @var array<string, mixed> */
+    private $config = [];
 
     public function __construct(string $account)
     {
