@@ -1,4 +1,10 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import {
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+} from "react";
+
 import ProductCardReact from "./ProductCardReact.tsx";
 
 export default function FilterPanel({
@@ -8,26 +14,147 @@ export default function FilterPanel({
   locations,
 }: any) {
   const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState("Todas");
-  const [activeBrand, setActiveBrand] = useState("Todas");
-  const [activeLocation, setActiveLocation] = useState("Todas");
-  const [sortOrder, setSortOrder] = useState("Más recientes");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [activeCategory, setActiveCategory] =
+    useState("Todas");
+  const [activeBrand, setActiveBrand] =
+    useState("Todas");
+  const [activeLocation, setActiveLocation] =
+    useState("Todas");
+  const [sortOrder, setSortOrder] =
+    useState("Más recientes");
+  const [currentPage, setCurrentPage] =
+    useState(1);
 
   const ITEMS_PER_PAGE = 8;
+
+  /*
+  |--------------------------------------------------------------------------
+  | Leer categoría desde la URL
+  |--------------------------------------------------------------------------
+  |
+  | Ejemplo:
+  |
+  | /tienda?categoria=equipo-celular
+  |
+  | Busca un producto cuyo categorySlug sea "equipo-celular"
+  | y obtiene su nombre visible: "Equipo Celular".
+  |
+  */
+
+  useEffect(() => {
+    const params = new URLSearchParams(
+      window.location.search,
+    );
+
+    const categorySlug =
+      params.get("categoria");
+
+    /*
+     * Si no existe ?categoria= dejamos "Todas".
+     */
+    if (!categorySlug) {
+      setActiveCategory("Todas");
+      return;
+    }
+
+    const product = products.find(
+      (p: any) =>
+        p.categorySlug === categorySlug,
+    );
+
+    /*
+     * Solo activamos la categoría si realmente
+     * existe entre los productos.
+     */
+    if (product) {
+      setActiveCategory(product.category);
+    } else {
+      setActiveCategory("Todas");
+    }
+  }, [products]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Cambiar categoría
+  |--------------------------------------------------------------------------
+  |
+  | Además de actualizar React, sincronizamos la URL.
+  |
+  | Equipo Celular:
+  | /tienda?categoria=equipo-celular
+  |
+  | Todas:
+  | /tienda
+  |
+  */
+
+  function handleCategoryChange(
+    categoryName: string,
+  ) {
+    setActiveCategory(categoryName);
+
+    const url = new URL(
+      window.location.href,
+    );
+
+    if (categoryName === "Todas") {
+      url.searchParams.delete("categoria");
+    } else {
+      const product = products.find(
+        (p: any) =>
+          p.category === categoryName,
+      );
+
+      if (product?.categorySlug) {
+        url.searchParams.set(
+          "categoria",
+          product.categorySlug,
+        );
+      }
+    }
+
+    /*
+     * Actualizamos la URL sin recargar.
+     *
+     * Conservamos cualquier otro parámetro
+     * que pueda existir en el futuro.
+     */
+
+    window.history.replaceState(
+      {},
+      "",
+      `${url.pathname}${url.search}${url.hash}`,
+    );
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Filtrado
+  |--------------------------------------------------------------------------
+  */
 
   const filteredProducts = useMemo(() => {
     return products
       .filter((p: any) => {
         const matchesSearch = p.title
           .toLowerCase()
-          .includes(search.toLowerCase());
+          .includes(
+            search.toLowerCase(),
+          );
+
         const matchesCategory =
-          activeCategory === "Todas" || p.category === activeCategory;
+          activeCategory === "Todas" ||
+          p.category === activeCategory;
+
         const matchesBrand =
-          activeBrand === "Todas" || p.brand === activeBrand;
+          activeBrand === "Todas" ||
+          p.brand === activeBrand;
+
         const matchesLocation =
-          activeLocation === "Todas" || p.locations.includes(activeLocation);
+          activeLocation === "Todas" ||
+          p.locations.includes(
+            activeLocation,
+          );
 
         return (
           matchesSearch &&
@@ -37,8 +164,20 @@ export default function FilterPanel({
         );
       })
       .sort((a: any, b: any) => {
-        if (sortOrder === "Precio: Bajo a Alto") return a.price - b.price;
-        if (sortOrder === "Precio: Alto a Bajo") return b.price - a.price;
+        if (
+          sortOrder ===
+          "Precio: Bajo a Alto"
+        ) {
+          return a.price - b.price;
+        }
+
+        if (
+          sortOrder ===
+          "Precio: Alto a Bajo"
+        ) {
+          return b.price - a.price;
+        }
+
         return 0;
       });
   }, [
@@ -50,49 +189,107 @@ export default function FilterPanel({
     products,
   ]);
 
+  /*
+  |--------------------------------------------------------------------------
+  | Reiniciar paginación al cambiar filtros
+  |--------------------------------------------------------------------------
+  */
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, activeCategory, activeBrand, activeLocation, sortOrder]);
+  }, [
+    search,
+    activeCategory,
+    activeBrand,
+    activeLocation,
+    sortOrder,
+  ]);
 
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-  const safePage = Math.min(Math.max(currentPage, 1), totalPages || 1);
+  /*
+  |--------------------------------------------------------------------------
+  | Paginación
+  |--------------------------------------------------------------------------
+  */
 
-  const paginatedProducts = useMemo(() => {
-    const start = (safePage - 1) * ITEMS_PER_PAGE;
-    return filteredProducts.slice(start, start + ITEMS_PER_PAGE);
-  }, [filteredProducts, safePage]);
+  const totalPages = Math.ceil(
+    filteredProducts.length /
+      ITEMS_PER_PAGE,
+  );
+
+  const safePage = Math.min(
+    Math.max(currentPage, 1),
+    totalPages || 1,
+  );
+
+  const paginatedProducts =
+    useMemo(() => {
+      const start =
+        (safePage - 1) *
+        ITEMS_PER_PAGE;
+
+      return filteredProducts.slice(
+        start,
+        start + ITEMS_PER_PAGE,
+      );
+    }, [
+      filteredProducts,
+      safePage,
+    ]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Render
+  |--------------------------------------------------------------------------
+  */
 
   return (
     <div className="space-y-12">
+      {/* FILTROS */}
+
       <div className="bg-white rounded-lg shadow-md p-4 dark:border dark:border-gray-100 dark:bg-black">
         <div className="flex flex-col gap-2">
+          {/* BUSCADOR */}
+
           <input
             type="text"
             placeholder="Buscar producto..."
             className="w-full px-6 py-4 rounded-lg border border-red-200 focus:ring-2 focus:ring-red-600/50 text-xl text-gray-700 placeholder:text-gray-300 transition-all dark:text-white dark:placeholder-gray-100"
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
             value={search}
           />
+
+          {/* DROPDOWNS */}
 
           <div className="flex flex-wrap items-center gap-x-8 gap-y-4 px-6 py-2 mt-2">
             <FilterDropdown
               label="Categorías"
               options={categories}
               active={activeCategory}
-              onChange={setActiveCategory}
+              onChange={
+                handleCategoryChange
+              }
             />
+
             <FilterDropdown
               label="Sedes"
               options={locations}
               active={activeLocation}
-              onChange={setActiveLocation}
+              onChange={
+                setActiveLocation
+              }
             />
+
             <FilterDropdown
               label="Marcas"
               options={brands}
               active={activeBrand}
-              onChange={setActiveBrand}
+              onChange={
+                setActiveBrand
+              }
             />
+
             <FilterDropdown
               label="Ordenar por"
               options={[
@@ -107,72 +304,123 @@ export default function FilterPanel({
         </div>
       </div>
 
+      {/* CONTADOR */}
+
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <p className="text-sm font-medium text-gray-500 dark:text-gray-300">
-          {filteredProducts.length} productos encontrados
+          {filteredProducts.length}{" "}
+          productos encontrados
         </p>
 
         {totalPages > 1 && (
           <p className="text-sm text-gray-400 dark:text-gray-400">
-            Página {safePage} de {totalPages}
+            Página {safePage} de{" "}
+            {totalPages}
           </p>
         )}
       </div>
 
+      {/* PRODUCTOS */}
+
       {filteredProducts.length > 0 ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
-            {paginatedProducts.map((product: any) => {
-              const hasDiscount =
-                product.salePrice && product.salePrice < product.price;
-              const saving = hasDiscount
-                ? (product.price - product.salePrice).toFixed(2)
-                : null;
+            {paginatedProducts.map(
+              (product: any) => {
+                const hasDiscount =
+                  product.salePrice &&
+                  product.salePrice <
+                    product.price;
 
-              return (
-                <div
-                  key={product.id}
-                  className="animate-in fade-in duration-500"
-                >
-                  <ProductCardReact
-                    product={{ ...product, hasDiscount, saving }}
-                  />
-                </div>
-              );
-            })}
+                const saving =
+                  hasDiscount
+                    ? (
+                        product.price -
+                        product.salePrice
+                      ).toFixed(2)
+                    : null;
+
+                return (
+                  <div
+                    key={product.id}
+                    className="animate-in fade-in duration-500"
+                  >
+                    <ProductCardReact
+                      product={{
+                        ...product,
+                        hasDiscount,
+                        saving,
+                      }}
+                    />
+                  </div>
+                );
+              },
+            )}
           </div>
+
+          {/* PAGINACIÓN */}
 
           {totalPages > 1 && (
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={safePage === 1}
+                type="button"
+                onClick={() =>
+                  setCurrentPage(
+                    (p) =>
+                      Math.max(
+                        1,
+                        p - 1,
+                      ),
+                  )
+                }
+                disabled={
+                  safePage === 1
+                }
                 className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed dark:bg-black dark:border-gray-700 dark:text-white dark:hover:bg-gray-900"
               >
                 Anterior
               </button>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`min-w-10.5 px-4 py-2 rounded-xl border text-sm font-semibold transition ${
-                      page === safePage
-                        ? "bg-red-600 text-white border-red-600"
-                        : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 dark:bg-black dark:border-gray-700 dark:text-white dark:hover:bg-gray-900"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ),
-              )}
+              {Array.from(
+                {
+                  length:
+                    totalPages,
+                },
+                (_, i) => i + 1,
+              ).map((page) => (
+                <button
+                  type="button"
+                  key={page}
+                  onClick={() =>
+                    setCurrentPage(
+                      page,
+                    )
+                  }
+                  className={`min-w-10.5 px-4 py-2 rounded-xl border text-sm font-semibold transition ${
+                    page === safePage
+                      ? "bg-red-600 text-white border-red-600"
+                      : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 dark:bg-black dark:border-gray-700 dark:text-white dark:hover:bg-gray-900"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
 
               <button
+                type="button"
                 onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  setCurrentPage(
+                    (p) =>
+                      Math.min(
+                        totalPages,
+                        p + 1,
+                      ),
+                  )
                 }
-                disabled={safePage === totalPages}
+                disabled={
+                  safePage ===
+                  totalPages
+                }
                 className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed dark:bg-black dark:border-gray-700 dark:text-white dark:hover:bg-gray-900"
               >
                 Siguiente
@@ -183,7 +431,8 @@ export default function FilterPanel({
       ) : (
         <div className="text-center py-20">
           <p className="text-gray-400 text-lg">
-            No se encontraron productos que coincidan con tu búsqueda.
+            No se encontraron productos
+            que coincidan con tu búsqueda.
           </p>
         </div>
       )}
@@ -191,42 +440,97 @@ export default function FilterPanel({
   );
 }
 
-function FilterDropdown({ label, options, active, onChange }: any) {
-  const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Cierra el dropdown al tocar/hacer click fuera de él
+/*
+|--------------------------------------------------------------------------
+| FilterDropdown
+|--------------------------------------------------------------------------
+*/
+
+function FilterDropdown({
+  label,
+  options,
+  active,
+  onChange,
+}: any) {
+  const [open, setOpen] =
+    useState(false);
+
+  const containerRef =
+    useRef<HTMLDivElement>(null);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Cerrar dropdown al hacer click fuera
+  |--------------------------------------------------------------------------
+  */
+
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
 
-    function handleOutsideClick(event: MouseEvent | TouchEvent) {
+    function handleOutsideClick(
+      event: MouseEvent | TouchEvent,
+    ) {
       if (
         containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
+        !containerRef.current.contains(
+          event.target as Node,
+        )
       ) {
         setOpen(false);
       }
     }
 
-    document.addEventListener("mousedown", handleOutsideClick);
-    document.addEventListener("touchstart", handleOutsideClick);
+    document.addEventListener(
+      "mousedown",
+      handleOutsideClick,
+    );
+
+    document.addEventListener(
+      "touchstart",
+      handleOutsideClick,
+    );
 
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-      document.removeEventListener("touchstart", handleOutsideClick);
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick,
+      );
+
+      document.removeEventListener(
+        "touchstart",
+        handleOutsideClick,
+      );
     };
   }, [open]);
 
-  function handleSelect(value: string) {
+  /*
+  |--------------------------------------------------------------------------
+  | Seleccionar opción
+  |--------------------------------------------------------------------------
+  */
+
+  function handleSelect(
+    value: string,
+  ) {
     onChange(value);
     setOpen(false);
   }
 
   return (
-    <div className="relative py-2" ref={containerRef}>
+    <div
+      className="relative py-2"
+      ref={containerRef}
+    >
       <button
         type="button"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={() =>
+          setOpen(
+            (prev) => !prev,
+          )
+        }
         aria-expanded={open}
         aria-haspopup="listbox"
         className="flex items-center gap-2 cursor-pointer"
@@ -234,12 +538,16 @@ function FilterDropdown({ label, options, active, onChange }: any) {
         <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">
           {label}:
         </span>
+
         <span className="text-sm font-bold text-gray-900 dark:text-white">
           {active}
         </span>
+
         <svg
           className={`w-4 h-4 text-gray-400 transition-transform ${
-            open ? "rotate-180" : ""
+            open
+              ? "rotate-180"
+              : ""
           }`}
           fill="none"
           stroke="currentColor"
@@ -259,8 +567,15 @@ function FilterDropdown({ label, options, active, onChange }: any) {
           role="listbox"
           className="absolute left-0 mt-2 w-56 bg-white border border-gray-100 rounded-xl shadow-xl z-50 p-2 dark:bg-black dark:border-gray-700"
         >
+          {/* TODAS */}
+
           <button
-            onClick={() => handleSelect("Todas")}
+            type="button"
+            onClick={() =>
+              handleSelect(
+                "Todas",
+              )
+            }
             className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
               active === "Todas"
                 ? "bg-red-50 text-red-600"
@@ -270,19 +585,28 @@ function FilterDropdown({ label, options, active, onChange }: any) {
             Todas
           </button>
 
-          {options.map((opt: any) => (
-            <button
-              key={opt}
-              onClick={() => handleSelect(opt)}
-              className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                active === opt
-                  ? "bg-orange-50 text-red-600"
-                  : "hover:bg-gray-50 text-gray-600 dark:text-white dark:hover:text-black"
-              }`}
-            >
-              {opt}
-            </button>
-          ))}
+          {/* OPCIONES */}
+
+          {options.map(
+            (opt: any) => (
+              <button
+                type="button"
+                key={opt}
+                onClick={() =>
+                  handleSelect(
+                    opt,
+                  )
+                }
+                className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  active === opt
+                    ? "bg-orange-50 text-red-600"
+                    : "hover:bg-gray-50 text-gray-600 dark:text-white dark:hover:text-black"
+                }`}
+              >
+                {opt}
+              </button>
+            ),
+          )}
         </div>
       )}
     </div>
