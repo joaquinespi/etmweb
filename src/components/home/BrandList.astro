@@ -1,18 +1,43 @@
 ---
 // src/components/home/BrandList.astro
-import { getCollection, type CollectionEntry } from "astro:content";
+
+import {
+  getCollection,
+  type CollectionEntry,
+} from "astro:content";
+
 import Icon from "../../components/ui/Icon.astro";
 import { getOptimizedImage } from "../../lib/images";
 
 type Brand = CollectionEntry<"brands">;
 
-const brands: Brand[] = await getCollection("brands");
+const brands: Brand[] =
+  await getCollection("brands");
+
+/*
+ * Ordenamos alfabéticamente para mantener
+ * una presentación consistente.
+ */
+const sortedBrands = [...brands].sort(
+  (a, b) =>
+    a.data.name.localeCompare(
+      b.data.name,
+    ),
+);
 ---
 
 <section class="py-12 bg-gray-50/50 dark:bg-black">
   <div class="container mx-auto px-4">
+
+    <!-- TÍTULO -->
+
     <div class="flex items-center justify-center gap-2 mb-10">
-      <Icon id="icon-best" name="best" class="w-12 h-12 md:w-8 md:h-8 text-orange-600" />
+      <Icon
+        id="icon-best"
+        name="best"
+        class="w-12 h-12 md:w-8 md:h-8 text-orange-600"
+      />
+
       <h2
         class="font-body text-3xl sm:text-4xl font-medium text-black dark:text-white"
       >
@@ -20,47 +45,72 @@ const brands: Brand[] = await getCollection("brands");
       </h2>
     </div>
 
+    <!-- MARCAS -->
+
     <div class="flex flex-wrap justify-center gap-4 sm:gap-6">
       {
-        brands.map((brand) => {
+        sortedBrands.map((brand) => {
+          /*
+           * Los archivos de brands funcionan como:
+           *
+           * apple.json   → brand.id = "apple"
+           * samsung.json → brand.id = "samsung"
+           *
+           * Si el schema dispone de slug,
+           * también podemos utilizarlo.
+           */
+
+          const brandSlug =
+            (brand.data as any).slug ??
+            brand.id;
+
+          /*
+           * Ejemplo:
+           *
+           * /tienda?marca=apple
+           */
+          const href =
+            `/tienda?marca=${encodeURIComponent(
+              brandSlug,
+            )}`;
+
           const logo = brand.data.logo
-            ? getOptimizedImage(brand.data.logo)
+            ? getOptimizedImage(
+                brand.data.logo,
+              )
             : null;
 
-          const card = (
-            <div class="w-32 h-32 sm:w-40 sm:h-40 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center p-6 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
-              {logo ? (
-                <img
-                  src={logo.full}
-                  alt={brand.data.name}
-                  width="112"
-                  height="112"
-                  class="max-w-full max-h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
-                  loading="lazy"
-                />
-              ) : (
-                <span class="font-bold text-gray-400 text-center text-sm">
-                  {brand.data.name}
-                </span>
-              )}
-            </div>
-          );
-
-          return brand.data.website ? (
+          return (
             <a
-              href={brand.data.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Visitar el sitio web de ${brand.data.name}`}
-              class="group relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 rounded-2xl"
+              href={href}
+              aria-label={`Ver productos de ${brand.data.name}`}
+              class="group relative rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
             >
-              {card}
+              <div
+                class="w-32 h-32 sm:w-40 sm:h-40 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center p-6 transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+              >
+                {
+                  logo ? (
+                    <img
+                      src={logo.full}
+                      alt={brand.data.name}
+                      width="112"
+                      height="112"
+                      class="max-w-full max-h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span class="font-bold text-gray-400 text-center text-sm">
+                      {brand.data.name}
+                    </span>
+                  )
+                }
+              </div>
             </a>
-          ) : (
-            <div class="group relative">{card}</div>
           );
         })
       }
     </div>
+
   </div>
 </section>

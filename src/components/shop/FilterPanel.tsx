@@ -42,34 +42,39 @@ export default function FilterPanel({
   */
 
   useEffect(() => {
-    const params = new URLSearchParams(
-      window.location.search,
-    );
+    const params = new URLSearchParams(window.location.search);
 
-    const categorySlug =
-      params.get("categoria");
+    const categorySlug = params.get("categoria");
+    const brandSlug = params.get("marca");
 
-    /*
-     * Si no existe ?categoria= dejamos "Todas".
-     */
-    if (!categorySlug) {
-      setActiveCategory("Todas");
-      return;
-    }
+    // Categoría
+    if (categorySlug) {
+      const productByCategory = products.find(
+        (p: any) => p.categorySlug === categorySlug,
+      );
 
-    const product = products.find(
-      (p: any) =>
-        p.categorySlug === categorySlug,
-    );
-
-    /*
-     * Solo activamos la categoría si realmente
-     * existe entre los productos.
-     */
-    if (product) {
-      setActiveCategory(product.category);
+      if (productByCategory) {
+        setActiveCategory(productByCategory.category);
+      } else {
+        setActiveCategory("Todas");
+      }
     } else {
       setActiveCategory("Todas");
+    }
+
+    // Marca
+    if (brandSlug) {
+      const productByBrand = products.find(
+        (p: any) => p.brandSlug === brandSlug,
+      );
+
+      if (productByBrand) {
+        setActiveBrand(productByBrand.brand);
+      } else {
+        setActiveBrand("Todas");
+      }
+    } else {
+      setActiveBrand("Todas");
     }
   }, [products]);
 
@@ -119,6 +124,33 @@ export default function FilterPanel({
      * Conservamos cualquier otro parámetro
      * que pueda existir en el futuro.
      */
+
+    window.history.replaceState(
+      {},
+      "",
+      `${url.pathname}${url.search}${url.hash}`,
+    );
+  }
+
+  function handleBrandChange(brandName: string) {
+    setActiveBrand(brandName);
+
+    const url = new URL(window.location.href);
+
+    if (brandName === "Todas") {
+      url.searchParams.delete("marca");
+    } else {
+      const product = products.find(
+        (p: any) => p.brand === brandName,
+      );
+
+      if (product?.brandSlug) {
+        url.searchParams.set(
+          "marca",
+          product.brandSlug,
+        );
+      }
+    }
 
     window.history.replaceState(
       {},
@@ -285,9 +317,7 @@ export default function FilterPanel({
               label="Marcas"
               options={brands}
               active={activeBrand}
-              onChange={
-                setActiveBrand
-              }
+              onChange={handleBrandChange}
             />
 
             <FilterDropdown

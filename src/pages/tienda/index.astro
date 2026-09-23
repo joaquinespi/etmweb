@@ -23,6 +23,7 @@ const productIndex = await Promise.all(
       salePrice: p.data.salePrice,
 
       brand: brand?.data.name || "Sin Marca",
+      brandSlug: p.data.brand || "",
 
       category: category?.data.name || "Sin Categoría",
       categorySlug: p.data.category || "",
