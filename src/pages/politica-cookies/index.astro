@@ -1,0 +1,165 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BreadCrumb from "../../components/ui/BreadCrumb.astro";
+---
+
+<BaseLayout
+  title="Política de cookies"
+  description="Información sobre el uso de cookies en el sitio web de Expansion TEC MyT."
+>
+  <div class="w-full mt-20"></div>
+
+  <main class="container mx-auto max-w-4xl px-4 py-8 sm:py-12">
+    <BreadCrumb
+      crumbs={[
+        { label: "Inicio", href: "/" },
+        { label: "Política de cookies" },
+      ]}
+    />
+
+    <header class="mt-10 border-b border-gray-200 pb-10 dark:border-gray-800">
+      <p class="text-sm font-semibold uppercase tracking-widest text-red-600">
+        Información legal
+      </p>
+
+      <h1
+        class="mt-3 font-body text-4xl sm:text-5xl font-medium text-gray-900 dark:text-white"
+      >
+        Política de cookies
+      </h1>
+
+      <p class="mt-5 text-lg leading-8 text-gray-600 dark:text-gray-300">
+        En esta página explicamos de manera general qué son las
+        cookies y cómo pueden utilizarse durante la navegación por
+        nuestro sitio web.
+      </p>
+
+      <p class="mt-4 text-sm text-gray-400">
+        Contenido demostrativo sujeto a actualización.
+      </p>
+    </header>
+
+    <div
+      class="mt-10 space-y-10 text-gray-600 leading-8 dark:text-gray-300"
+    >
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          1. ¿Qué son las cookies?
+        </h2>
+
+        <p class="mt-4">
+          Las cookies son pequeños archivos o fragmentos de
+          información que pueden almacenarse en el dispositivo del
+          usuario cuando visita un sitio web. Permiten recordar
+          determinadas preferencias y facilitar algunas funciones
+          relacionadas con la navegación.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          2. ¿Para qué utilizamos cookies?
+        </h2>
+
+        <p class="mt-4">
+          El sitio puede utilizar cookies necesarias para su
+          funcionamiento y otras tecnologías destinadas a mejorar la
+          experiencia de navegación, recordar preferencias y conocer
+          de manera general cómo se utiliza el sitio.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          3. Tipos de cookies
+        </h2>
+
+        <div class="mt-5 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl border border-gray-200 p-6 dark:border-gray-800">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Cookies necesarias
+            </h3>
+            <p class="mt-2">
+              Permiten el funcionamiento básico y seguro de
+              determinadas características del sitio.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 p-6 dark:border-gray-800">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Cookies de preferencias
+            </h3>
+            <p class="mt-2">
+              Pueden utilizarse para recordar determinadas
+              configuraciones seleccionadas durante la navegación.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 p-6 dark:border-gray-800">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Cookies estadísticas
+            </h3>
+            <p class="mt-2">
+              Pueden ayudarnos a comprender de forma agregada cómo
+              interactúan los visitantes con nuestras páginas.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 p-6 dark:border-gray-800">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Servicios de terceros
+            </h3>
+            <p class="mt-2">
+              Algunos servicios integrados en el sitio podrían
+              utilizar sus propias tecnologías de almacenamiento.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          4. Administración de cookies
+        </h2>
+
+        <p class="mt-4">
+          El usuario puede configurar su navegador para permitir,
+          bloquear o eliminar cookies. La desactivación de algunas
+          cookies podría afectar determinadas funciones del sitio.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          5. Actualizaciones
+        </h2>
+
+        <p class="mt-4">
+          Esta política podrá ser actualizada cuando se incorporen
+          nuevas funcionalidades, herramientas o cambios relacionados
+          con el uso de cookies en nuestro sitio.
+        </p>
+      </section>
+
+      <section class="rounded-2xl bg-gray-100 p-6 dark:bg-gray-900">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+          ¿Tienes alguna consulta?
+        </h2>
+
+        <p class="mt-2">
+          Puedes comunicarte con nosotros a través de nuestra página
+          de contacto.
+        </p>
+
+        <a
+          href="/contacto"
+          class="mt-4 inline-flex font-semibold text-red-600 hover:text-red-700"
+        >
+          Ir a contacto →
+        </a>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
