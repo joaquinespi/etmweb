@@ -1,6 +1,9 @@
 {
   "name": "Samsung",
-  "logo": "/uploads/marcas/1742419028361-Samsung.webp",
+  "logo": "/uploads/marca_samsung.png",
   "website": "https://www.samsung.com",
-  "categories": ["accesorios", "equipo-celular"]
+  "categories": [
+    "accesorios",
+    "equipo-celular"
+  ]
 }
