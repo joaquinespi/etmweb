@@ -126,7 +126,7 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
             >
               <option value="">Selecciona una sucursal</option>
               {locations.map((loc) => (
-                <option value={loc.id}>
+                <option value={loc.data.name}>
                   {loc.data.name} — {loc.data.district}
                 </option>
               ))}
@@ -146,11 +146,12 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
             name="cv"
             type="file"
             required
-            accept=".pdf,.doc,.docx,image/png,image/jpeg,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             class="block w-full cursor-pointer rounded-xl border border-dashed border-red-300 bg-red-50/40 px-4 py-4 text-sm text-gray-600 file:mr-4 file:rounded-lg file:border-0 file:bg-red-600 file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 dark:border-red-800 dark:bg-red-950/20 dark:text-gray-300"
           />
+
           <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            Formatos permitidos: PDF, Word (.doc/.docx), JPG, PNG o WebP. Tamaño máximo: 5 MB.
+            Formatos permitidos: PDF o Word (.doc/.docx). Tamaño máximo: 2 MB.
           </p>
         </div>
 
@@ -188,14 +189,11 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
   const fileInput = document.querySelector<HTMLInputElement>("#cv");
   const feedback = document.querySelector<HTMLElement>("#job-form-feedback");
 
-  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  const MAX_FILE_SIZE = 2 * 1024 * 1024;
   const ALLOWED_FILE_TYPES = new Set([
     "application/pdf",
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "image/jpeg",
-    "image/png",
-    "image/webp",
   ]);
 
   function showFeedback(message: string, type: "success" | "error") {
@@ -213,13 +211,16 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
 
     if (!ALLOWED_FILE_TYPES.has(file.type)) {
       fileInput.value = "";
-      showFeedback("Formato no permitido. Adjunta un PDF, Word, JPG, PNG o WebP.", "error");
+      showFeedback(
+        "Formato no permitido. Adjunta un archivo PDF o Word (.doc/.docx).",
+        "error",
+      );
       return;
     }
 
     if (file.size > MAX_FILE_SIZE) {
       fileInput.value = "";
-      showFeedback("El archivo supera el límite de 5 MB.", "error");
+      showFeedback("El archivo supera el límite de 2 MB.", "error");
     }
   });
 
@@ -237,16 +238,61 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
       return;
     }
 
-    // Reemplaza este bloque con tu endpoint de backend multipart/form-data.
-    // Ejemplo:
-    // const response = await fetch("/api/job-application", {
-    //   method: "POST",
-    //   body: new FormData(form),
-    // });
-    // if (!response.ok) throw new Error("No se pudo enviar la postulación");
-    showFeedback(
-      "El formulario está listo, pero aún falta configurar el servicio seguro para recibir postulaciones y archivos.",
-      "error",
-    );
+    const submitButton =
+      document.querySelector<HTMLButtonElement>("#job-submit-btn");
+
+    try {
+      if (submitButton) {
+        submitButton.disabled = true;
+      }
+
+      showFeedback(
+        "Enviando tu postulación...",
+        "success",
+      );
+
+      const response = await fetch(
+        "/api/trabaja-con-nosotros.php",
+        {
+          method: "POST",
+          body: new FormData(form),
+          headers: {
+            Accept: "application/json",
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message ||
+            "No pudimos enviar tu postulación.",
+        );
+      }
+
+      form.reset();
+
+      showFeedback(
+        data.message ||
+          "Tu postulación fue enviada correctamente.",
+        "success",
+      );
+
+    } catch (error) {
+
+      showFeedback(
+        error instanceof Error
+          ? error.message
+          : "No pudimos enviar tu postulación.",
+        "error",
+      );
+
+    } finally {
+
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    }
   });
 </script>

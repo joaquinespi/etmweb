@@ -1,0 +1,185 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BreadCrumb from "../../components/ui/BreadCrumb.astro";
+---
+
+<BaseLayout
+  title="Política de privacidad"
+  description="Información sobre privacidad y tratamiento de datos personales en Expansion TEC MyT."
+>
+  <div class="w-full mt-20"></div>
+
+  <main class="container mx-auto max-w-4xl px-4 py-8 sm:py-12">
+    <BreadCrumb
+      crumbs={[
+        { label: "Inicio", href: "/" },
+        { label: "Política de privacidad" },
+      ]}
+    />
+
+    <header class="mt-10 border-b border-gray-200 pb-10 dark:border-gray-800">
+      <p class="text-sm font-semibold uppercase tracking-widest text-red-600">
+        Privacidad
+      </p>
+
+      <h1
+        class="mt-3 font-body text-4xl sm:text-5xl font-medium text-gray-900 dark:text-white"
+      >
+        Política de privacidad
+      </h1>
+
+      <p class="mt-5 text-lg leading-8 text-gray-600 dark:text-gray-300">
+        La privacidad de nuestros usuarios es importante para
+        nosotros. Esta página presenta información general sobre el
+        tratamiento de los datos proporcionados a través del sitio.
+      </p>
+
+      <p class="mt-4 text-sm text-gray-400">
+        Contenido demostrativo sujeto a revisión y actualización.
+      </p>
+    </header>
+
+    <div class="mt-10 space-y-10 text-gray-600 leading-8 dark:text-gray-300">
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          1. Información que podemos recopilar
+        </h2>
+
+        <p class="mt-4">
+          Dependiendo del servicio utilizado, el usuario puede
+          proporcionar voluntariamente información como nombres,
+          datos de contacto, consultas y otra información necesaria
+          para atender una solicitud.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          2. Formularios del sitio
+        </h2>
+
+        <p class="mt-4">
+          Nuestro sitio dispone de diferentes medios mediante los
+          cuales los usuarios pueden comunicarse con nosotros o
+          realizar solicitudes.
+        </p>
+
+        <div class="mt-5 space-y-4">
+          <div class="rounded-2xl border border-gray-200 p-6 dark:border-gray-800">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Contáctanos
+            </h3>
+            <p class="mt-2">
+              Permite enviar consultas relacionadas con nuestros
+              productos, servicios y atención comercial.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 p-6 dark:border-gray-800">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Trabaja con nosotros
+            </h3>
+            <p class="mt-2">
+              Permite que los interesados envíen información
+              relacionada con procesos de selección y postulación.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 p-6 dark:border-gray-800">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Libro de Reclamaciones
+            </h3>
+            <p class="mt-2">
+              Permite registrar la información necesaria para
+              gestionar reclamaciones y solicitudes presentadas por
+              los usuarios.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          3. Finalidad de la información
+        </h2>
+
+        <p class="mt-4">
+          Los datos proporcionados podrán utilizarse para responder
+          consultas, gestionar solicitudes, atender comunicaciones,
+          procesar postulaciones y mejorar la atención brindada a
+          nuestros usuarios.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          4. Seguridad
+        </h2>
+
+        <p class="mt-4">
+          Procuramos adoptar medidas razonables para proteger la
+          información proporcionada mediante nuestros canales
+          digitales frente a accesos, alteraciones o usos no
+          autorizados.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          5. Conservación de información
+        </h2>
+
+        <p class="mt-4">
+          La información podrá conservarse durante el tiempo
+          necesario para cumplir la finalidad para la cual fue
+          proporcionada y las obligaciones que resulten aplicables.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          6. Derechos del usuario
+        </h2>
+
+        <p class="mt-4">
+          Los usuarios podrán comunicarse con Expansion TEC MyT para
+          realizar consultas relacionadas con sus datos personales y
+          solicitar la atención que corresponda según la normativa
+          aplicable.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+          7. Cambios en esta política
+        </h2>
+
+        <p class="mt-4">
+          Esta política puede ser modificada cuando se incorporen
+          nuevos servicios, procesos o cambios que hagan necesaria su
+          actualización.
+        </p>
+      </section>
+
+      <section class="rounded-2xl bg-gray-100 p-6 dark:bg-gray-900">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+          Contacto
+        </h2>
+
+        <p class="mt-2">
+          Para consultas relacionadas con esta política puedes
+          utilizar nuestros canales de contacto.
+        </p>
+
+        <a
+          href="/contacto"
+          class="mt-4 inline-flex font-semibold text-red-600 hover:text-red-700"
+        >
+          Contáctanos →
+        </a>
+      </section>
+    </div>
+  </main>
+</BaseLayout>

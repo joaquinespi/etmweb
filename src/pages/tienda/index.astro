@@ -21,10 +21,16 @@ const productIndex = await Promise.all(
       shortDescription: p.data.shortDescription,
       price: p.data.price,
       salePrice: p.data.salePrice,
+
       brand: brand?.data.name || "Sin Marca",
+      brandSlug: p.data.brand || "",
+
       category: category?.data.name || "Sin Categoría",
+      categorySlug: p.data.category || "",
+
       locations: p.data.locations?.map((l: any) => l.location) || [],
       images: p.data.images,
+
       url: `/tienda/producto/${p.id}`,
     };
   }),

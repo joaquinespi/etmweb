@@ -12,7 +12,8 @@ const sorted = categories.sort((a: any, b: any) => a.data.name.localeCompare(b.d
     <div class="flex flex-wrap justify-center gap-4 sm:gap-6">
       {sorted.map((cat: any) => {
         const { name, image, slug } = cat.data;
-        const href = `/categoria/${slug ?? cat.id}`;
+        const categorySlug = slug ?? cat.id;
+        const href = `/tienda?categoria=${encodeURIComponent(categorySlug)}`;
         return (
           <a
             href={href}

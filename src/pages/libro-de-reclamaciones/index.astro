@@ -98,10 +98,10 @@ const today = new Date().toISOString().slice(0, 10);
                 class="field-control"
               >
                 <option value="">Selecciona el tipo de documento</option>
-                <option value="dni">DNI</option>
-                <option value="ce">Carné de extranjería</option>
-                <option value="passport">Pasaporte</option>
-                <option value="other">Otro</option>
+                <option value="1">DNI</option>
+                <option value="2">Carné de extranjería</option>
+                <option value="3">Pasaporte</option>
+                <option value="4">RUC</option>
               </select>
             </div>
 
@@ -241,6 +241,90 @@ const today = new Date().toISOString().slice(0, 10);
               No
             </label>
           </div>
+
+          <!-- Datos del Padre / Madre / Tutor -->
+          <div
+            id="guardian-section"
+            class="hidden space-y-6"
+            aria-hidden="true"
+          >
+            <div class="pt-2">
+              <h3 class="section-title">
+                Padre / Madre / Tutor
+              </h3>
+            </div>
+
+            <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <div>
+                <label for="guardian-name" class="field-label">
+                  Nombre <span>*</span>
+                </label>
+
+                <input
+                  id="guardian-name"
+                  name="guardianName"
+                  type="text"
+                  autocomplete="name"
+                  placeholder="Nombre"
+                  class="field-control"
+                  data-guardian-required
+                />
+              </div>
+
+              <div>
+                <label for="guardian-email" class="field-label">
+                  Correo electrónico <span>*</span>
+                </label>
+
+                <input
+                  id="guardian-email"
+                  name="guardianEmail"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="Correo electrónico"
+                  class="field-control"
+                  data-guardian-required
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <div>
+                <label for="guardian-document-type" class="field-label">
+                  Tipo de documentación <span>*</span>
+                </label>
+
+                <select
+                  id="guardian-document-type"
+                  name="guardianDocumentType"
+                  class="field-control"
+                  data-guardian-required
+                >
+                  <option value="">Selecciona el tipo de documento</option>
+                  <option value="1">DNI</option>
+                  <option value="2">Carné de extranjería</option>
+                  <option value="3">Pasaporte</option>
+                  <option value="4">RUC</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="guardian-document-number" class="field-label">
+                  Número de documento <span>*</span>
+                </label>
+
+                <input
+                  id="guardian-document-number"
+                  name="guardianDocumentNumber"
+                  type="text"
+                  inputmode="numeric"
+                  placeholder="Número de documento"
+                  class="field-control"
+                  data-guardian-required
+                />
+              </div>
+            </div>
+          </div>
         </fieldset>
 
         <fieldset class="space-y-6">
@@ -260,8 +344,8 @@ const today = new Date().toISOString().slice(0, 10);
                 class="field-control"
               >
                 <option value="">Selecciona un tipo</option>
-                <option value="reclamo">Reclamo</option>
-                <option value="queja">Queja</option>
+                <option value="1">Reclamación</option>
+                <option value="2">Queja</option>
               </select>
             </div>
 
@@ -269,6 +353,7 @@ const today = new Date().toISOString().slice(0, 10);
               <label for="consumption-type" class="field-label">
                 Tipo de consumo <span>*</span>
               </label>
+
               <select
                 id="consumption-type"
                 name="consumptionType"
@@ -276,8 +361,8 @@ const today = new Date().toISOString().slice(0, 10);
                 class="field-control"
               >
                 <option value="">Selecciona un tipo</option>
-                <option value="producto">Producto</option>
-                <option value="servicio">Servicio</option>
+                <option value="1">Producto</option>
+                <option value="2">Servicio</option>
               </select>
             </div>
 
@@ -346,6 +431,7 @@ const today = new Date().toISOString().slice(0, 10);
               id="product-description"
               name="productDescription"
               required
+              maxlength="600"
               rows="4"
               class="field-control"
               placeholder="Describe el producto o servicio relacionado"
@@ -399,6 +485,7 @@ const today = new Date().toISOString().slice(0, 10);
               id="claim-detail"
               name="claimDetail"
               required
+              maxlength="600"
               rows="5"
               class="field-control"
               placeholder="Describe detalladamente los hechos"
@@ -413,6 +500,7 @@ const today = new Date().toISOString().slice(0, 10);
               id="customer-request"
               name="customerRequest"
               required
+              maxlength="600"
               rows="5"
               class="field-control"
               placeholder="Indica qué solución solicitas"
@@ -489,6 +577,52 @@ const today = new Date().toISOString().slice(0, 10);
   const submitButton =
     document.querySelector<HTMLButtonElement>("#claims-submit");
   const feedback = document.querySelector<HTMLElement>("#claims-feedback");
+    const minorRadios =
+  document.querySelectorAll<HTMLInputElement>('input[name="minor"]');
+
+  const guardianSection =
+    document.querySelector<HTMLElement>("#guardian-section");
+
+  const guardianRequiredFields =
+    guardianSection?.querySelectorAll<
+      HTMLInputElement | HTMLSelectElement
+    >("[data-guardian-required]");
+
+  function updateGuardianSection() {
+    const selectedMinor =
+      document.querySelector<HTMLInputElement>(
+        'input[name="minor"]:checked',
+      );
+
+    const isMinor = selectedMinor?.value === "yes";
+
+    if (!guardianSection) return;
+
+    if (isMinor) {
+      guardianSection.classList.remove("hidden");
+      guardianSection.setAttribute("aria-hidden", "false");
+
+      guardianRequiredFields?.forEach((field) => {
+        field.required = true;
+      });
+
+      return;
+    }
+
+    guardianSection.classList.add("hidden");
+    guardianSection.setAttribute("aria-hidden", "true");
+
+    guardianRequiredFields?.forEach((field) => {
+      field.required = false;
+      field.value = "";
+    });
+  }
+
+  minorRadios.forEach((radio) => {
+    radio.addEventListener("change", updateGuardianSection);
+  });
+
+  updateGuardianSection();
 
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -498,14 +632,79 @@ const today = new Date().toISOString().slice(0, 10);
       return;
     }
 
+    if (!submitButton) return;
+
+    const originalText = submitButton.textContent ?? "ENVIAR";
+
+    submitButton.disabled = true;
+    submitButton.textContent = "ENVIANDO...";
+
     if (feedback) {
-      feedback.className =
-        "rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:bg-amber-950/40 dark:text-amber-300";
-      feedback.textContent =
-        "El formulario está validado, pero aún falta configurar el servicio de recepción de reclamos.";
+      feedback.className = "hidden";
+      feedback.textContent = "";
     }
 
-    submitButton?.removeAttribute("disabled");
+    try {
+      const formData = new FormData(form);
+
+      const response = await fetch("/api/libro-reclamaciones.php", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      let data: {
+        success?: boolean;
+        message?: string;
+        id?: number;
+      };
+
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error(
+          "El servidor devolvió una respuesta no válida.",
+        );
+      }
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message ||
+            "No pudimos registrar tu solicitud.",
+        );
+      }
+
+      form.reset();
+      updateGuardianSection();
+
+      if (feedback) {
+        feedback.className =
+          "rounded-lg bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300";
+
+        feedback.textContent =
+          data.message ||
+          "Tu solicitud fue registrada correctamente.";
+      }
+
+    } catch (error) {
+
+      if (feedback) {
+        feedback.className =
+          "rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-800 dark:bg-red-950/40 dark:text-red-300";
+
+        feedback.textContent =
+          error instanceof Error
+            ? error.message
+            : "No pudimos registrar tu solicitud. Inténtalo nuevamente.";
+      }
+
+    } finally {
+
+      submitButton.disabled = false;
+      submitButton.textContent = originalText;
+    }
   });
 </script>
 

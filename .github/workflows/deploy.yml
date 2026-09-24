@@ -7,167 +7,447 @@ on:
 
   workflow_dispatch:
 
+# Evita que dos deploys modifiquen producción simultáneamente.
 concurrency:
   group: production-deploy
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   build-and-deploy:
-    name: Build and Deploy
+    name: Build & Deploy
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
+    # Evita workflows bloqueados indefinidamente.
+    timeout-minutes: 20
 
     env:
+      # ---------------------------------------------------------
+      # TinaCMS
+      # ---------------------------------------------------------
       TINA_CLIENT_ID: ${{ secrets.TINA_CLIENT_ID }}
       TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
       TINA_SEARCH_TOKEN: ${{ secrets.TINA_SEARCH_TOKEN }}
 
+      # ---------------------------------------------------------
+      # cPanel
+      # ---------------------------------------------------------
       CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
       CPANEL_USER: ${{ secrets.CPANEL_USER }}
       CPANEL_SSH_PORT: ${{ secrets.CPANEL_SSH_PORT }}
 
+      # ---------------------------------------------------------
+      # Deployment
+      # ---------------------------------------------------------
+      DEPLOY_PATH: ~/etmweb
+      PRIVATE_PATH: ~/etm-private
+      SITE_URL: https://fit-tan-parrot.106-0-62-104.cpanel.site
+
     steps:
-      # ---------------------------------------------------------
-      # 1. Descargar repositorio
-      # ---------------------------------------------------------
+
+      # =========================================================
+      # 1. CHECKOUT
+      # =========================================================
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ---------------------------------------------------------
-      # 2. Configurar Node.js
-      # ---------------------------------------------------------
+      # =========================================================
+      # 2. NODE
+      # =========================================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22.20.0"
-          cache: "npm"
+          cache: npm
+          cache-dependency-path: package-lock.json
 
-      # ---------------------------------------------------------
-      # 3. Mostrar versiones
-      # ---------------------------------------------------------
-      - name: Show versions
+      # =========================================================
+      # 3. PHP + COMPOSER
+      # =========================================================
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          tools: composer:v2
+          coverage: none
+
+      # =========================================================
+      # 4. VALIDAR CONFIGURACIÓN
+      # =========================================================
+      - name: Validate deployment configuration
+        shell: bash
         run: |
-          node --version
-          npm --version
+          set -euo pipefail
 
-      # ---------------------------------------------------------
-      # 4. Instalar dependencias
-      # ---------------------------------------------------------
-      - name: Install dependencies
+          [ -n "$TINA_CLIENT_ID" ] || {
+            echo "::error::TINA_CLIENT_ID no está configurado"
+            exit 1
+          }
+
+          [ -n "$TINA_TOKEN" ] || {
+            echo "::error::TINA_TOKEN no está configurado"
+            exit 1
+          }
+
+          [ -n "$TINA_SEARCH_TOKEN" ] || {
+            echo "::error::TINA_SEARCH_TOKEN no está configurado"
+            exit 1
+          }
+
+          [ -n "$CPANEL_HOST" ] || {
+            echo "::error::CPANEL_HOST no está configurado"
+            exit 1
+          }
+
+          [ -n "$CPANEL_USER" ] || {
+            echo "::error::CPANEL_USER no está configurado"
+            exit 1
+          }
+
+          [ -n "$CPANEL_SSH_PORT" ] || {
+            echo "::error::CPANEL_SSH_PORT no está configurado"
+            exit 1
+          }
+
+          echo "✅ Deployment configuration OK"
+
+      # =========================================================
+      # 5. INFORMACIÓN DEL ENTORNO
+      # =========================================================
+      - name: Show environment versions
+        run: |
+          echo "Node:     $(node --version)"
+          echo "npm:      $(npm --version)"
+          echo "PHP:      $(php --version | head -n 1)"
+          echo "Composer: $(composer --version)"
+          echo "rsync:    $(rsync --version | head -n 1)"
+
+      # =========================================================
+      # 6. DEPENDENCIAS NODE
+      # =========================================================
+      - name: Install Node dependencies
         run: npm ci --legacy-peer-deps
 
-      # ---------------------------------------------------------
-      # 5. Build TinaCMS + Astro
-      # ---------------------------------------------------------
-      - name: Build website
+      # =========================================================
+      # 7. DEPENDENCIAS PHP
+      # =========================================================
+      - name: Install PHP dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          composer install \
+            --no-dev \
+            --prefer-dist \
+            --no-interaction \
+            --no-progress \
+            --optimize-autoloader
+
+          echo "✅ PHP dependencies installed"
+
+      # =========================================================
+      # 8. BUILD
+      # =========================================================
+      - name: Build TinaCMS + Astro
         run: npm run build:cms
 
-      # ---------------------------------------------------------
-      # 6. Verificar archivos críticos
-      # ---------------------------------------------------------
+      # =========================================================
+      # 9. VALIDAR BUILD
+      # =========================================================
       - name: Verify build
+        shell: bash
         run: |
+          set -euo pipefail
+
           test -f dist/index.html || {
-            echo "ERROR: dist/index.html no existe"
+            echo "::error::dist/index.html no existe"
             exit 1
           }
 
           test -f dist/admin/index.html || {
-            echo "ERROR: dist/admin/index.html no existe"
+            echo "::error::dist/admin/index.html no existe"
             exit 1
           }
 
+          test -f vendor/autoload.php || {
+            echo "::error::vendor/autoload.php no existe"
+            exit 1
+          }
+
+          test -f vendor/phpmailer/phpmailer/src/PHPMailer.php || {
+            echo "::error::PHPMailer no está instalado"
+            exit 1
+          }
+
+          test -f dist/api/lib/Mailer.php || {
+            echo "::error::dist/api/lib/Mailer.php no existe"
+            exit 1
+          }
+
+          test -f dist/sitemap-index.xml || {
+            echo "::warning::dist/sitemap-index.xml no existe"
+          }
+
+          echo "----------------------------------------"
           echo "✅ Astro website OK"
           echo "✅ TinaCMS admin OK"
+          echo "✅ PHP API OK"
+          echo "✅ Composer autoload OK"
+          echo "✅ PHPMailer OK"
+          echo "----------------------------------------"
 
-      # ---------------------------------------------------------
-      # 7. Configurar SSH
-      # ---------------------------------------------------------
+          echo "Archivos generados:"
+          find dist -type f | wc -l
+
+          echo "Tamaño del build:"
+          du -sh dist
+
+          echo "Tamaño de dependencias PHP:"
+          du -sh vendor
+
+      # =========================================================
+      # 10. CONFIGURAR SSH
+      # =========================================================
       - name: Configure SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.CPANEL_SSH_PRIVATE_KEY }}
+        shell: bash
         run: |
+          set -euo pipefail
+
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "::error::CPANEL_SSH_PRIVATE_KEY no está configurado"
+            exit 1
+          fi
+
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/cpanel_deploy
+          chmod 600 ~/.ssh/cpanel_deploy
 
           ssh-keyscan \
             -p "$CPANEL_SSH_PORT" \
             -H "$CPANEL_HOST" \
             >> ~/.ssh/known_hosts
 
-          chmod 644 ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
 
-      # ---------------------------------------------------------
-      # 8. Probar conexión SSH
-      # ---------------------------------------------------------
+          echo "✅ SSH configured"
+
+      # =========================================================
+      # 11. VALIDAR CLAVE PRIVADA
+      # =========================================================
+      - name: Validate SSH private key
+        run: |
+          ssh-keygen -y \
+            -f ~/.ssh/cpanel_deploy \
+            > /dev/null
+
+          echo "✅ SSH private key valid"
+
+      # =========================================================
+      # 12. PROBAR CONEXIÓN
+      # =========================================================
       - name: Test SSH connection
         run: |
           ssh \
-            -i ~/.ssh/id_ed25519 \
+            -o BatchMode=yes \
+            -o ConnectTimeout=15 \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=3 \
+            -i ~/.ssh/cpanel_deploy \
             -p "$CPANEL_SSH_PORT" \
             "$CPANEL_USER@$CPANEL_HOST" \
             "echo '✅ SSH connection successful'"
 
-      # ---------------------------------------------------------
-      # 9. Verificar carpeta destino
-      # ---------------------------------------------------------
-      - name: Verify cPanel destination
+      # =========================================================
+      # 13. PREPARAR DESTINOS
+      # =========================================================
+      - name: Prepare cPanel directories
+        shell: bash
         run: |
+          set -euo pipefail
+
           ssh \
-            -i ~/.ssh/id_ed25519 \
+            -o BatchMode=yes \
+            -i ~/.ssh/cpanel_deploy \
             -p "$CPANEL_SSH_PORT" \
             "$CPANEL_USER@$CPANEL_HOST" \
-            "test -d ~/etmweb && echo '✅ ~/etmweb existe' || { echo '❌ ~/etmweb no existe'; exit 1; }"
+            "
+              set -e
 
-      # ---------------------------------------------------------
-      # 10. Deploy mediante rsync
-      # ---------------------------------------------------------
-      - name: Deploy to cPanel
+              test -d $DEPLOY_PATH
+
+              mkdir -p $PRIVATE_PATH/vendor
+              mkdir -p $PRIVATE_PATH/config
+              mkdir -p $PRIVATE_PATH/logs
+              mkdir -p $PRIVATE_PATH/uploads/cv
+            "
+
+          echo "✅ Public and private directories ready"
+
+      # =========================================================
+      # 14. DEPLOY SITIO + API
+      # =========================================================
+      - name: Deploy website to cPanel
+        shell: bash
         run: |
+          set -euo pipefail
+
+          echo "Deploying dist/ → $DEPLOY_PATH"
+
           rsync \
             -az \
             --delete \
+            --delete-delay \
+            --human-readable \
+            --stats \
             --exclude=".well-known/" \
-            -e "ssh -i ~/.ssh/id_ed25519 -p $CPANEL_SSH_PORT" \
+            --exclude=".htaccess" \
+            -e "ssh \
+              -o BatchMode=yes \
+              -o ConnectTimeout=15 \
+              -o ServerAliveInterval=15 \
+              -o ServerAliveCountMax=3 \
+              -i ~/.ssh/cpanel_deploy \
+              -p $CPANEL_SSH_PORT" \
             dist/ \
-            "$CPANEL_USER@$CPANEL_HOST:~/etmweb/"
+            "$CPANEL_USER@$CPANEL_HOST:$DEPLOY_PATH/"
 
-      # ---------------------------------------------------------
-      # 11. Verificación remota
-      # ---------------------------------------------------------
-      - name: Verify deployment
+          echo "✅ Website rsync completed"
+
+      # =========================================================
+      # 15. DEPLOY DEPENDENCIAS PHP PRIVADAS
+      # =========================================================
+      - name: Deploy PHP dependencies
+        shell: bash
         run: |
+          set -euo pipefail
+
+          echo "Deploying vendor/ → $PRIVATE_PATH/vendor"
+
+          rsync \
+            -az \
+            --delete \
+            --delete-delay \
+            --human-readable \
+            --stats \
+            -e "ssh \
+              -o BatchMode=yes \
+              -o ConnectTimeout=15 \
+              -o ServerAliveInterval=15 \
+              -o ServerAliveCountMax=3 \
+              -i ~/.ssh/cpanel_deploy \
+              -p $CPANEL_SSH_PORT" \
+            vendor/ \
+            "$CPANEL_USER@$CPANEL_HOST:$PRIVATE_PATH/vendor/"
+
+          echo "✅ PHP dependencies deployed"
+
+      # =========================================================
+      # 16. VALIDAR ARCHIVOS REMOTOS
+      # =========================================================
+      - name: Verify remote deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+
           ssh \
-            -i ~/.ssh/id_ed25519 \
+            -o BatchMode=yes \
+            -i ~/.ssh/cpanel_deploy \
             -p "$CPANEL_SSH_PORT" \
             "$CPANEL_USER@$CPANEL_HOST" \
-            "test -f ~/etmweb/index.html && test -f ~/etmweb/admin/index.html"
+            "
+              set -e
 
-          echo "✅ Deployment completed successfully"
-      # ---------------------------------------------------------
-      # 13. comprobacion HTTP
-      # ---------------------------------------------------------
-      - name: Check production website
+              test -f $DEPLOY_PATH/index.html
+              test -f $DEPLOY_PATH/admin/index.html
+
+              test -f $DEPLOY_PATH/api/lib/Mailer.php
+
+              test -f $PRIVATE_PATH/vendor/autoload.php
+              test -f $PRIVATE_PATH/vendor/phpmailer/phpmailer/src/PHPMailer.php
+
+              test -f $PRIVATE_PATH/config/database.php
+              test -f $PRIVATE_PATH/config/mail.php
+            "
+
+          echo "✅ Remote files verified"
+          echo "✅ PHPMailer verified"
+          echo "✅ Private configuration verified"
+
+      # =========================================================
+      # 17. HEALTH CHECK WEB
+      # =========================================================
+      - name: Verify production website
+        shell: bash
         run: |
-          curl \
-            --fail \
-            --silent \
-            --show-error \
-            --location \
-            "https://fit-tan-parrot.106-0-62-104.cpanel.site/" \
-            > /dev/null
+          set -euo pipefail
 
-          curl \
-            --fail \
-            --silent \
-            --show-error \
-            --location \
-            "https://fit-tan-parrot.106-0-62-104.cpanel.site/admin/" \
-            > /dev/null
-          echo "✅ Website online"
-          echo "✅ TinaCMS admin online"
+          check_url() {
+            URL="$1"
+            NAME="$2"
+
+            echo "Checking $NAME..."
+
+            curl \
+              --fail \
+              --silent \
+              --show-error \
+              --location \
+              --retry 4 \
+              --retry-delay 3 \
+              --retry-all-errors \
+              --connect-timeout 10 \
+              --max-time 30 \
+              "$URL" \
+              > /dev/null
+
+            echo "✅ $NAME online"
+          }
+
+          check_url "$SITE_URL/" "Website"
+          check_url "$SITE_URL/admin/" "TinaCMS Admin"
+
+      # =========================================================
+      # 18. RESUMEN
+      # =========================================================
+      - name: Deployment summary
+        if: success()
+        run: |
+          {
+            echo "## 🚀 Deployment successful"
+            echo ""
+            echo "| Check | Status |"
+            echo "|---|---|"
+            echo "| Astro build | ✅ |"
+            echo "| TinaCMS admin | ✅ |"
+            echo "| PHP API | ✅ |"
+            echo "| PHPMailer | ✅ |"
+            echo "| SSH | ✅ |"
+            echo "| Website rsync | ✅ |"
+            echo "| Private vendor rsync | ✅ |"
+            echo "| Remote files | ✅ |"
+            echo "| Website | ✅ |"
+            echo "| Admin | ✅ |"
+            echo ""
+            echo "### Environment"
+            echo ""
+            echo "- Node: $(node --version)"
+            echo "- PHP: $(php --version | head -n 1)"
+            echo "- Composer: $(composer --version)"
+            echo "- Public target: \`$DEPLOY_PATH\`"
+            echo "- Private target: \`$PRIVATE_PATH\`"
+            echo "- URL: $SITE_URL"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # =========================================================
+      # 19. LIMPIEZA
+      # =========================================================
+      - name: Cleanup SSH credentials
+        if: always()
+        run: |
+          rm -f ~/.ssh/cpanel_deploy
