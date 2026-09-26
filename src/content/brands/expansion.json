@@ -1,9 +1,0 @@
-{
-  "name": "Expansion",
-  "logo": "/uploads/logo-Expansion-v3-interior-blanco.png",
-  "categories": [
-    {
-      "category": "src/content/categories/equipo-celular.json"
-    }
-  ]
-}
