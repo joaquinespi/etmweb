@@ -56,7 +56,25 @@ const productIndex = await Promise.all(
 
 const brands = [...new Set(productIndex.map((p) => p.brand))];
 const categories = [...new Set(productIndex.map((p) => p.category))];
-const locations = [...new Set(productIndex.flatMap((p) => p.locations))];
+
+const locationIds = [
+  ...new Set(productIndex.flatMap((p) => p.locations)),
+];
+
+const locations = (
+  await Promise.all(
+    locationIds.map(async (id) => {
+      const location = await getEntry("locations", id);
+
+      if (!location) return null;
+
+      return {
+        value: id,
+        label: location.data.name || id,
+      };
+    }),
+  )
+).filter(Boolean);
 ---
 
 <BaseLayout

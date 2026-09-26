@@ -486,6 +486,23 @@ function FilterDropdown({
   const [open, setOpen] =
     useState(false);
 
+  const normalizedOptions = options.map((option: any) =>
+    typeof option === "string"
+      ? {
+          value: option,
+          label: option,
+        }
+      : option,
+  );
+
+  const activeLabel =
+    active === "Todas"
+      ? "Todas"
+      : normalizedOptions.find(
+          (option: any) =>
+            option.value === active,
+        )?.label || active;
+
   const containerRef =
     useRef<HTMLDivElement>(null);
 
@@ -570,7 +587,7 @@ function FilterDropdown({
         </span>
 
         <span className="text-sm font-bold text-gray-900 dark:text-white">
-          {active}
+          {activeLabel}
         </span>
 
         <svg
@@ -617,23 +634,23 @@ function FilterDropdown({
 
           {/* OPCIONES */}
 
-          {options.map(
+          {normalizedOptions.map(
             (opt: any) => (
               <button
                 type="button"
-                key={opt}
+                key={opt.value}
                 onClick={() =>
                   handleSelect(
-                    opt,
+                    opt.value,
                   )
                 }
                 className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  active === opt
+                  active === opt.value
                     ? "bg-orange-50 text-red-600"
                     : "hover:bg-gray-50 text-gray-600 dark:text-white dark:hover:text-black"
                 }`}
               >
-                {opt}
+                {opt.label}
               </button>
             ),
           )}
