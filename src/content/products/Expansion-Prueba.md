@@ -1,5 +1,9 @@
 ---
 title: Expansion Prueba
+shortDescription: 5G
+availableColors:
+  - name: ocre
+    hex: '#906868'
 price: 1
 salePrice: 5
 brand: src/content/brands/expansion.json
