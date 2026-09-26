@@ -2,6 +2,25 @@
 import { defineConfig } from "tinacms";
 import { slidersCollection } from "./collections/sliders";
 
+const slugifyDocumentName = (values: unknown): string => {
+  const value =
+    typeof values === "string"
+      ? values
+      : typeof values === "object" &&
+          values !== null &&
+          "name" in values
+        ? String((values as { name?: unknown }).name ?? "")
+        : "";
+
+  return value
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+};
+
 export default defineConfig({
   branch: "main",
   clientId: process.env.TINA_CLIENT_ID ?? "",
@@ -43,22 +62,7 @@ export default defineConfig({
         ui: {
           filename: {
             readonly: false,
-            slugify: (val) => {
-              const value =
-                typeof val === "string"
-                  ? val
-                  : Array.isArray(val)
-                    ? String(val[0] ?? "")
-                    : String(val ?? "");
-
-              return value
-                .trim()
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^a-z0-9]+/g, "-")
-                .replace(/^-+|-+$/g, "");
-            },
+            slugify: slugifyDocumentName,
           },
         },
         fields: [
@@ -92,6 +96,7 @@ export default defineConfig({
         ui: {
           filename: {
             readonly: false,
+            slugify: slugifyDocumentName,
           },
         },
         fields: [
@@ -119,6 +124,7 @@ export default defineConfig({
         ui: {
           filename: {
             readonly: false,
+            slugify: slugifyDocumentName,
           },
         },
         fields: [
@@ -256,7 +262,6 @@ export default defineConfig({
             name: "salePrice",
             label: "Precio oferta",
           },
-          // ✅ CAMBIO: reference → string con options
           {
             type: "reference",
             name: "brand",
@@ -264,7 +269,6 @@ export default defineConfig({
             collections: ["brands"],
             required: true,
           },
-          // ✅ CAMBIO: reference → string con options
           {
             type: "reference",
             name: "category",
@@ -272,7 +276,6 @@ export default defineConfig({
             collections: ["categories"],
             required: true,
           },
-          // ✅ CAMBIO: reference → string con options
           {
             type: "object",
             name: "locations",
