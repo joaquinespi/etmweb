@@ -44,7 +44,22 @@ export default defineConfig({
         ui: {
           filename: {
             readonly: false,
-            slugify: (val) => val.toLowerCase().replace(/\s+/g, '-'),
+            slugify: (val) => {
+              const value =
+                typeof val === "string"
+                  ? val
+                  : Array.isArray(val)
+                    ? String(val[0] ?? "")
+                    : String(val ?? "");
+
+              return value
+                .trim()
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-+|-+$/g, "");
+            },
           },
         },
         fields: [
@@ -267,7 +282,6 @@ export default defineConfig({
                 options: locationOptions,
               },
             ],
-            searchable: true,
           },
           {
             type: "image",

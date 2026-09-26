@@ -6,15 +6,16 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "node scripts/generate-specs.mjs && astro dev",
-    "dev:cms": "tinacms dev -c \"astro dev\"",
+    "dev": "npm run generate:options && node scripts/generate-specs.mjs && astro dev",
+    "dev:cms": "npm run generate:options && concurrently -k -n TINA,OPTIONS \"tinacms dev -c \\\"astro dev\\\"\" \"npm run generate:options:watch\"",
+    "build:cms": "npm run generate:options && node scripts/optimize-images.mjs && tinacms build && astro build",
+    "generate:options": "node scripts/generate-tina-options.mjs",
+    "generate:options:watch": "node scripts/generate-tina-options.mjs --watch",
     "build": "node scripts/optimize-images.mjs && node scripts/generate-specs.mjs",
-    "build:cms": "node scripts/optimize-images.mjs && tinacms build && astro build",
     "build:tina": "node scripts/generate-specs.mjs && node scripts/build-with-tina.mjs",
     "build:full": "node scripts/generate-specs.mjs && npm run build:cms && npm run build",
     "preview": "astro preview",
     "astro": "astro",
-    "generate:options": "node scripts/generate-tina-options.mjs",
     "fix:refs": "node scripts/fix-tina-refs.mjs",
     "fix:refs:watch": "node scripts/fix-tina-refs-watch.mjs",
     "lint": "astro check",
@@ -56,6 +57,7 @@
     "@types/node": "^25.6.0",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.7",
+    "concurrently": "^10.0.5",
     "husky": "^9.1.7",
     "sharp": "^0.35.4"
   },

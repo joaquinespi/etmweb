@@ -9,32 +9,12 @@ export interface Option {
 
 export const brandOptions: Option[] = [
   {
-    "value": "alcatel",
-    "label": "Alcatel"
-  },
-  {
     "value": "apple",
     "label": "Apple"
   },
   {
-    "value": "azumi",
-    "label": "Azumi"
-  },
-  {
     "value": "claro",
     "label": "Claro"
-  },
-  {
-    "value": "coolpad",
-    "label": "Coolpad"
-  },
-  {
-    "value": "corn",
-    "label": "Corn"
-  },
-  {
-    "value": "hello",
-    "label": "Hello"
   },
   {
     "value": "honor",
@@ -45,44 +25,24 @@ export const brandOptions: Option[] = [
     "label": "Huawei"
   },
   {
-    "value": "ifitec-3000",
-    "label": "Ifitec 3000"
-  },
-  {
-    "value": "ipro",
-    "label": "Ipro"
-  },
-  {
-    "value": "jbl",
-    "label": "Jbl"
-  },
-  {
-    "value": "lg",
-    "label": "Lg"
-  },
-  {
     "value": "logic",
     "label": "Logic"
+  },
+  {
+    "value": "marca-test",
+    "label": "Marca Test"
   },
   {
     "value": "motorola",
     "label": "Motorola"
   },
   {
-    "value": "nokia",
-    "label": "Nokia"
-  },
-  {
-    "value": "oltech",
-    "label": "Oltech"
-  },
-  {
     "value": "oppo",
     "label": "Oppo"
   },
   {
-    "value": "realme",
-    "label": "Realme"
+    "value": "poco",
+    "label": "Poco"
   },
   {
     "value": "redmi",
@@ -91,22 +51,6 @@ export const brandOptions: Option[] = [
   {
     "value": "samsung",
     "label": "Samsung"
-  },
-  {
-    "value": "tcl",
-    "label": "Tcl"
-  },
-  {
-    "value": "tech-tfi0200",
-    "label": "Tech Tfi0200"
-  },
-  {
-    "value": "tmcell",
-    "label": "Tmcell"
-  },
-  {
-    "value": "unonu",
-    "label": "Unonu"
   },
   {
     "value": "vivo",
@@ -160,12 +104,23 @@ export const locationOptions: Option[] = [
   }
 ];
 
-// Helper para obtener label por value
-export const getBrandLabel = (value: string): string =>
-  brandOptions.find(b => b.value === value)?.label || value;
+export const getBrandLabel = (
+  value: string,
+): string =>
+  brandOptions.find(
+    (brand) => brand.value === value,
+  )?.label || value;
 
-export const getCategoryLabel = (value: string): string =>
-  categoryOptions.find(c => c.value === value)?.label || value;
+export const getCategoryLabel = (
+  value: string,
+): string =>
+  categoryOptions.find(
+    (category) => category.value === value,
+  )?.label || value;
 
-export const getLocationLabel = (value: string): string =>
-  locationOptions.find(l => l.value === value)?.label || value;
+export const getLocationLabel = (
+  value: string,
+): string =>
+  locationOptions.find(
+    (location) => location.value === value,
+  )?.label || value;
