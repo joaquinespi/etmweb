@@ -6,6 +6,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import BreadCrumb from "../../components/ui/BreadCrumb.astro";
 import Badge from "../../components/ui/Badge.astro";
 import Icon from "../../components/ui/Icon.astro";
+import { referenceToId } from "../../utils/contentReference";
 
 export async function getStaticPaths() {
   const activations = await getCollection("activations");
@@ -29,12 +30,35 @@ const heroImages = hasGallery
     : [];
 
 // 1. Resolución de localizaciones (Múltiples sedes)
+// Compatible con:
+//
+// Formato antiguo:
+// locations:
+//   - pdv-chosica
+//
+// Formato Tina reference:
+// locations:
+//   - location: src/content/locations/pdv-chosica.md
+const locationIds = (activation.data.locations ?? [])
+  .map((item: any) => {
+    const value =
+      typeof item === "string"
+        ? item
+        : item?.location;
+
+    return referenceToId(value);
+  })
+  .filter(Boolean);
+
 const locationEntries = await Promise.all(
-  (activation.data.locations || []).map((id: string) =>
+  locationIds.map((id: string) =>
     getEntry("locations", id),
   ),
 );
-const validLocations = locationEntries.filter((l) => l !== undefined);
+
+const validLocations = locationEntries.filter(
+  (location) => location !== undefined,
+);
 
 // 2. Lógica de tiempo blindada (Pre-calculada)
 const nowTime = Date.now();

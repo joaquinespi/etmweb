@@ -3,11 +3,11 @@ title: POCO F8 Pro
 shortDescription: El mejor equipo de todos los tiempos
 price: 650
 salePrice: 550
-brand: xiaomi
-category: equipo-celular
+brand: src/content/brands/xiaomi.json
+category: src/content/categories/equipo-celular.json
 locations:
-  - location: pdv-chosica
-  - location: pdv-cieneguilla
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
 images:
   - /uploads/products/poco-f8-pro-1.png
   - /uploads/products/poco-f8-pro-2.png

@@ -3,17 +3,19 @@ title: Xiaomi 17 Ultra
 shortDescription: Ultra diseño refinado
 price: 5999
 salePrice: 4999
-brand: xiaomi
-category: equipo-celular
+brand: src/content/brands/xiaomi.json
+category: src/content/categories/equipo-celular.json
 locations:
-  - location: pdv-chosica
-  - location: pdv-cieneguilla
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
 images:
   - /uploads/products/xiaomi-17-ultra/images/0.webp
 specs:
   - key: procesador
-    value: |
-      Snapdragon® 8 Elite Gen 5 proceso de manufactura de 3nmCPU:2× Prime Core, hasta 4.6GHz6× Performance Core, hasta 3.62GHzGPU:Adreno™ GPUAI:Qualcomm AI engine
+    value: >
+      Snapdragon® 8 Elite Gen 5 proceso de manufactura de 3nmCPU:2× Prime Core,
+      hasta 4.6GHz6× Performance Core, hasta 3.62GHzGPU:Adreno™ GPUAI:Qualcomm
+      AI engine
 inStock: true
 featured: true
 tags:

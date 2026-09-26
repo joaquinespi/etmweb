@@ -2,11 +2,11 @@
 title: Redmi Smart Pen
 shortDescription: El mejor lapiz de todos los tiempos
 price: 250
-brand: redmi
-category: accesorios
+brand: src/content/brands/redmi.json
+category: src/content/categories/accesorios.json
 locations:
-  - location: pdv-chosica
-  - location: pdv-cieneguilla
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
 images:
   - /uploads/products/redmi-smart-pen-1.png
   - /uploads/products/redmi-smart-pen-2.png
@@ -29,4 +29,3 @@ seoTitle: Redmi Smart Pen
 seoDescription: Escritura de nivel PC para una experiencia más eficiente
 publishedAt: 2026-02-10T03:46:38.000Z
 ---
-

@@ -3,6 +3,8 @@
   "logo": "/uploads/marca_claro.png",
   "website": "https://www.example.com",
   "categories": [
-    "router-ifi"
+    {
+      "category": "src/content/categories/router-ifi.json"
+    }
   ]
 }

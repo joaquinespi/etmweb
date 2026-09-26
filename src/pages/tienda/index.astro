@@ -5,14 +5,21 @@ import { getCollection, getEntry } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import FilterPanel from "../../components/shop/FilterPanel.tsx";
 import BreadCrumb from "../../components/ui/BreadCrumb.astro";
+import { referenceToId } from "../../utils/contentReference";
 
 const allProducts = await getCollection("products");
 
 const productIndex = await Promise.all(
   allProducts.map(async (p: any) => {
-    const brand = p.data.brand ? await getEntry("brands", p.data.brand) : null;
-    const category = p.data.category
-      ? await getEntry("categories", p.data.category)
+    const brandSlug = referenceToId(p.data.brand);
+    const categorySlug = referenceToId(p.data.category);
+
+    const brand = brandSlug
+      ? await getEntry("brands", brandSlug)
+      : null;
+
+    const category = categorySlug
+      ? await getEntry("categories", categorySlug)
       : null;
 
     return {
@@ -23,12 +30,23 @@ const productIndex = await Promise.all(
       salePrice: p.data.salePrice,
 
       brand: brand?.data.name || "Sin Marca",
-      brandSlug: p.data.brand || "",
+      brandSlug,
 
       category: category?.data.name || "Sin Categoría",
-      categorySlug: p.data.category || "",
+      categorySlug,
 
-      locations: p.data.locations?.map((l: any) => l.location) || [],
+      locations:
+        p.data.locations
+          ?.map((item: any) => {
+            const value =
+              typeof item === "string"
+                ? item
+                : item?.location;
+
+            return referenceToId(value);
+          })
+          .filter(Boolean) || [],
+
       images: p.data.images,
 
       url: `/tienda/producto/${p.id}`,

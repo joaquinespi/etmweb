@@ -3,11 +3,11 @@ title: Xiaomi Watch 5 2026
 shortDescription: Habla con Google Gemini directamente en tu muñeca
 price: 1650
 salePrice: 1550
-brand: xiaomi
-category: accesorios
+brand: src/content/brands/xiaomi.json
+category: src/content/categories/accesorios.json
 locations:
-  - location: pdv-chosica
-  - location: pdv-cieneguilla
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
 images:
   - /uploads/wearables.png
 specs:
@@ -66,8 +66,9 @@ specs:
     value: |
       WCDMA: B1/B2/B4/B5/B6/B8/B19
   - key: 4G
-    value: |
-      LTE FDD: B1/B2/B3/B4/B5/B7/B8/B12/B13/B17/B18/B19/B20/B26/B28/B32/B66 LTE TDD: B38/B40/B41/B42/B48
+    value: >
+      LTE FDD: B1/B2/B3/B4/B5/B7/B8/B12/B13/B17/B18/B19/B20/B26/B28/B32/B66 LTE
+      TDD: B38/B40/B41/B42/B48
   - key: 5G
     value: |
       si
@@ -94,4 +95,3 @@ seoTitle: POCO F8 Pro
 seoDescription: Batería de 6580mAh con carga rapida
 publishedAt: 2026-02-09T22:02:13.000Z
 ---
-

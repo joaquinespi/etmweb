@@ -1,126 +1,100 @@
 ---
-title: "Oppo Reno 14f"
-shortDescription: "5G"
+title: Oppo Reno 14f
+shortDescription: 5G
 availableColors:
-  - name: "Verde"
-    hex: "#16A34A"
+  - name: Verde
+    hex: '#16A34A'
 price: 0
-brand: "oppo"
-category: "equipo-celular"
+brand: src/content/brands/oppo.json
+category: src/content/categories/equipo-celular.json
 locations:
-  - location: "pdv-chosica"
-  - location: "pdv-cieneguilla"
-  - location: "pdv-lurin"
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
+  - location: src/content/locations/pdv-lurin.md
 images:
-  - "/uploads/products/oppo-reno-14f-01.jpg"
+  - /uploads/products/oppo-reno-14f-01.jpg
 specs:
-  - key: "Sistema Operativo"
-    value: |
-
-  - key: "Tamaño de Pantalla"
-    value: |
-
-  - key: "Tipo de Pantalla"
-    value: |
-
-  - key: "Resolución"
-    value: |
-
-  - key: "Cámara Trasera"
-    value: |
-
-  - key: "Cámara Frontal"
-    value: |
-
-  - key: "Almacenamiento"
+  - key: Sistema Operativo
+    value: ''
+  - key: Tamaño de Pantalla
+    value: ''
+  - key: Tipo de Pantalla
+    value: ''
+  - key: Resolución
+    value: ''
+  - key: Cámara Trasera
+    value: ''
+  - key: Cámara Frontal
+    value: ''
+  - key: Almacenamiento
     value: |
       256 GB
-  - key: "RAM"
+  - key: RAM
     value: |
       12 GB
-  - key: "Núcleos"
-    value: |
-
-  - key: "Velocidad CPU"
-    value: |
-
-  - key: "Procesador"
+  - key: Núcleos
+    value: ''
+  - key: Velocidad CPU
+    value: ''
+  - key: Procesador
     value: |
       Qualcomm Snapdragon 6
-  - key: "Batería"
-    value: |
-
-  - key: "Peso (g)"
-    value: |
-
-  - key: "Alto (cm)"
-    value: |
-
-  - key: "Ancho (cm)"
-    value: |
-
-  - key: "Grosor (cm)"
-    value: |
-
-  - key: "2G"
-    value: |
-
-  - key: "3G"
-    value: |
-
-  - key: "4G"
-    value: |
-
-  - key: "5G"
+  - key: Batería
+    value: ''
+  - key: Peso (g)
+    value: ''
+  - key: Alto (cm)
+    value: ''
+  - key: Ancho (cm)
+    value: ''
+  - key: Grosor (cm)
+    value: ''
+  - key: 2G
+    value: ''
+  - key: 3G
+    value: ''
+  - key: 4G
+    value: ''
+  - key: 5G
     value: |
       5G
-  - key: "WiFi"
-    value: |
-
-  - key: "Bluetooth"
-    value: |
-
-  - key: "NFC"
-    value: |
-
-  - key: "Sensor de Huella"
-    value: |
-
-  - key: "Tecnología"
+  - key: WiFi
+    value: ''
+  - key: Bluetooth
+    value: ''
+  - key: NFC
+    value: ''
+  - key: Sensor de Huella
+    value: ''
+  - key: Tecnología
     value: |
       5G
-  - key: "Tecnología SIM"
+  - key: Tecnología SIM
     value: |
       One SIM
-  - key: "Detalle técnico"
-    value: |
-
-  - key: "Dispositivo destino"
-    value: |
-
-  - key: "Tipo de accesorio"
-    value: |
-
-  - key: "Material"
-    value: |
-
-  - key: "Voltaje"
-    value: |
-
-  - key: "Tipo de conexión"
-    value: |
-
+  - key: Detalle técnico
+    value: ''
+  - key: Dispositivo destino
+    value: ''
+  - key: Tipo de accesorio
+    value: ''
+  - key: Material
+    value: ''
+  - key: Voltaje
+    value: ''
+  - key: Tipo de conexión
+    value: ''
 inStock: true
 featured: false
 tags:
-  - "12-gb"
-  - "256-gb"
-  - "5g"
-  - "equipo-celular"
-  - "oppo"
-  - "oppo-reno-14f"
-seoTitle: "Oppo Reno 14f"
-seoDescription: "5G"
+  - 12-gb
+  - 256-gb
+  - 5g
+  - equipo-celular
+  - oppo
+  - oppo-reno-14f
+seoTitle: Oppo Reno 14f
+seoDescription: 5G
 publishedAt: 2026-09-08T17:26:35.282Z
 stockQuantity: 0
 maxPerOrder: 5

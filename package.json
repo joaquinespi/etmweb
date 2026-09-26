@@ -6,18 +6,14 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "npm run generate:options && node scripts/generate-specs.mjs && astro dev",
-    "dev:cms": "npm run generate:options && concurrently -k -n TINA,OPTIONS \"tinacms dev -c \\\"astro dev\\\"\" \"npm run generate:options:watch\"",
-    "build:cms": "npm run generate:options && node scripts/optimize-images.mjs && tinacms build && astro build",
-    "generate:options": "node scripts/generate-tina-options.mjs",
-    "generate:options:watch": "node scripts/generate-tina-options.mjs --watch",
+    "dev": "node scripts/generate-specs.mjs && astro dev",
+    "dev:cms": "tinacms dev -c \"astro dev\"",
+    "build:cms": "node scripts/optimize-images.mjs && tinacms build && astro build",
     "build": "node scripts/optimize-images.mjs && node scripts/generate-specs.mjs",
     "build:tina": "node scripts/generate-specs.mjs && node scripts/build-with-tina.mjs",
     "build:full": "node scripts/generate-specs.mjs && npm run build:cms && npm run build",
     "preview": "astro preview",
     "astro": "astro",
-    "fix:refs": "node scripts/fix-tina-refs.mjs",
-    "fix:refs:watch": "node scripts/fix-tina-refs-watch.mjs",
     "lint": "astro check",
     "clean": "rm -rf dist .astro node_modules/.vite",
     "prepare": "husky",
@@ -25,7 +21,7 @@
     "backup:media": "node scripts/backup-media-to-supabase.mjs",
     "backup:full": "npm run backup:content && npm run backup:media",
     "migrate:brand-categories": "node scripts/migrate-brand-categories.mjs",
-    "migrate:brand-categories:write": "node scripts/migrate-brand-categories.mjs",
+    "migrate:brand-categories:write": "node scripts/migrate-brand-categories.mjs --write",
     "migrate:products": "node scripts/migrate-products-from-csv.mjs",
     "migrate:products:write": "node scripts/migrate-products-from-csv.mjs --write",
     "migrate:products:overwrite": "node scripts/migrate-products-from-csv.mjs --write --overwrite"
@@ -57,7 +53,6 @@
     "@types/node": "^25.6.0",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.7",
-    "concurrently": "^10.0.5",
     "husky": "^9.1.7",
     "sharp": "^0.35.4"
   },

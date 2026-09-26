@@ -1,7 +1,6 @@
 // tina/config.ts
 import { defineConfig } from "tinacms";
 import { slidersCollection } from "./collections/sliders";
-import { brandOptions, categoryOptions, locationOptions } from "./options";
 
 export default defineConfig({
   branch: "main",
@@ -67,12 +66,19 @@ export default defineConfig({
           { type: "image", name: "logo", label: "Logo" },
           { type: "string", name: "website", label: "Sitio web", searchable: false },
           {
-            type: "string",
-            name: "categories", // Lo cambiamos a plural para ser consistentes
+            type: "object",
+            name: "categories",
             label: "Categorías",
-            list: true, // ✅ Esto permite agregar múltiples sucursales
-            options: categoryOptions,
-            required: true,
+            list: true,
+            fields: [
+              {
+                type: "reference",
+                name: "category",
+                label: "Categoría",
+                collections: ["categories"],
+                required: true,
+              },
+            ],
           },
         ],
       },
@@ -152,12 +158,19 @@ export default defineConfig({
           { type: "datetime", name: "startDate", label: "Fecha inicio", required: true },
           { type: "datetime", name: "endDate", label: "Fecha fin", required: true },
           {
-            type: "string",
-            name: "locations", // Lo cambiamos a plural para ser consistentes
+            type: "object",
+            name: "locations",
             label: "Sucursales",
-            list: true, // ✅ Esto permite agregar múltiples sucursales
-            options: locationOptions,
-            required: true,
+            list: true,
+            fields: [
+              {
+                type: "reference",
+                name: "location",
+                label: "Sucursal",
+                collections: ["locations"],
+                required: true,
+              },
+            ],
           },
           {
             type: "object",
@@ -245,21 +258,19 @@ export default defineConfig({
           },
           // ✅ CAMBIO: reference → string con options
           {
-            type: "string",
+            type: "reference",
             name: "brand",
             label: "Marca",
-            options: brandOptions,
+            collections: ["brands"],
             required: true,
-            searchable: true,
           },
           // ✅ CAMBIO: reference → string con options
           {
-            type: "string",
+            type: "reference",
             name: "category",
             label: "Categoría",
-            options: categoryOptions,
+            collections: ["categories"],
             required: true,
-            searchable: true,
           },
           // ✅ CAMBIO: reference → string con options
           {
@@ -276,10 +287,10 @@ export default defineConfig({
             },
             fields: [
               {
-                type: "string",
+                type: "reference",
                 name: "location",
                 label: "Sucursal",
-                options: locationOptions,
+                collections: ["locations"],
               },
             ],
           },

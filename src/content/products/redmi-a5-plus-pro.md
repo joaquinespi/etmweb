@@ -3,11 +3,11 @@ title: Redmi A5 Plus Pro
 shortDescription: El mejor equipo de todos los tiempos
 price: 350
 salePrice: 200
-brand: redmi
-category: equipo-celular
+brand: src/content/brands/redmi.json
+category: src/content/categories/equipo-celular.json
 locations:
-  - location: pdv-chosica
-  - location: pdv-cieneguilla
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
 images:
   - /uploads/products/4bd97b9ea7c180f75cd56ab631cf2320.png
   - /uploads/products/redmi-a5-plus-pro-1.png
@@ -71,8 +71,9 @@ specs:
     value: |
       WCDMA: B1/B2/B4/B5/B6/B8/B19
   - key: 4G
-    value: |
-      LTE FDD: B1/B2/B3/B4/B5/B7/B8/B12/B13/B17/B18/B19/B20/B26/B28/B32/B66 LTE TDD: B38/B40/B41/B42/B48
+    value: >
+      LTE FDD: B1/B2/B3/B4/B5/B7/B8/B12/B13/B17/B18/B19/B20/B26/B28/B32/B66 LTE
+      TDD: B38/B40/B41/B42/B48
   - key: 5G
     value: |
       si
@@ -98,4 +99,3 @@ seoTitle: Redmi A5 Plus Pro
 seoDescription: '&nbsp;'
 publishedAt: 2026-02-09T01:45:59.000Z
 ---
-

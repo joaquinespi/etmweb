@@ -3,6 +3,8 @@
   "logo": "/uploads/marca_vivo.png",
   "website": "https://www.example.com",
   "categories": [
-    "equipo-celular"
+    {
+      "category": "src/content/categories/equipo-celular.json"
+    }
   ]
 }

@@ -2,5 +2,12 @@
   "name": "Oppo",
   "logo": "/uploads/marcas/1742419265913-logo_oppo.webp",
   "website": "https://www.logitech.com",
-  "categories": ["accesorios", "equipo-celular"]
+  "categories": [
+    {
+      "category": "src/content/categories/accesorios.json"
+    },
+    {
+      "category": "src/content/categories/equipo-celular.json"
+    }
+  ]
 }

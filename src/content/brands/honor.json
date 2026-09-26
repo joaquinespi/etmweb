@@ -2,5 +2,12 @@
   "name": "Honor",
   "logo": "/uploads/marcas/1742419238332-logo_honor.webp",
   "website": "https://www.logitech.com",
-  "categories": ["accesorios", "equipo-celular"]
+  "categories": [
+    {
+      "category": "src/content/categories/accesorios.json"
+    },
+    {
+      "category": "src/content/categories/equipo-celular.json"
+    }
+  ]
 }

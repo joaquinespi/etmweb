@@ -9,11 +9,11 @@ availableColors:
   - name: Starlight
     hex: '#F5F5DC'
 price: 0
-brand: apple
-category: equipo-celular
+brand: src/content/brands/apple.json
+category: src/content/categories/equipo-celular.json
 locations:
-  - location: pdv-cieneguilla
-  - location: pdv-lurin
+  - location: src/content/locations/pdv-cieneguilla.md
+  - location: src/content/locations/pdv-lurin.md
 mainImage: /uploads/png-transparent-iphone-13.png
 images:
   - /uploads/png-transparent-iphone-13.png
@@ -103,4 +103,3 @@ seoTitle: Apple Iphone 13
 seoDescription: 5G
 publishedAt: 2026-09-08T17:26:35.248Z
 ---
-

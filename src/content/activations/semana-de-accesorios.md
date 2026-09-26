@@ -3,8 +3,9 @@ title: Semana de Accesorios
 startDate: 2026-05-01T00:00:00.000Z
 endDate: 2026-05-26T00:00:00.000Z
 locations:
-  - los-olivos
-  - miraflores
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
+  - location: src/content/locations/pdv-lurin.md
 banner: /uploads/activaciones/183750710_116658133867832_6259312820782397018_n.jpg
 isPublished: true
 ---

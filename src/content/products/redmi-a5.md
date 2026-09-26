@@ -3,11 +3,11 @@ title: Redmi A5
 shortDescription: El mejor equipo de todos los tiempos
 price: 450
 salePrice: 320
-brand: redmi
-category: equipo-celular
+brand: src/content/brands/redmi.json
+category: src/content/categories/equipo-celular.json
 locations:
-  - location: pdv-chosica
-  - location: pdv-cieneguilla
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
 images:
   - /uploads/e49c493667d44960797bdb900abad611.png
 specs:
@@ -66,8 +66,9 @@ specs:
     value: |
       WCDMA B1/B2/B4/B5/B6/B8/B19
   - key: 4G
-    value: |
-      LTE FDD B1/B2/B3/B4/B5/B7/B8/B12/B13/B17/B18/B19/B20/B26/B28/B32/B66 LTE TDD B38/B40/B41/B42/B48
+    value: >
+      LTE FDD B1/B2/B3/B4/B5/B7/B8/B12/B13/B17/B18/B19/B20/B26/B28/B32/B66 LTE
+      TDD B38/B40/B41/B42/B48
   - key: 5G
     value: |
       si
@@ -92,4 +93,3 @@ seoTitle: Redmi A5
 seoDescription: 'Redmi A5 con gran batería, pantalla amplia y excelente rendimiento.'
 publishedAt: 2026-02-09T01:35:00.000Z
 ---
-

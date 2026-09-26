@@ -11,6 +11,7 @@ import ProductSection from "../components/home/ProductSection.astro";
 import StoreSection from "../components/home/StoreSection.astro";
 import BrandList from "../components/home/BrandList.astro";
 import ActivationSection from "../components/home/ActivationSection.astro";
+import { referenceToId } from "../utils/contentReference";
 
 const FEATURED_LIMIT = 7;
 const CATEGORY_SECTION_LIMIT = 5;
@@ -39,10 +40,20 @@ function createProductHydrator() {
     id: string,
     cache: Map<string, string>,
   ): Promise<string> {
-    if (cache.has(id)) return cache.get(id)!;
-    const entry = await getEntry(collection, id);
+    // if (cache.has(id)) return cache.get(id)!;
+    // const entry = await getEntry(collection, id);
+    // const name = entry?.data.name ?? "";
+    // cache.set(id, name);
+    // return name;
+    const normalizedId = referenceToId(id);
+    if (cache.has(normalizedId)) {
+      return cache.get(normalizedId)!;
+    }
+    const entry = normalizedId
+      ? await getEntry(collection, normalizedId)
+      : null;
     const name = entry?.data.name ?? "";
-    cache.set(id, name);
+    cache.set(normalizedId, name);
     return name;
   }
 
@@ -58,18 +69,31 @@ function createProductHydrator() {
 }
 
 async function hydrateActivation(a: Activation): Promise<HydratedActivation> {
+  const locationIds = (a.data.locations ?? [])
+    .map((item: any) => {
+      const value =
+        typeof item === "string"
+          ? item
+          : item?.location;
+
+      return referenceToId(value);
+    })
+    .filter(Boolean);
+
   const locationEntries = await Promise.all(
-    a.data.locations.map((id:any) => getEntry("locations", id)),
+    locationIds.map((id: string) => getEntry("locations", id)),
   );
 
   const locationNames: string[] = [];
+
   locationEntries.forEach((entry, i) => {
     if (!entry) {
       console.warn(
-        `[activations] "${a.id}" referencia una location inexistente: "${a.data.locations[i]}"`,
+        `[activations] "${a.id}" referencia una location inexistente: "${locationIds[i]}"`,
       );
       return;
     }
+
     locationNames.push(entry.data.name);
   });
 
@@ -99,12 +123,16 @@ const featuredCandidates = allProducts
   .slice(0, FEATURED_LIMIT);
 
 const smartphoneCandidates = allProducts
-  .filter((p) => p.data.category === "equipo-celular")
+  .filter(
+    (p) => referenceToId(p.data.category) === "equipo-celular",
+  )
   .sort((a, b) => Number(b.data.inStock) - Number(a.data.inStock))
   .slice(0, CATEGORY_SECTION_LIMIT);
 
 const accessoryCandidates = allProducts
-  .filter((p) => p.data.category === "accesorios")
+  .filter(
+    (p) => referenceToId(p.data.category) === "accesorios",
+  )
   .sort((a, b) => Number(b.data.inStock) - Number(a.data.inStock))
   .slice(0, CATEGORY_SECTION_LIMIT);
 

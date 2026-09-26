@@ -21,6 +21,7 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 const PRODUCTS_DIR = "./src/content/products";
 const OUTPUT_DIR = "./public/specs";
+const BRANDS_DIR = "./src/content/brands";
 const IMAGE_ROOT = "./public"; // mainImage/images[0] son rutas tipo /uploads/products/xxx.png
 
 // Paleta
@@ -60,6 +61,75 @@ function safeSlug(title) {
     .replace(/[^a-z0-9]/gi, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
+}
+
+/**
+ * Convierte una marca antigua o una referencia TinaCMS en su ID.
+ *
+ * Ejemplos:
+ *   apple
+ *   src/content/brands/apple.json
+ *
+ * Ambos devuelven:
+ *   apple
+ */
+function referenceToId(value) {
+  if (!value || typeof value !== "string") {
+    return "";
+  }
+
+  const normalized = value
+    .trim()
+    .replace(/\\/g, "/")
+    .replace(/\/+$/, "");
+
+  if (!normalized) {
+    return "";
+  }
+
+  const filename = normalized.split("/").pop() ?? normalized;
+
+  return filename.replace(/\.(json|md|mdx)$/i, "");
+}
+
+/**
+ * Obtiene el nombre comercial real de una marca.
+ *
+ * apple                               -> Apple
+ * src/content/brands/apple.json       -> Apple
+ * src/content/brands/marca-test.json  -> Marca Test
+ */
+function resolveBrandName(brandReference) {
+  const brandId = referenceToId(brandReference);
+
+  if (!brandId) {
+    return "ExpansionTec";
+  }
+
+  const brandFile = path.join(BRANDS_DIR, `${brandId}.json`);
+
+  try {
+    if (fs.existsSync(brandFile)) {
+      const brandData = JSON.parse(
+        fs.readFileSync(brandFile, "utf8"),
+      );
+
+      if (
+        typeof brandData.name === "string" &&
+        brandData.name.trim()
+      ) {
+        return brandData.name.trim();
+      }
+    }
+  } catch (error) {
+    console.warn(
+      `⚠️ No se pudo leer la marca "${brandId}":`,
+      error.message,
+    );
+  }
+
+  // Fallback para no romper la generación del PDF
+  return brandId;
 }
 
 function breakLongToken(token, font, size, maxWidth) {
@@ -244,6 +314,7 @@ async function generatePDFs() {
     if (!data.specs || data.specs.length === 0) continue;
 
     const safeTitle = safeSlug(data.title);
+    const brandName = resolveBrandName(data.brand);
 
     const pdfDoc = await PDFDocument.create();
     const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -362,7 +433,7 @@ async function generatePDFs() {
 
     let page = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
 
-    page.drawText((data.brand || "ExpansionTec").toUpperCase(), {
+    page.drawText(brandName.toUpperCase(), {
       x: MARGIN_X,
       y: PAGE_HEIGHT - MARGIN_TOP + 6,
       size: 9,
@@ -401,7 +472,7 @@ async function generatePDFs() {
       if (rowTopY - CARD_HEIGHT < MARGIN_BOTTOM + 24) {
         drawFooter(page);
         page = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
-        page.drawText((data.brand || "ExpansionTec").toUpperCase(), {
+        page.drawText(brandName.toUpperCase(), {
           x: MARGIN_X,
           y: PAGE_HEIGHT - MARGIN_TOP + 6,
           size: 9,

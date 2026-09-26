@@ -1,124 +1,98 @@
 ---
-title: "Apple Iphone 14"
-shortDescription: "5G"
+title: Apple Iphone 14
+shortDescription: 5G
 availableColors:
-  - name: "Midnight"
-    hex: "#111827"
+  - name: Midnight
+    hex: '#111827'
 price: 0
-brand: "apple"
-category: "equipo-celular"
+brand: src/content/brands/apple.json
+category: src/content/categories/equipo-celular.json
 locations:
-  - location: "pdv-chosica"
+  - location: src/content/locations/pdv-chosica.md
 images:
-  - "/uploads/products/apple-iphone-14-01.jpg"
+  - /uploads/products/apple-iphone-14-01.jpg
 specs:
-  - key: "Sistema Operativo"
-    value: |
-
-  - key: "Tamaño de Pantalla"
-    value: |
-
-  - key: "Tipo de Pantalla"
-    value: |
-
-  - key: "Resolución"
-    value: |
-
-  - key: "Cámara Trasera"
-    value: |
-
-  - key: "Cámara Frontal"
-    value: |
-
-  - key: "Almacenamiento"
+  - key: Sistema Operativo
+    value: ''
+  - key: Tamaño de Pantalla
+    value: ''
+  - key: Tipo de Pantalla
+    value: ''
+  - key: Resolución
+    value: ''
+  - key: Cámara Trasera
+    value: ''
+  - key: Cámara Frontal
+    value: ''
+  - key: Almacenamiento
     value: |
       128 GB
-  - key: "RAM"
+  - key: RAM
     value: |
       6 GB
-  - key: "Núcleos"
-    value: |
-
-  - key: "Velocidad CPU"
-    value: |
-
-  - key: "Procesador"
+  - key: Núcleos
+    value: ''
+  - key: Velocidad CPU
+    value: ''
+  - key: Procesador
     value: |
       Apple A15 Bionic Hexa-core
-  - key: "Batería"
-    value: |
-
-  - key: "Peso (g)"
-    value: |
-
-  - key: "Alto (cm)"
-    value: |
-
-  - key: "Ancho (cm)"
-    value: |
-
-  - key: "Grosor (cm)"
-    value: |
-
-  - key: "2G"
-    value: |
-
-  - key: "3G"
-    value: |
-
-  - key: "4G"
-    value: |
-
-  - key: "5G"
+  - key: Batería
+    value: ''
+  - key: Peso (g)
+    value: ''
+  - key: Alto (cm)
+    value: ''
+  - key: Ancho (cm)
+    value: ''
+  - key: Grosor (cm)
+    value: ''
+  - key: 2G
+    value: ''
+  - key: 3G
+    value: ''
+  - key: 4G
+    value: ''
+  - key: 5G
     value: |
       5G
-  - key: "WiFi"
-    value: |
-
-  - key: "Bluetooth"
-    value: |
-
-  - key: "NFC"
-    value: |
-
-  - key: "Sensor de Huella"
-    value: |
-
-  - key: "Tecnología"
+  - key: WiFi
+    value: ''
+  - key: Bluetooth
+    value: ''
+  - key: NFC
+    value: ''
+  - key: Sensor de Huella
+    value: ''
+  - key: Tecnología
     value: |
       5G
-  - key: "Tecnología SIM"
+  - key: Tecnología SIM
     value: |
       One SIM
-  - key: "Detalle técnico"
-    value: |
-
-  - key: "Dispositivo destino"
-    value: |
-
-  - key: "Tipo de accesorio"
-    value: |
-
-  - key: "Material"
-    value: |
-
-  - key: "Voltaje"
-    value: |
-
-  - key: "Tipo de conexión"
-    value: |
-
+  - key: Detalle técnico
+    value: ''
+  - key: Dispositivo destino
+    value: ''
+  - key: Tipo de accesorio
+    value: ''
+  - key: Material
+    value: ''
+  - key: Voltaje
+    value: ''
+  - key: Tipo de conexión
+    value: ''
 inStock: true
 featured: false
 tags:
-  - "128-gb"
-  - "5g"
-  - "6-gb"
-  - "apple"
-  - "apple-iphone-14"
-  - "equipo-celular"
-seoTitle: "Apple Iphone 14"
-seoDescription: "5G"
+  - 128-gb
+  - 5g
+  - 6-gb
+  - apple
+  - apple-iphone-14
+  - equipo-celular
+seoTitle: Apple Iphone 14
+seoDescription: 5G
 publishedAt: 2026-09-08T17:26:35.250Z
 stockQuantity: 0
 maxPerOrder: 5

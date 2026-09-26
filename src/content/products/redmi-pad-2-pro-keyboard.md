@@ -3,11 +3,11 @@ title: REDMI Pad 2 Pro Keyboard
 shortDescription: El mejor teclado de todos los tiempos
 price: 450
 salePrice: 350
-brand: redmi
-category: accesorios
+brand: src/content/brands/redmi.json
+category: src/content/categories/accesorios.json
 locations:
-  - location: pdv-chosica
-  - location: pdv-cieneguilla
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
 images:
   - /uploads/products/redmi-pad-2-pro-keyboard-1.png
   - /uploads/products/redmi-pad-2-pro-keyboard-2.png
@@ -29,4 +29,3 @@ seoTitle: REDMI Pad 2 Pro Keyboard
 seoDescription: Escritura de nivel PC para una experiencia más eficiente
 publishedAt: 2026-02-10T03:40:47.000Z
 ---
-

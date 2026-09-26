@@ -25,10 +25,18 @@ const brandsCollection = defineCollection({
     name: z.string(),
     logo: z.string().optional(),
     website: z.string().url().optional(),
-    // Una marca puede estar asociada a una o varias categorías.
-    // Los valores deben coincidir con los IDs de src/content/categories/.
-    // default([]) permite migrar las marcas existentes gradualmente.
-    // categories: z.array(z.string()).min(1, "Toda marca debe pertenecer a una categoría"),
+
+    // Compatibilidad temporal:
+    // antiguo: ["equipo-celular", "accesorios"]
+    // Tina reference: [{ category: "src/content/categories/accesorios.json" }]
+    categories: z.array(
+      z.union([
+        z.string(),
+        z.object({
+          category: z.string(),
+        }),
+      ]),
+    ).default([]),
   }),
 });
 
@@ -75,7 +83,18 @@ const activationsCollection = defineCollection({
     title: z.string(),
     startDate: z.coerce.date(),
     endDate: z.coerce.date(),
-    locations: z.array(z.string()),
+    // Compatibilidad temporal:
+    // antiguo: ["pdv-chosica"]
+    // Tina reference:
+    // [{ location: "src/content/locations/pdv-chosica.md" }]
+    locations: z.array(
+      z.union([
+        z.string(),
+        z.object({
+          location: z.string(),
+        }),
+      ]),
+    ).default([]),
     products: z.array(z.object({
       product: z.string(),
     })).optional(),

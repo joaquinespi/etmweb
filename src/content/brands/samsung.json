@@ -3,7 +3,11 @@
   "logo": "/uploads/marca_samsung.png",
   "website": "https://www.samsung.com",
   "categories": [
-    "accesorios",
-    "equipo-celular"
+    {
+      "category": "src/content/categories/accesorios.json"
+    },
+    {
+      "category": "src/content/categories/equipo-celular.json"
+    }
   ]
 }

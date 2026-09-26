@@ -3,7 +3,11 @@
   "logo": "/uploads/marca_zte.png",
   "website": "https://www.example.com",
   "categories": [
-    "equipo-celular",
-    "router-olo"
+    {
+      "category": "src/content/categories/equipo-celular.json"
+    },
+    {
+      "category": "src/content/categories/router-olo.json"
+    }
   ]
 }

@@ -30,8 +30,8 @@
 //   node scripts/migrate-brand-categories.mjs --write
 //
 // Después de una migración real:
-//   npm run generate:options
-//   npm run dev
+//   npx tinacms audit
+//   npm run dev:cms
 
 import fs from "node:fs";
 import path from "node:path";
@@ -245,11 +245,38 @@ function groupCsvBrands() {
   return { groups, unmappedTypes, skippedRows };
 }
 
-function hasSameCategories(current, next) {
+function categoryReference(categoryId) {
+  return `src/content/categories/${categoryId}.json`;
+}
+
+function categoryToId(value) {
+  const raw =
+    typeof value === "string"
+      ? value
+      : value?.category;
+
+  if (!raw || typeof raw !== "string") {
+    return "";
+  }
+
+  const normalized = raw
+    .trim()
+    .replace(/\\/g, "/")
+    .replace(/\/+$/, "");
+
+  const filename = normalized.split("/").pop() ?? normalized;
+
+  return filename.replace(/\.(json|md|mdx)$/i, "");
+}
+
+function hasSameCategories(current, nextIds) {
   const currentNormalized = Array.isArray(current)
-    ? [...new Set(current)].sort()
+    ? [...new Set(current.map(categoryToId).filter(Boolean))].sort()
     : [];
-  const nextNormalized = [...new Set(next)].sort();
+
+  const nextNormalized = [...new Set(nextIds)]
+    .filter(Boolean)
+    .sort();
 
   return JSON.stringify(currentNormalized) === JSON.stringify(nextNormalized);
 }
@@ -294,7 +321,11 @@ function main() {
   for (const group of orderedGroups) {
     const existing = existingBrands.get(group.slug);
     const previous = existing?.data ?? {};
-    const categories = [...group.categories].sort();
+    const categoryIds = [...group.categories].sort();
+
+    const categories = categoryIds.map((categoryId) => ({
+      category: categoryReference(categoryId),
+    }));
     const targetPath =
       existing?.filePath ?? path.join(BRANDS_DIR, `${group.slug}.json`);
 
@@ -311,7 +342,10 @@ function main() {
       categories,
     };
 
-    const categoriesChanged = !hasSameCategories(previous.categories, categories);
+    const categoriesChanged = !hasSameCategories(
+      previous.categories,
+      categoryIds,
+    );
     const metadataChanged =
       isNew ||
       !previous.name ||
@@ -321,23 +355,29 @@ function main() {
 
     if (!changed) {
       summary.unchanged += 1;
-      console.log(`  = ${group.slug}: sin cambios (${categories.join(", ")})`);
+      console.log(`      categorías: ${categoryIds.join(", ")}`);
       continue;
     }
 
     if (isNew) {
       summary.created += 1;
       console.log(`  + ${group.slug}: crear`);
-      console.log(`      categorías: ${categories.join(", ")}`);
+      console.log(`      categorías: ${categoryIds.join(", ")}`);
       console.log(`      logo demo: ${nextData.logo}`);
       console.log(`      website demo: ${nextData.website}`);
     } else {
       summary.updated += 1;
       const previousCategories = Array.isArray(previous.categories)
-        ? previous.categories.join(", ")
+        ? previous.categories
+            .map(categoryToId)
+            .filter(Boolean)
+            .join(", ")
         : "(sin categorías)";
+
       console.log(`  ~ ${group.slug}: actualizar`);
-      console.log(`      categorías: ${previousCategories} → ${categories.join(", ")}`);
+      console.log(
+        `      categorías: ${previousCategories} → ${categoryIds.join(", ")}`,
+      );
     }
 
     if (WRITE_MODE) {
@@ -379,8 +419,8 @@ function main() {
   console.log("Siguientes pasos:");
   console.log("  1. Reemplaza los logos demo en TinaCMS.");
   console.log("  2. Reemplaza https://www.example.com por el sitio real de cada marca.");
-  console.log("  3. Ejecuta: npm run generate:options");
-  console.log("  4. Reinicia Astro/Tina: npm run dev");
+  console.log("  3. Ejecuta: npx tinacms audit");
+  console.log("  4. Reinicia Astro/Tina: npm run dev:cms");
 }
 
 try {

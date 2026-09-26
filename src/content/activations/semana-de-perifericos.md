@@ -3,8 +3,9 @@ title: Semana de Periféricos
 startDate: 2026-05-01T00:00:00.000Z
 endDate: 2026-05-31T00:00:00.000Z
 locations:
-  - los-olivos
-  - miraflores
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
+  - location: src/content/locations/pdv-lurin.md
 banner: /uploads/activaciones/DSC00794CLARO-ACTIVACION-780x470.jpg
 gallery:
   - /uploads/activaciones/182563073_116149540585358_922898584125414516_n.jpg

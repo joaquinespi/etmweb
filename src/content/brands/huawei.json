@@ -3,8 +3,14 @@
   "logo": "/uploads/marca_huawei.png",
   "website": "https://www.example.com",
   "categories": [
-    "equipo-celular",
-    "router-ifi",
-    "router-olo"
+    {
+      "category": "src/content/categories/equipo-celular.json"
+    },
+    {
+      "category": "src/content/categories/router-ifi.json"
+    },
+    {
+      "category": "src/content/categories/router-olo.json"
+    }
   ]
 }

@@ -1,6 +1,7 @@
 ---
 // src/pages/activaciones/index.astro
 import { getCollection, getEntry } from "astro:content";
+import { referenceToId } from "../../utils/contentReference";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BreadCrumb from "../../components/ui/BreadCrumb.astro";
 import Badge from "../../components/ui/Badge.astro";
@@ -17,14 +18,28 @@ const nowTime = now.getTime();
 // 1. Procesamiento de datos y resolución de localizaciones
 const processedActivations = await Promise.all(
   activations.map(async (act: any) => {
-    // Resolvemos los nombres de todas las sedes vinculadas
+    // Resolvemos los nombres de todas las sedes vinculadas.
+    // Compatible con el formato antiguo y Tina reference.
+    const locationIds = (act.data.locations ?? [])
+      .map((item: any) => {
+        const value =
+          typeof item === "string"
+            ? item
+            : item?.location;
+
+        return referenceToId(value);
+      })
+      .filter(Boolean);
+
     const locationEntries = await Promise.all(
-      (act.data.locations || []).map((id: string) => getEntry("locations", id)),
+      locationIds.map((id: string) =>
+        getEntry("locations", id),
+      ),
     );
 
     const locationNames = locationEntries
       .filter((entry) => entry !== undefined)
-      .map((l) => l.data.name);
+      .map((location) => location.data.name);
 
     const startDate = new Date(act.data.startDate);
     const endDate = new Date(act.data.endDate);

@@ -3,6 +3,8 @@
   "logo": "/uploads/marcas/1742419213124-Motorola.webp",
   "website": "https://www.logitech.com",
   "categories": [
-    "equipo-celular"
+    {
+      "category": "src/content/categories/equipo-celular.json"
+    }
   ]
 }

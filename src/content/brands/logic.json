@@ -3,7 +3,11 @@
   "logo": "/uploads/marca_logic_fixo.png",
   "website": "https://www.example.com",
   "categories": [
-    "equipo-celular",
-    "tfi"
+    {
+      "category": "src/content/categories/equipo-celular.json"
+    },
+    {
+      "category": "src/content/categories/tfi.json"
+    }
   ]
 }

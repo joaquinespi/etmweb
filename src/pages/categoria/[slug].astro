@@ -5,6 +5,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CategoryHero from "../../components/category/CategoryHero.astro";
 import ProductGrid from "../../components/category/ProductGrid.astro";
+import { referenceToId } from "../../utils/contentReference";
 
 export async function getStaticPaths() {
   const categories = await getCollection("categories");
@@ -19,12 +20,21 @@ const { name, description, banner, image } = category.data;
 
 // Productos filtrados por esta categoría
 const allProducts = await getCollection("products");
-const products = allProducts.filter(
-  (p: any) =>
-    p.data.inStock !== false &&
-    (p.data.category.id === category.id ||
-      p.data.category.slug === category.data.slug),
-);
+const categoryId = referenceToId(category.id);
+const categorySlug = category.data.slug ?? categoryId;
+
+const products = allProducts.filter((p: any) => {
+  if (p.data.inStock === false) {
+    return false;
+  }
+
+  const productCategory = referenceToId(p.data.category);
+
+  return (
+    productCategory === categoryId ||
+    productCategory === categorySlug
+  );
+});
 ---
 
 <BaseLayout

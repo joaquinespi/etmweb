@@ -3,8 +3,9 @@ title: Semana de Reventon
 startDate: 2026-04-14T00:00:00.000Z
 endDate: 2026-05-01T00:00:00.000Z
 locations:
-  - los-olivos
-  - miraflores
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
+  - location: src/content/locations/pdv-lurin.md
 banner: /uploads/activaciones/activacionessss.jpg
 isPublished: true
 ---

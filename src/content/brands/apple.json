@@ -2,5 +2,12 @@
   "name": "Apple",
   "logo": "/uploads/marcas/1742418990300-Apple.webp",
   "website": "https://www.logitech.com",
-  "categories": ["accesorios", "equipo-celular"]
+  "categories": [
+    {
+      "category": "src/content/categories/accesorios.json"
+    },
+    {
+      "category": "src/content/categories/equipo-celular.json"
+    }
+  ]
 }

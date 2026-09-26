@@ -3,10 +3,10 @@ title: POCO F8 Pro 5G
 shortDescription: Batería de 6580mAh
 price: 850
 salePrice: 750
-brand: realme
-category: equipo-celular
+brand: src/content/brands/poco.json
+category: src/content/categories/equipo-celular.json
 locations:
-  - location: pdv-chosica
+  - location: src/content/locations/pdv-chosica.md
 images:
   - /uploads/products/7dd2b9ef0b4ab5ebf56ee5ebcad12a22.png
   - /uploads/products/poco-f8-pro-5g-1.webp
@@ -66,8 +66,9 @@ specs:
     value: |
       WCDMA: B1/B2/B4/B5/B6/B8/B19
   - key: 4G
-    value: |
-      LTE FDD: B1/B2/B3/B4/B5/B7/B8/B12/B13/B17/B18/B19/B20/B26/B28/B32/B66 LTE TDD: B38/B40/B41/B42/B48
+    value: >
+      LTE FDD: B1/B2/B3/B4/B5/B7/B8/B12/B13/B17/B18/B19/B20/B26/B28/B32/B66 LTE
+      TDD: B38/B40/B41/B42/B48
   - key: 5G
     value: |
       si
@@ -95,4 +96,3 @@ seoTitle: POCO F8 Pro 5G
 seoDescription: ''
 publishedAt: 2026-02-09T22:14:56.000Z
 ---
-

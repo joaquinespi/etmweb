@@ -33,10 +33,9 @@
 //   "migrate:products:write": "node scripts/migrate-products-from-csv.mjs --write"
 //
 // Después de migrar:
-//   npm run generate:options
-//   npm run generate:specs
-//   npm run check
-//   npm run dev
+//   npx tinacms audit
+//   npx astro build
+//   npm run dev:cms
 
 import fs from "node:fs";
 import path from "node:path";
@@ -604,9 +603,22 @@ async function downloadProductImages(groups) {
   return runWithConcurrency(tasks, DOWNLOAD_CONCURRENCY);
 }
 
+function brandReference(brandId) {
+  return `src/content/brands/${brandId}.json`;
+}
+
+function categoryReference(categoryId) {
+  return `src/content/categories/${categoryId}.json`;
+}
+
+function locationReference(locationId) {
+  return `src/content/locations/${locationId}.md`;
+}
+
 // ── Serialización Markdown ───────────────────────────────────────────────
 function renderProductMarkdown(group) {
-  const locations = uniqueSorted([...group.locations]);
+  const locations = uniqueSorted([...group.locations])
+  .map(locationReference);
   const colors = [...group.colors.values()].sort((a, b) =>
     a.name.localeCompare(b.name, "es"),
   );
@@ -634,8 +646,12 @@ function renderProductMarkdown(group) {
   }
 
   lines.push(`price: ${DEFAULT_PRICE}`);
-  lines.push(`brand: ${escapeYamlString(group.brand)}`);
-  lines.push(`category: ${escapeYamlString(group.category)}`);
+  lines.push(
+    `brand: ${escapeYamlString(brandReference(group.brand))}`,
+  );
+  lines.push(
+    `category: ${escapeYamlString(categoryReference(group.category))}`,
+  );
   lines.push("locations:");
 
   if (locations.length > 0) {
@@ -816,9 +832,9 @@ async function main() {
   console.log("  1. Revisa los .md en src/content/products/.");
   console.log("  2. Completa precios (price: 0) desde TinaCMS antes de vender.");
   console.log("  3. Ejecuta el pipeline de optimización para crear WebP/full/thumb.");
-  console.log("  4. Ejecuta: npm run generate:options");
-  console.log("  5. Ejecuta: npm run generate:specs");
-  console.log("  6. Ejecuta: npm run check && npm run build");
+  console.log("  4. Ejecuta: npx tinacms audit");
+  console.log("  5. Ejecuta: npx astro build");
+  console.log("  6. Prueba TinaCMS con: npm run dev:cms");
 }
 
 main().catch((error) => {

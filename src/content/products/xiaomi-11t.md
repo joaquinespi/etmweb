@@ -3,11 +3,11 @@ title: Redmi Note 15 Pro + 5G
 shortDescription: Batería de 6580mAh
 price: 2020
 salePrice: 1900
-brand: xiaomi
-category: equipo-celular
+brand: src/content/brands/xiaomi.json
+category: src/content/categories/equipo-celular.json
 locations:
-  - location: pdv-chosica
-  - location: pdv-cieneguilla
+  - location: src/content/locations/pdv-chosica.md
+  - location: src/content/locations/pdv-cieneguilla.md
 images:
   - /uploads/a365dac6c6b371e09a6f4ec7ce3fedce.png
   - /uploads/products/xiaomi-11t-1.webp
@@ -70,8 +70,9 @@ specs:
     value: |
       WCDMA: B1/B2/B4/B5/B6/B8/B19
   - key: 4G
-    value: |
-      LTE FDD: B1/B2/B3/B4/B5/B7/B8/B12/B13/B17/B18/B19/B20/B26/B28/B32/B66 LTE TDD: B38/B40/B41/B42/B48
+    value: >
+      LTE FDD: B1/B2/B3/B4/B5/B7/B8/B12/B13/B17/B18/B19/B20/B26/B28/B32/B66 LTE
+      TDD: B38/B40/B41/B42/B48
   - key: 5G
     value: |
       si
@@ -99,4 +100,3 @@ seoTitle: Redmi Note 15 Pro + 5G
 seoDescription: ''
 publishedAt: 2026-02-01T06:04:37.000Z
 ---
-

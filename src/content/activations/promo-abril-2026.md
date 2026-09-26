@@ -4,7 +4,7 @@ title: Semana de Periféricos Gaming - Abril 2026
 startDate: 2026-05-01T00:00:00.000Z
 endDate: 2026-04-28T00:00:00.000Z
 locations:
-  - los-olivos
+  - location: src/content/locations/pdv-chosica.md
 banner: /uploads/activaciones/activacionesdddss.jpg
 gallery:
   - /uploads/activaciones/182563073_116149540585358_922898584125414516_n.jpg
