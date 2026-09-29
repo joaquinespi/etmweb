@@ -1,11 +1,11 @@
 ---
-name: PDV Chosica
+name: Claro Chosica
 image: /uploads/locations/miraflores/image.jpeg
 district: Chosica
 city: Lima
-address: 'Av. Larco 345, Miraflores'
+address: 'Jr. Arequipa 296, Esquina Lima Sur (Tienda 1), Lurigancho-Chosica 15468, Perú'
 phone: +51 987-706-079 / +51 997-965-722
-email: chosica@tutienda.com
+email: contacto@expansiontecmye.pe
 coordinates:
   lat: -11.934125829796585
   lng: -76.69389548551014
