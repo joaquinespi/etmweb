@@ -1,6 +1,6 @@
 ---
 name: Claro Cieneguilla
-image: /uploads/WhatsApp-Image-2026-03-22-at-6.08.jpg
+image: /uploads/WhatsApp-Image-2026-03-22-at-6.08.43-PM.jpeg
 district: Cieneguilla
 city: Lima
 address: 'Av. San Martin Mz. D Lt. 28 OTR. Tambo Viejo, Cieneguilla 15593, Perú'
