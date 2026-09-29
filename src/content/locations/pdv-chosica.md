@@ -1,6 +1,6 @@
 ---
 name: Claro Chosica
-image: /uploads/locations/miraflores/image.jpeg
+image: /uploads/5.jpeg
 district: Chosica
 city: Lima
 address: 'Jr. Arequipa 296, Esquina Lima Sur (Tienda 1), Lurigancho-Chosica 15468, Perú'
