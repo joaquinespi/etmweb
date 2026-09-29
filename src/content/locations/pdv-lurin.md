@@ -1,6 +1,6 @@
 ---
 name: Claro Lurín
-image: /uploads/locations/la-molina/image.jpg
+image: /uploads/3.jpeg
 district: Lurin
 city: Lurín
 address: 'Jr. Bolognesi 334, Lurín 15823, Perú'
