@@ -189,7 +189,8 @@ try {
             celular,
             asunto,
             mensaje,
-            sucursal
+            sucursal,
+            flg_autorizo
         )
         VALUES
         (
@@ -198,7 +199,8 @@ try {
             :celular,
             :asunto,
             :mensaje,
-            :sucursal
+            :sucursal,
+            :flg_autorizo
         )
         RETURNING id_contacto
     ';
@@ -217,6 +219,7 @@ try {
             $location !== ''
                 ? $location
                 : null,
+        ':flg_autorizo' => 1,
     ]);
 
 
