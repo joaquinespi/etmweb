@@ -187,7 +187,26 @@ const locations: CollectionEntry<"locations">[] = await getCollection(
               ))}
             </select>
           </div>
-
+          <div>
+            <label class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-300">
+              <input
+                id="privacy"
+                name="privacy"
+                type="checkbox"
+                required
+                class="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-600"
+              />
+              <span>
+                Autorizo el tratamiento de mis datos personales.
+                <span aria-hidden="true">*</span>
+              </span>
+              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <b>Aceptación de tratamiento de datos personales</b><br>
+                Otorga su consentimiento a <i>DAC Expansion Tec MyE</i>, para utilizar los datos personales que ha registrado, con la finalidad de recibir información sobre productos y/o servicios que ha solicitado mediante este formulario. Es oportuno mencionarle que sus datos personales serán registrados en nuestro Banco de Datos y declarados a la Autoridad Nacional de Protección de Datos Personales.<br>
+                Usted podrá revocar su consentimiento y/o ejercer los derechos ARCO (Acceso, Rectificación, Cancelación y Oposición). Asimismo, se garantiza el respeto y observancia al ejercicio de dichos derechos.
+              </p>
+            </label>
+          </div>
           <button
             type="submit"
             id="submit-btn"
